@@ -1,28 +1,49 @@
-<\!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Research Archive</title>
+    <title>AI Research</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); min-height: 100vh; color: #fff; padding: 40px 20px; }
-        .container { max-width: 900px; margin: 0 auto; }
+        .container { max-width: 1000px; margin: 0 auto; }
         h1 { text-align: center; font-size: 2.5rem; margin-bottom: 10px; background: linear-gradient(90deg, #4facfe, #00f2fe); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .subtitle { text-align: center; color: #8892b0; margin-bottom: 40px; }
+        .section-title { font-size: 1.3rem; color: #4facfe; margin: 30px 0 15px; padding-bottom: 8px; border-bottom: 1px solid rgba(79,172,254,0.3); }
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
         .card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 24px; transition: all 0.3s; }
         .card:hover { transform: translateY(-5px); background: rgba(255,255,255,0.1); border-color: #4facfe; }
+        .card.featured { border-color: #00f2fe; background: rgba(0,242,254,0.05); }
         .card h3 { font-size: 1.1rem; margin-bottom: 8px; color: #4facfe; }
         .card p { font-size: 0.9rem; color: #8892b0; line-height: 1.5; margin-bottom: 16px; }
         .card a { display: inline-block; padding: 8px 16px; background: linear-gradient(90deg, #4facfe, #00f2fe); color: #1a1a2e; text-decoration: none; border-radius: 6px; font-weight: 500; font-size: 0.85rem; }
         .card a:hover { opacity: 0.9; }
+        .tag { display: inline-block; font-size: 0.7rem; padding: 2px 8px; background: rgba(79,172,254,0.2); border-radius: 4px; margin-bottom: 8px; color: #4facfe; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>📚 AI Research Archive</h1>
-        <p class="subtitle">AI 调研报告合集</p>
+        <h1>🔬 AI Research</h1>
+        <p class="subtitle">AI 调研项目合集 — 产品分析 · 行业洞察 · 技术探索</p>
+        
+        <h2 class="section-title">🚀 项目入口</h2>
+        <div class="grid">
+            <div class="card featured">
+                <span class="tag">Portal</span>
+                <h3>🌐 AI项目总览</h3>
+                <p>所有AI项目的统一入口导航页</p>
+                <a href="./ai-project-portal/">进入</a>
+            </div>
+            <div class="card featured">
+                <span class="tag">金融</span>
+                <h3>💹 金融AI研究</h3>
+                <p>金融AI学习与数字员工架构设计</p>
+                <a href="./ai-fin-learn/">进入</a>
+            </div>
+        </div>
+
+        <h2 class="section-title">📊 调研报告</h2>
         <div class="grid">
             <div class="card">
                 <h3>🧠 AI产品终极形态</h3>
