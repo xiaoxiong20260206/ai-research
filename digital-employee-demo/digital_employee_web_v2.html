@@ -1,0 +1,2920 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>数字员工平台</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Figtree:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+<style>
+/* ───────────────────────────────────────────
+   DESIGN TOKENS
+─────────────────────────────────────────── */
+:root {
+  /* Surfaces */
+  --bg:        #F5F4F0;
+  --surface:   #FFFFFF;
+  --surface-2: #F9F8F5;
+  --surface-3: #F1EFE9;
+
+  /* Brand */
+  --ink:       #1B2D4F;
+  --ink-mid:   #3D5476;
+  --ink-light: #7A92B4;
+
+  /* Agent / Pet accent — amber */
+  --amber:     #D97706;
+  --amber-dim: #92400E;
+  --amber-bg:  #FFFBEB;
+  --amber-border: #FDE68A;
+
+  /* Functional */
+  --blue:      #2563EB;
+  --blue-bg:   #EFF6FF;
+  --blue-border:#BFDBFE;
+  --green:     #059669;
+  --green-bg:  #ECFDF5;
+  --red:       #DC2626;
+  --red-bg:    #FEF2F2;
+  --orange:    #EA580C;
+  --orange-bg: #FFF7ED;
+  --purple:    #7C3AED;
+  --purple-bg: #F5F3FF;
+  --teal:      #0D9488;
+  --teal-bg:   #F0FDFA;
+
+  /* Borders */
+  --border:    #E8E5DD;
+  --border-2:  #D6D0C4;
+  --border-focus: #2563EB;
+
+  /* Text */
+  --text:      #1C1917;
+  --text-2:    #57534E;
+  --text-3:    #A8A29E;
+  --text-4:    #D6D3D1;
+
+  /* Dimensions */
+  --sidebar:   228px;
+  --radius:    8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+
+  /* Fonts */
+  --f-display: 'Sora', 'PingFang SC', sans-serif;
+  --f-body:    'Figtree', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(28,25,23,.05);
+  --shadow:    0 1px 3px rgba(28,25,23,.07), 0 1px 2px rgba(28,25,23,.05);
+  --shadow-md: 0 4px 6px rgba(28,25,23,.06), 0 2px 4px rgba(28,25,23,.05);
+  --shadow-lg: 0 10px 15px rgba(28,25,23,.07), 0 4px 6px rgba(28,25,23,.05);
+}
+
+/* ───────────────────────────────────────────
+   RESET & BASE
+─────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body, #root { height: 100%; }
+body {
+  font-family: var(--f-body);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.6;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-2); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-3); }
+button { cursor: pointer; font-family: var(--f-body); }
+input, textarea { font-family: var(--f-body); }
+
+/* ───────────────────────────────────────────
+   LAYOUT
+─────────────────────────────────────────── */
+.app { display: flex; height: 100vh; }
+
+/* Sidebar */
+.sidebar {
+  width: var(--sidebar);
+  min-width: var(--sidebar);
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.sidebar-head {
+  padding: 18px 16px 14px;
+  border-bottom: 1px solid var(--border);
+}
+.brand-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 2px;
+}
+.brand-logo {
+  width: 30px; height: 30px;
+  border-radius: 8px;
+  background: var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+  box-shadow: var(--shadow-sm);
+}
+.brand-name {
+  font-family: var(--f-display);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.2;
+}
+.brand-org {
+  font-size: 11px;
+  color: var(--text-3);
+  padding-left: 38px;
+}
+
+/* Agent status strip */
+.agent-strip {
+  margin: 10px 16px 0;
+  background: var(--amber-bg);
+  border: 1px solid var(--amber-border);
+  border-radius: var(--radius);
+  padding: 7px 10px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  cursor: pointer;
+  transition: background .15s;
+}
+.agent-strip:hover { background: #FEF3C7; }
+.agent-strip-icon { font-size: 16px; animation: bob 2.5s ease-in-out infinite; }
+@keyframes bob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-2px)} }
+.agent-strip-info { flex: 1; min-width: 0; }
+.agent-strip-name { font-size: 12px; font-weight: 600; color: var(--amber-dim); }
+.agent-strip-status { font-size: 11px; color: var(--amber); display: flex; align-items: center; gap: 4px; }
+.status-pulse { width: 6px; height: 6px; border-radius: 50%; background: var(--green); flex-shrink: 0; animation: pulse-green 2s infinite; }
+@keyframes pulse-green { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.85)} }
+
+/* Nav */
+.sidebar-nav { flex: 1; padding: 10px 8px; overflow-y: auto; }
+.nav-group { margin-bottom: 2px; }
+.nav-group-label {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: .07em;
+  color: var(--text-3);
+  text-transform: uppercase;
+  padding: 8px 8px 4px;
+}
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 10px;
+  border-radius: var(--radius);
+  color: var(--text-2);
+  font-size: 13.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all .14s;
+  position: relative;
+  user-select: none;
+}
+.nav-item:hover { background: var(--surface-3); color: var(--text); }
+.nav-item.active {
+  background: var(--blue-bg);
+  color: var(--blue);
+  font-weight: 600;
+}
+.nav-icon { font-size: 15px; width: 18px; text-align: center; flex-shrink: 0; }
+.nav-label { flex: 1; }
+.nav-badge {
+  background: var(--red);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 20px;
+  min-width: 18px;
+  text-align: center;
+}
+.nav-count {
+  font-size: 11px;
+  color: var(--text-3);
+  background: var(--surface-3);
+  border-radius: 10px;
+  padding: 1px 6px;
+}
+
+/* Sidebar footer */
+.sidebar-foot {
+  padding: 12px 12px 14px;
+  border-top: 1px solid var(--border);
+}
+.xp-card {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 9px 11px;
+  cursor: pointer;
+  transition: border-color .15s;
+}
+.xp-card:hover { border-color: var(--border-2); }
+.xp-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+.xp-level { font-size: 12px; font-weight: 600; color: var(--amber); }
+.xp-val { font-size: 10.5px; color: var(--text-3); }
+.xp-bar { height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
+.xp-fill { height: 100%; background: linear-gradient(90deg, var(--amber), #F59E0B); border-radius: 2px; transition: width .8s ease; }
+
+/* Main area */
+.main { flex: 1; overflow: hidden; display: flex; flex-direction: column; min-width: 0; }
+.topbar {
+  height: 52px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  gap: 14px;
+  flex-shrink: 0;
+}
+.topbar-title { font-family: var(--f-display); font-size: 16px; font-weight: 700; color: var(--ink); }
+.topbar-sub { font-size: 12px; color: var(--text-3); margin-left: 2px; }
+.topbar-right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+.page-body { flex: 1; overflow-y: auto; padding: 22px 24px; }
+
+/* ───────────────────────────────────────────
+   SHARED COMPONENTS
+─────────────────────────────────────────── */
+/* Buttons */
+.btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 7px 14px; border-radius: var(--radius);
+  font-size: 13px; font-weight: 500; border: none;
+  transition: all .14s; white-space: nowrap;
+  font-family: var(--f-body);
+}
+.btn-primary { background: var(--ink); color: #fff; }
+.btn-primary:hover { background: var(--ink-mid); }
+.btn-blue { background: var(--blue); color: #fff; }
+.btn-blue:hover { background: #1D4ED8; }
+.btn-outline { background: var(--surface); color: var(--text); border: 1px solid var(--border-2); }
+.btn-outline:hover { background: var(--surface-2); border-color: var(--text-3); }
+.btn-ghost { background: transparent; color: var(--text-2); border: 1px solid transparent; }
+.btn-ghost:hover { background: var(--surface-3); color: var(--text); }
+.btn-amber { background: var(--amber); color: #fff; }
+.btn-amber:hover { background: var(--amber-dim); }
+.btn-danger { background: var(--red-bg); color: var(--red); border: 1px solid #FECACA; }
+.btn-danger:hover { background: #FEE2E2; }
+.btn-sm { padding: 5px 10px; font-size: 12px; }
+.btn-lg { padding: 10px 20px; font-size: 14px; }
+.btn-icon { padding: 7px; }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+
+/* Cards */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 18px 20px;
+  box-shadow: var(--shadow-sm);
+}
+.card-sm { padding: 12px 14px; }
+.card-title {
+  font-family: var(--f-display);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  margin-bottom: 14px;
+}
+
+/* Stat cards */
+.stat-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 20px; }
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px 18px;
+  box-shadow: var(--shadow-sm);
+}
+.stat-val { font-family: var(--f-display); font-size: 26px; font-weight: 800; line-height: 1; margin-bottom: 3px; }
+.stat-label { font-size: 12px; color: var(--text-2); }
+.stat-delta { font-size: 11px; margin-top: 3px; }
+.stat-icon { float: right; font-size: 20px; opacity: .2; margin-top: 2px; }
+
+/* Badges */
+.badge {
+  display: inline-flex; align-items: center; gap: 3px;
+  padding: 2px 7px; border-radius: 20px; font-size: 11px; font-weight: 600;
+}
+.badge-blue { background: var(--blue-bg); color: var(--blue); }
+.badge-green { background: var(--green-bg); color: var(--green); }
+.badge-red { background: var(--red-bg); color: var(--red); }
+.badge-amber { background: var(--amber-bg); color: var(--amber); }
+.badge-orange { background: var(--orange-bg); color: var(--orange); }
+.badge-purple { background: var(--purple-bg); color: var(--purple); }
+.badge-teal { background: var(--teal-bg); color: var(--teal); }
+.badge-gray { background: var(--surface-3); color: var(--text-2); }
+.badge-ink { background: var(--ink); color: #fff; }
+
+/* Tags */
+.tag { display: inline-block; padding: 2px 7px; border-radius: 4px; font-size: 11px; background: var(--surface-3); color: var(--text-2); border: 1px solid var(--border); }
+
+/* Progress */
+.progress { height: 5px; background: var(--surface-3); border-radius: 3px; overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 3px; transition: width .5s ease; }
+.progress-blue { background: var(--blue); }
+.progress-amber { background: var(--amber); }
+.progress-green { background: var(--green); }
+.progress-ink { background: var(--ink); }
+
+/* Status dot */
+.dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.dot-running { background: var(--blue); animation: blink-blue 1.8s infinite; }
+.dot-hil { background: var(--orange); animation: blink-orange 1.8s infinite; }
+.dot-done { background: var(--green); }
+.dot-amber { background: var(--amber); }
+.dot-failed { background: var(--red); }
+.dot-idle { background: var(--text-4); }
+@keyframes blink-blue { 0%,100%{box-shadow:0 0 0 0 rgba(37,99,235,.35)} 50%{box-shadow:0 0 0 4px rgba(37,99,235,0)} }
+@keyframes blink-orange { 0%,100%{box-shadow:0 0 0 0 rgba(234,88,12,.35)} 50%{box-shadow:0 0 0 4px rgba(234,88,12,0)} }
+@keyframes fadein { from{opacity:0;transform:translateX(-50%) translateY(-8px)} to{opacity:1;transform:translateX(-50%) translateY(0)} }
+
+/* Input / Textarea */
+.field {
+  width: 100%; padding: 8px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border-2);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-size: 13.5px; font-family: var(--f-body);
+  outline: none; transition: border-color .15s;
+}
+.field:focus { border-color: var(--border-focus); box-shadow: 0 0 0 3px rgba(37,99,235,.1); }
+.field::placeholder { color: var(--text-3); }
+textarea.field { resize: none; }
+
+/* Divider */
+.divider { height: 1px; background: var(--border); margin: 16px 0; }
+.section-label {
+  font-size: 11.5px; font-weight: 600; letter-spacing: .06em;
+  color: var(--text-3); text-transform: uppercase; margin-bottom: 10px;
+  display: flex; align-items: center; gap: 8px;
+}
+.section-label::after { content:''; flex:1; height:1px; background: var(--border); }
+
+/* Spinner */
+.spin { width:16px;height:16px;border:2px solid var(--border-2);border-top-color:var(--blue);border-radius:50%;animation:spin .65s linear infinite;flex-shrink:0; }
+@keyframes spin { to{transform:rotate(360deg)} }
+
+/* Typing dots */
+.typing { display:flex;gap:3px;align-items:center;padding:4px 0; }
+.typing span { width:5px;height:5px;background:var(--text-3);border-radius:50%;animation:typ 1.1s infinite; }
+.typing span:nth-child(2){animation-delay:.18s}
+.typing span:nth-child(3){animation-delay:.36s}
+@keyframes typ { 0%,80%,100%{transform:scale(.8);opacity:.4} 40%{transform:scale(1.2);opacity:1} }
+
+/* Drawer */
+.drawer-overlay { position:fixed;inset:0;background:rgba(28,25,23,.25);z-index:200;animation:fadein .2s ease; }
+.drawer {
+  position:fixed;top:0;right:0;bottom:0;width:500px;
+  background:var(--surface);border-left:1px solid var(--border);
+  z-index:201;overflow-y:auto;
+  animation:slidein .22s ease;box-shadow:var(--shadow-lg);
+}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+@keyframes slidein{from{transform:translateX(24px);opacity:0}to{transform:translateX(0);opacity:1}}
+.drawer-head {
+  padding:18px 20px;border-bottom:1px solid var(--border);
+  display:flex;align-items:flex-start;justify-content:space-between;
+  position:sticky;top:0;background:var(--surface);z-index:1;
+}
+.drawer-close { background:none;border:none;color:var(--text-3);font-size:20px;padding:2px;line-height:1;transition:color .15s; }
+.drawer-close:hover { color:var(--text); }
+.drawer-body { padding:18px 20px; }
+
+/* Page enter animation */
+.page-in { animation:pagein .18s ease; }
+@keyframes pagein { from{opacity:0;transform:translateY(5px)} to{opacity:1;transform:translateY(0)} }
+
+/* HIL card */
+.hil-card {
+  background: var(--orange-bg);
+  border: 1px solid #FED7AA;
+  border-radius: var(--radius-lg);
+  padding: 14px 16px;
+}
+.hil-title { font-weight: 600; color: var(--orange); font-size: 13px; margin-bottom: 6px; display:flex;align-items:center;gap:6px; }
+.hil-body { font-size: 13px; color: var(--text-2); margin-bottom: 10px; line-height:1.6; }
+.diff-block {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 6px; padding:8px 12px;
+  font-family: 'Courier New', monospace;
+  font-size: 12px; margin-bottom: 10px; overflow-x: auto;
+}
+.diff-add { color: var(--green); }
+.diff-rm { color: var(--red); }
+.hil-actions { display:flex;gap:7px; }
+
+/* Task card */
+.task-item {
+  display:flex;align-items:center;gap:12px;
+  padding:12px 14px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius-lg);
+  cursor:pointer;
+  transition:all .14s;
+  position:relative;overflow:hidden;
+  box-shadow:var(--shadow-sm);
+}
+.task-item::before { content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:3px 0 0 3px; }
+.task-item.running::before { background:var(--blue); }
+.task-item.hil::before { background:var(--orange); }
+.task-item.done::before { background:var(--green); }
+.task-item.failed::before { background:var(--red); }
+.task-item:hover { border-color:var(--border-2);box-shadow:var(--shadow-md);transform:translateY(-1px); }
+.task-name { font-weight:500;font-size:13.5px;margin-bottom:3px; }
+.task-meta { font-size:11.5px;color:var(--text-3);display:flex;gap:8px;align-items:center; }
+
+/* Chat */
+.chat-wrap { display:flex;flex-direction:column;height:100%; }
+.chat-messages { flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:14px;padding:18px 20px; }
+.msg { display:flex;gap:9px;animation:msgIn .18s ease; }
+.msg.user { flex-direction:row-reverse; }
+@keyframes msgIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.msg-avatar { width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;background:var(--surface-3);border:1px solid var(--border); }
+.msg-avatar.ai { background:var(--amber-bg);border-color:var(--amber-border); }
+.msg-bubble {
+  max-width:72%;padding:10px 14px;border-radius:12px;
+  font-size:13.5px;line-height:1.65;
+}
+.msg-bubble.ai { background:var(--surface);border:1px solid var(--border);border-top-left-radius:4px; }
+.msg-bubble.user { background:var(--ink);color:#fff;border-top-right-radius:4px; }
+.msg-bubble strong { font-weight:600; }
+.msg-bubble code { background:var(--surface-3);padding:1px 5px;border-radius:3px;font-family:monospace;font-size:12px;color:var(--blue); }
+.msg-bubble.user code { background:rgba(255,255,255,.15);color:#fff; }
+.msg-bubble pre { background:var(--surface-2);border:1px solid var(--border);border-radius:6px;padding:10px;margin-top:7px;font-size:12px;overflow-x:auto;white-space:pre-wrap;font-family:monospace; }
+.chat-foot { padding:12px 16px;border-top:1px solid var(--border);background:var(--surface); }
+.chat-input-row { display:flex;gap:8px;align-items:flex-end; }
+.chat-input-row textarea { flex:1;min-height:38px;max-height:110px; }
+.chat-send { width:36px;height:36px;border-radius:var(--radius);background:var(--ink);color:#fff;border:none;font-size:16px;display:flex;align-items:center;justify-content:center;transition:background .14s;flex-shrink:0; }
+.chat-send:hover { background:var(--ink-mid); }
+.chat-send:disabled { opacity:.4;cursor:not-allowed; }
+.quick-pills { display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px; }
+.quick-pill { padding:4px 10px;background:var(--surface-2);border:1px solid var(--border);border-radius:20px;font-size:12px;color:var(--text-2);cursor:pointer;transition:all .13s; }
+.quick-pill:hover { background:var(--blue-bg);border-color:var(--blue-border);color:var(--blue); }
+
+/* Skills grid */
+.skills-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:12px; }
+.skill-card {
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius-lg);padding:14px 16px;
+  cursor:pointer;transition:all .15s;
+  box-shadow:var(--shadow-sm);
+}
+.skill-card:hover { border-color:var(--border-2);box-shadow:var(--shadow-md);transform:translateY(-2px); }
+.skill-card.owned { border-color:#BFDBFE; }
+
+/* Agent core grid */
+.core-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:10px; }
+.core-card {
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius-lg);padding:14px;
+  cursor:pointer;transition:all .15s;
+}
+.core-card:hover { border-color:var(--border-2);box-shadow:var(--shadow-md); }
+.core-card.active { border-color:var(--blue-border);background:var(--blue-bg); }
+
+/* Memory list */
+.mem-item { display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--border); }
+.mem-item:last-child { border-bottom:none; }
+
+/* Project space pipeline */
+.pipeline { display:flex;gap:0;overflow-x:auto;padding-bottom:4px; }
+.pipeline-stage {
+  min-width:200px;flex:1;
+  border-right:1px solid var(--border);
+  padding:0 14px 14px;
+}
+.pipeline-stage:last-child { border-right:none; }
+.stage-header {
+  padding:12px 0 10px;
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;background:var(--bg);z-index:1;
+}
+.stage-name { font-size:12px;font-weight:700;color:var(--ink);text-transform:uppercase;letter-spacing:.06em; }
+.stage-count { font-size:11px;color:var(--text-3);background:var(--surface-3);border-radius:10px;padding:1px 7px; }
+.stage-card {
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);padding:10px 12px;
+  margin-bottom:8px;box-shadow:var(--shadow-sm);
+  transition:all .14s;cursor:pointer;
+}
+.stage-card:hover { border-color:var(--border-2);box-shadow:var(--shadow-md); }
+.stage-card-name { font-size:13px;font-weight:500;margin-bottom:5px;line-height:1.4; }
+.stage-card-meta { font-size:11px;color:var(--text-3);display:flex;gap:6px;align-items:center; }
+
+/* Notification timeline */
+.notif-item {
+  display:flex;gap:12px;padding:12px 0;
+  border-bottom:1px solid var(--border);
+  transition:background .13s;
+}
+.notif-item:last-child { border-bottom:none; }
+.notif-dot-wrap { display:flex;flex-direction:column;align-items:center;padding-top:3px; }
+.notif-line { flex:1;width:1px;background:var(--border);margin-top:5px; }
+
+/* Team */
+.member-card {
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius-lg);padding:16px;
+  text-align:center;box-shadow:var(--shadow-sm);
+  transition:all .15s;
+}
+.member-card:hover { border-color:var(--border-2);box-shadow:var(--shadow-md);transform:translateY(-2px); }
+
+/* Tabs */
+.tabs { display:flex;gap:2px;background:var(--surface-3);border-radius:var(--radius);padding:3px; }
+.tab { padding:6px 14px;border-radius:6px;font-size:13px;font-weight:500;cursor:pointer;transition:all .14s;color:var(--text-2); }
+.tab.active { background:var(--surface);color:var(--text);box-shadow:var(--shadow-sm); }
+
+/* API key banner */
+.api-banner {
+  background:var(--amber-bg);border:1px solid var(--amber-border);
+  border-radius:var(--radius);padding:8px 14px;
+  display:flex;align-items:center;gap:10px;font-size:12.5px;
+}
+.api-key-field {
+  background:var(--surface);border:1px solid var(--border-2);
+  border-radius:6px;color:var(--text);
+  font-family:monospace;font-size:11px;
+  padding:4px 9px;width:200px;outline:none;
+}
+.api-key-field:focus { border-color:var(--amber); }
+
+/* Empty state */
+.empty { text-align:center;padding:40px 20px;color:var(--text-3); }
+.empty-icon { font-size:36px;margin-bottom:8px;opacity:.5; }
+.empty-text { font-size:13px; }
+
+/* Context panel */
+.ctx-panel {
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius-lg);
+  overflow:hidden;
+  box-shadow:var(--shadow-sm);
+}
+.ctx-item { padding:10px 14px;border-bottom:1px solid var(--border);display:flex;gap:10px;align-items:flex-start; }
+.ctx-item:last-child { border-bottom:none; }
+.ctx-icon { font-size:14px;width:20px;text-align:center;flex-shrink:0;margin-top:1px; }
+
+/* Two-col helpers */
+.col-2 { display:grid;grid-template-columns:1fr 1fr;gap:18px; }
+.col-3 { display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px; }
+.col-chat { display:grid;grid-template-columns:1fr 300px;gap:18px;height:calc(100vh - 96px); }
+
+/* ═══════════════════════════════════════════
+   NEW STYLES — Workflow Templates
+═══════════════════════════════════════════ */
+.wf-grid { display:grid;grid-template-columns:repeat(2,1fr);gap:14px; }
+.wf-card {
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius-lg);padding:16px;
+  cursor:pointer;transition:all .15s;box-shadow:var(--shadow-sm);
+  position:relative;overflow:hidden;
+}
+.wf-card::before { content:'';position:absolute;left:0;top:0;bottom:0;width:4px; }
+.wf-card:hover { border-color:var(--border-2);box-shadow:var(--shadow-md);transform:translateY(-2px); }
+.wf-card.selected { border-color:var(--blue-border);background:var(--blue-bg); }
+.wf-card.selected::before { background:var(--blue); }
+.wf-step {
+  display:flex;align-items:flex-start;gap:10px;
+  padding:10px 0;border-bottom:1px solid var(--border);
+  font-size:13px;
+}
+.wf-step:last-child { border-bottom:none; }
+.wf-step-num {
+  width:22px;height:22px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:10px;font-weight:700;flex-shrink:0;margin-top:1px;
+}
+.wf-step-ai { background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-border); }
+.wf-step-manual { background:var(--surface-3);color:var(--text-2);border:1px solid var(--border-2); }
+.wf-step-hil { background:var(--orange-bg);color:var(--orange);border:1px solid #FED7AA; }
+.wf-step-collab { background:var(--purple-bg);color:var(--purple);border:1px solid #DDD6FE; }
+.wf-type-chip {
+  display:inline-flex;align-items:center;gap:3px;
+  padding:1px 6px;border-radius:10px;font-size:10px;font-weight:600;
+}
+
+/* ═══════════════════════════════════════════
+   NEW STYLES — Skill Tree (Agent Page)
+═══════════════════════════════════════════ */
+.skill-tree-layer {
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius-xl);padding:18px 20px;
+  margin-bottom:14px;position:relative;
+}
+.skill-tree-layer::before {
+  content:'';position:absolute;left:0;top:0;bottom:0;width:4px;
+  border-radius:16px 0 0 16px;
+}
+.layer-meta { background:var(--purple-bg);border-color:#DDD6FE; }
+.layer-meta::before { background:var(--purple); }
+.layer-domain { background:var(--blue-bg);border-color:var(--blue-border); }
+.layer-domain::before { background:var(--blue); }
+.layer-exec { border-color:var(--border); }
+.layer-exec::before { background:var(--teal); }
+.skill-node {
+  display:inline-flex;align-items:center;gap:5px;
+  padding:4px 10px;border-radius:20px;font-size:12px;
+  background:var(--surface);border:1px solid var(--border);
+  margin:3px;transition:all .13s;cursor:default;
+}
+.skill-node:hover { border-color:var(--border-2);box-shadow:var(--shadow-sm); }
+.skill-lv {
+  width:18px;height:18px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:9px;font-weight:800;color:#fff;
+}
+.lv-1 { background:var(--text-3); }
+.lv-2 { background:var(--teal); }
+.lv-3 { background:var(--blue); }
+.lv-4 { background:var(--purple); }
+.lv-5 { background:var(--amber); }
+.layer-connector {
+  text-align:center;padding:6px 0;color:var(--text-3);font-size:12px;
+}
+
+/* ═══════════════════════════════════════════
+   NEW STYLES — Radar Chart
+═══════════════════════════════════════════ */
+.radar-wrap {
+  display:flex;align-items:center;justify-content:center;
+  padding:14px 0;
+}
+.radar-legend {
+  display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:8px;
+}
+.radar-legend-item {
+  display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text-2);
+}
+.radar-legend-dot {
+  width:8px;height:8px;border-radius:50%;
+}
+
+/* ═══════════════════════════════════════════
+   NEW STYLES — Achievements
+═══════════════════════════════════════════ */
+.achv-grid { display:grid;grid-template-columns:repeat(4,1fr);gap:10px; }
+.achv-card {
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius-lg);padding:12px 10px;
+  text-align:center;transition:all .15s;position:relative;
+}
+.achv-card:hover { transform:translateY(-2px);box-shadow:var(--shadow-md); }
+.achv-card.locked { opacity:.5;filter:grayscale(.4); }
+.achv-card.rare { border-color:var(--blue-border); }
+.achv-card.epic { border-color:#DDD6FE; }
+.achv-card.legend { border-color:var(--amber-border);background:var(--amber-bg); }
+.achv-icon { font-size:24px;margin-bottom:4px; }
+.achv-name { font-size:11.5px;font-weight:600;margin-bottom:2px; }
+.achv-rarity { font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.05em; }
+
+/* ═══════════════════════════════════════════
+   NEW STYLES — Evolution Timeline
+═══════════════════════════════════════════ */
+.evo-timeline { position:relative;padding-left:24px; }
+.evo-timeline::before {
+  content:'';position:absolute;left:8px;top:6px;bottom:6px;
+  width:2px;background:var(--border);
+}
+.evo-item { position:relative;padding-bottom:18px; }
+.evo-item:last-child { padding-bottom:0; }
+.evo-dot {
+  position:absolute;left:-20px;top:4px;
+  width:12px;height:12px;border-radius:50%;
+  border:2px solid var(--surface);
+  z-index:1;
+}
+.evo-dot.past { background:var(--green); }
+.evo-dot.current { background:var(--amber);box-shadow:0 0 0 3px rgba(217,119,6,.2); }
+.evo-dot.future { background:var(--border); }
+
+/* ═══════════════════════════════════════════
+   NEW STYLES — Manager View
+═══════════════════════════════════════════ */
+.manager-gate {
+  text-align:center;padding:60px 30px;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius-xl);
+}
+.privacy-note {
+  background:var(--surface-2);border:1px solid var(--border);
+  border-radius:var(--radius);padding:12px 16px;
+  font-size:12px;color:var(--text-2);line-height:1.65;
+  margin-bottom:18px;
+}
+.privacy-note strong { color:var(--text); }
+.usage-bar-wrap {
+  display:flex;align-items:center;gap:10px;margin-bottom:12px;
+}
+.usage-bar-label { width:80px;font-size:12px;color:var(--text-2);text-align:right; }
+.usage-bar { flex:1; }
+.usage-bar-val { width:48px;font-size:12px;font-weight:700;color:var(--ink);text-align:right; }
+
+/* ═══════════════════════════════════════════
+   NEW STYLES — Misc Enhancements
+═══════════════════════════════════════════ */
+.toggle-sw {
+  width:36px;height:20px;border-radius:10px;
+  cursor:pointer;transition:background .15s;
+  position:relative;flex-shrink:0;
+}
+.toggle-sw .toggle-knob {
+  position:absolute;top:2px;width:16px;height:16px;
+  background:#fff;border-radius:50%;transition:left .15s;
+  box-shadow:0 1px 2px rgba(0,0,0,.2);
+}
+.four-dim-grid { display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px; }
+.four-dim-card {
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius-lg);padding:16px;text-align:center;
+  cursor:pointer;transition:all .15s;
+}
+.four-dim-card:hover { box-shadow:var(--shadow-md);transform:translateY(-2px); }
+.four-dim-card.active { border-color:var(--blue-border);background:var(--blue-bg); }
+.four-dim-val { font-family:var(--f-display);font-weight:800;font-size:28px;margin-bottom:2px; }
+.four-dim-label { font-size:12px;color:var(--text-2); }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const {useState,useEffect,useRef,useCallback} = React;
+/* ───────────────────────────────
+   MOCK DATA
+─────────────────────────────── */
+const TASKS = [
+  {id:'t1',name:'Code Review: PR#2847 风控引擎重构',role:'研效',status:'done',trigger:'飞书Bot',clones:2,progress:100,saved:38,skills:['code-review','security-scan'],time:'10:23',jira:'RISK-2847',steps:[{t:'分析 PR Diff（+847/-203行）',done:true},{t:'代码规范检查',done:true},{t:'安全漏洞扫描（SQL注入/XSS）',done:true},{t:'性能隐患识别',done:true},{t:'生成 Review 报告',done:true}],result:'发现 2 项必须修复（含 SQL 注入风险），5 项建议修复，代码整体结构清晰'},
+  {id:'t2',name:'面试评估报告: 张晓雯（高级研发）',role:'HR',status:'hil',trigger:'飞书Bot',clones:1,progress:72,saved:null,skills:['audio-to-insight','resume-screen'],time:'09:41',jira:'HR-1234',steps:[{t:'面试录音转写（47分钟）',done:true},{t:'简历解析',done:true},{t:'胜任力模型映射评分',done:true},{t:'与历史录用候选人比对',done:true},{t:'评估结果写入招聘系统（等待HIL）',done:false,hil:true}],result:null,hil:{op:'评估结果写入招聘系统',reason:'候选人敏感信息写入'}},
+  {id:'t3',name:'月末对账差异分析报告',role:'财务',status:'running',trigger:'Web端',clones:3,progress:45,saved:null,skills:['data-narrative','financial-report'],time:'09:15',jira:null,steps:[{t:'拉取银行流水（工行/招行）',done:true},{t:'对比账务系统数据',done:true},{t:'差异项自动分类（进行中）',done:false,active:true},{t:'生成差异清单',done:false},{t:'历史差异模式分析',done:false},{t:'生成关账报告',done:false}],result:null},
+  {id:'t4',name:'合同审查: XX资产管理合作协议',role:'法务',status:'done',trigger:'飞书文档',clones:1,progress:100,saved:65,skills:['contract-review'],time:'昨天 16:30',jira:null,steps:[{t:'解析合同结构（共38页）',done:true},{t:'关键条款提取',done:true},{t:'风险条款识别',done:true},{t:'与标准模板比对',done:true}],result:'发现 3 项高风险条款，8 项需关注条款，附详细批注'},
+  {id:'t5',name:'NAV 异常监控告警 — 偏差0.3%',role:'业务',status:'done',trigger:'自动触发',clones:1,progress:100,saved:22,skills:['monitor-and-alert'],time:'昨天 09:02',jira:null,steps:[{t:'NAV 偏差检测（阈值0.1%）',done:true},{t:'历史30日对比',done:true},{t:'可能原因推断',done:true},{t:'推送飞书告警',done:true}],result:'偏差来源：市价波动（非计算异常），已推送告警'},
+  {id:'t6',name:'技术周报自动生成 Week22',role:'研效',status:'running',trigger:'自动触发',clones:2,progress:35,saved:null,skills:['doc-writer'],time:'11:00',jira:null,steps:[{t:'Jira 完成度采集',done:true},{t:'代码提交统计',done:true},{t:'生成报告草稿（进行中）',done:false,active:true},{t:'推送飞书审阅',done:false}],result:null},
+  {id:'t7',name:'新员工入职流程: 王天明（前端研发）',role:'HR',status:'running',trigger:'飞书Bot',clones:1,progress:60,saved:null,skills:['onboarding-flow'],time:'08:30',jira:'HR-1301',steps:[{t:'邮箱/OA/代码仓申请',done:true},{t:'VPN 权限申请',done:true},{t:'设备领取通知（进行中）',done:false,active:true},{t:'培训日程协调',done:false},{t:'导师分配确认（需HIL）',done:false}],result:null},
+  {id:'t8',name:'信披报告草稿: 量化1号基金',role:'财务',status:'running',trigger:'自动触发',clones:1,progress:65,saved:null,skills:['financial-report'],time:'08:45',jira:null,steps:[{t:'基金数据采集（PMS/托管系统）',done:true},{t:'报告模板填充',done:true},{t:'数据交叉验证（进行中）',done:false,active:true},{t:'合规审查（需HIL）',done:false}],result:null},
+  {id:'t9',name:'合同续签提醒: 投顾服务协议',role:'法务',status:'running',trigger:'自动触发',clones:1,progress:30,saved:null,skills:['contract-review'],time:'09:00',jira:null,steps:[{t:'合同到期日检测',done:true},{t:'历史合同条款提取（进行中）',done:false,active:true},{t:'续签建议生成',done:false}],result:null},
+  {id:'t10',name:'周度运营数据报表',role:'业务',status:'running',trigger:'Web端',clones:2,progress:85,saved:null,skills:['data-query','monitor-and-alert'],time:'09:30',jira:null,steps:[{t:'多源数据采集',done:true},{t:'指标计算与聚合',done:true},{t:'报表可视化',done:true},{t:'报表审核（需HIL）',done:false},{t:'分发推送',done:false}],result:null},
+  {id:'t11',name:'简历批量筛选: 3月社招第二批',role:'HR',status:'done',trigger:'飞书Bot',clones:1,progress:100,saved:45,skills:['resume-screen'],time:'昨天 14:00',jira:'HR-1299',steps:[{t:'解析 23 份简历',done:true},{t:'JD 维度匹配评分',done:true},{t:'红旗项标记',done:true},{t:'录用建议生成',done:true}],result:'推荐 5 人进入面试，标记 3 人红旗项'},
+];
+
+const SKILLS = [
+  {id:'s1',icon:'📋',name:'code-review',alias:'代码审查,代码评审,CR',cat:'研效',desc:'分析 PR Diff，检查规范/安全/性能，关联历史 Bug 库',rating:4.8,uses:342,hil:false,mine:true,evals:91},
+  {id:'s2',icon:'🐛',name:'debug-assist',alias:'调试助手,排错,修复',cat:'研效',desc:'读取报错上下文，推断根因，生成修复方案',rating:4.7,uses:289,hil:false,mine:true,evals:88},
+  {id:'s3',icon:'🎙️',name:'audio-to-insight',alias:'录音分析,面试转写,语音',cat:'HR',desc:'面试/会议录音 → 转写 → 按胜任力模型结构化输出',rating:4.6,uses:156,hil:true,mine:false,evals:85},
+  {id:'s4',icon:'📄',name:'contract-review',alias:'合同审查,合同审核,法务',cat:'法务',desc:'合同结构分析 + 风险条款标注（🔴🟡⚪）+ 与模板差异',rating:4.9,uses:203,hil:false,mine:true,evals:94},
+  {id:'s5',icon:'📊',name:'financial-report',alias:'财务报告,财报,对账',cat:'财务',desc:'结构化财务数据 → 按模板生成报告初稿 + 异常标注',rating:4.5,uses:87,hil:true,mine:false,evals:82},
+  {id:'s6',icon:'🔍',name:'resume-screen',alias:'简历筛选,简历评估,招聘',cat:'HR',desc:'简历 + JD → 逐维度评分 + 红旗标记 + 录用建议',rating:4.7,uses:178,hil:true,mine:true,evals:89},
+  {id:'s7',icon:'🔔',name:'monitor-and-alert',alias:'监控告警,预警,异常检测',cat:'业务',desc:'持续监控指定指标，超阈值时结构化推送飞书告警',rating:4.8,uses:267,hil:false,mine:true,evals:92},
+  {id:'s8',icon:'📝',name:'doc-writer',alias:'文档生成,周报,技术文档',cat:'研效',desc:'代码/PRD/会议 → 规范格式技术文档，支持多模板',rating:4.5,uses:201,hil:false,mine:true,evals:86},
+  {id:'s9',icon:'🧪',name:'test-case-gen',alias:'测试用例,自动测试,测试生成',cat:'研效',desc:'基于代码变更范围 + 历史 Bug 库，自动生成测试用例',rating:4.6,uses:189,hil:false,mine:true,evals:88},
+  {id:'s10',icon:'📈',name:'data-query',alias:'数据查询,SQL,数据分析',cat:'分析',desc:'自然语言 → SQL → 结构化分析叙述（权限感知）',rating:4.6,uses:134,hil:false,mine:true,evals:87},
+  {id:'s11',icon:'⚙️',name:'onboarding-flow',alias:'入职流程,新员工,入职自动化',cat:'HR',desc:'新员工入职全流程自动化：系统申请/欢迎邮件/Checklist',rating:4.4,uses:31,hil:true,mine:false,evals:83},
+  {id:'s12',icon:'🖥️',name:'system-operation',alias:'系统操作,报销,监管系统',cat:'业务',desc:'历史系统 Web 操作辅助（强制HIL），支持监管系统/报销',rating:4.3,uses:44,hil:true,mine:false,evals:79},
+];
+
+const MEMORIES = [
+  {type:'偏好',icon:'📌',text:'Code Review 时，优先关注 SQL 注入和敏感信息泄露风险',time:'2天前',color:'var(--blue)'},
+  {type:'偏好',icon:'📌',text:'PR 报告格式：先列🔴必须修复，再列🟡建议修复，最后🟢亮点',time:'3天前',color:'var(--blue)'},
+  {type:'教训',icon:'🔴',text:'debug-assist 曾建议删除 retry 逻辑，但该逻辑是针对历史遗留系统超时的特殊处理，不可删',time:'1周前',color:'var(--red)'},
+  {type:'经验',icon:'⚠️',text:'RISK 模块的数据库查询不能走读写分离，必须走主库（历史坑点）',time:'2周前',color:'var(--orange)'},
+  {type:'偏好',icon:'📌',text:'技术周报顺序：本周完成 → 风险/阻塞 → 下周计划',time:'3周前',color:'var(--blue)'},
+  {type:'知识',icon:'🧠',text:'已学习：风控引擎架构文档 v3.2、部署规范 v2.1（Confluence）',time:'1个月前',color:'var(--teal)'},
+];
+
+const TEAM = [
+  {name:'李明',role:'产品经理',avatar:'👤',level:4,tasks:87,skills:12,dept:'研效线',isLeader:false,weekTasks:14,aiUsageRate:78,timeSaved:4.2},
+  {name:'张伟',role:'高级研发',avatar:'💻',level:5,tasks:234,skills:18,dept:'研效线',isLeader:true,weekTasks:32,aiUsageRate:95,timeSaved:8.6},
+  {name:'王芳',role:'测试工程师',avatar:'🧪',level:3,tasks:56,skills:8,dept:'研效线',isLeader:false,weekTasks:8,aiUsageRate:62,timeSaved:2.1},
+  {name:'刘洋',role:'运维工程师',avatar:'🔧',level:4,tasks:123,skills:11,dept:'研效线',isLeader:false,weekTasks:18,aiUsageRate:85,timeSaved:5.3},
+  {name:'陈静',role:'HR经理',avatar:'👩',level:4,tasks:67,skills:9,dept:'职能线',isLeader:true,weekTasks:11,aiUsageRate:72,timeSaved:3.8},
+  {name:'赵磊',role:'财务主管',avatar:'📊',level:3,tasks:45,skills:7,dept:'职能线',isLeader:false,weekTasks:7,aiUsageRate:55,timeSaved:1.9},
+  {name:'孙丽',role:'法务专员',avatar:'⚖️',level:3,tasks:38,skills:6,dept:'职能线',isLeader:false,weekTasks:6,aiUsageRate:48,timeSaved:1.5},
+  {name:'周浩',role:'产品运营',avatar:'📈',level:4,tasks:91,skills:13,dept:'业务线',isLeader:false,weekTasks:15,aiUsageRate:81,timeSaved:4.7},
+];
+
+const ABILITIES = [
+  {icon:'🍑',name:'记忆沉淀',sub:'蟠桃金丹',score:78,tip:'156条记忆 · 工作偏好/失败教训/任务经验',color:'var(--amber)'},
+  {icon:'👁️',name:'推理判断',sub:'火眼金睛',score:85,tip:'近30天 Evals 平均分 85 · 高于团队平均',color:'var(--blue)'},
+  {icon:'☁️',name:'规划调度',sub:'筋斗云',score:72,tip:'最大3个分身并行 · 任务成功率 94%',color:'var(--teal)'},
+  {icon:'✨',name:'技能编排',sub:'七十二变',score:91,tip:'12个 Skills · 平均 Evals 88分',color:'var(--purple)'},
+  {icon:'🪄',name:'系统集成',sub:'金箍棒',score:65,tip:'已连接 5/8 个系统',color:'var(--green)'},
+  {icon:'🛡️',name:'反思进化',sub:'铜头铁臂',score:80,tip:'8条失败教训 · 教训转化率 73%',color:'var(--orange)'},
+];
+
+const NOTIFS = [
+  {id:'n1',type:'hil',title:'HIL 审批：面试评估结果写入招聘系统',body:'候选人张晓雯的评估结果即将写入，请确认',time:'09:43',icon:'⏸',badge:'hil',unread:true,role:'HR'},
+  {id:'n2',type:'done',title:'Code Review 完成：PR#2847',body:'发现 2 项必须修复，5 项建议修复，报告已生成',time:'10:31',icon:'✅',badge:'green',unread:true,role:'研效'},
+  {id:'n3',type:'alert',title:'NAV 异常告警：偏差超过阈值（0.3%）',body:'量化2号昨日净值偏差 0.3%，已分析为市价波动',time:'09:03',icon:'🔔',badge:'amber',unread:false,role:'业务'},
+  {id:'n4',type:'suggest',title:'建议：PR#2851 已超过24小时未 Review',body:'基于你的工作节奏，此 PR 有延误风险',time:'昨天 17:00',icon:'💡',badge:'blue',unread:false,role:'研效'},
+  {id:'n5',type:'done',title:'合同审查完成：XX资产管理合作协议',body:'发现 3 项高风险条款，报告已插入飞书文档',time:'昨天 16:48',icon:'✅',badge:'green',unread:false,role:'法务'},
+  {id:'n6',type:'done',title:'月末对账匹配完成：89% 流水已匹配',body:'151 笔差异待审核，含 3 笔大额差异',time:'昨天 14:20',icon:'✅',badge:'green',unread:false,role:'财务'},
+  {id:'n7',type:'alert',title:'信披报告提交截止提醒',body:'距离信披报告提交截止日还剩 3 天',time:'今天 08:00',icon:'🔔',badge:'amber',unread:true,role:'财务'},
+  {id:'n8',type:'hil',title:'HIL 审批：新员工导师分配确认',body:'王天明的入职导师待确认，请审批',time:'09:30',icon:'⏸',badge:'hil',unread:true,role:'HR'},
+  {id:'n9',type:'suggest',title:'建议：量化3号基金 NAV 偏差连续2日>0.2%',body:'建议关注是否存在计算异常',time:'昨天 16:00',icon:'💡',badge:'blue',unread:false,role:'业务'},
+  {id:'n10',type:'done',title:'周度运营报表生成完成',body:'数据报表已生成，待审核后分发',time:'昨天 15:30',icon:'✅',badge:'green',unread:false,role:'业务'},
+];
+
+const PROJ_STAGES = [
+  {id:'req',name:'需求分析',color:'var(--purple)',cards:[
+    {name:'用户增长功能 Q3 需求',owner:'李明',status:'done',tag:'PRD'},
+    {name:'风控引擎 v3 需求澄清',owner:'李明',status:'running',tag:'进行中'},
+  ]},
+  {id:'design',name:'技术设计',color:'var(--blue)',cards:[
+    {name:'风控引擎 v3 技术方案',owner:'张伟',status:'done',tag:'已评审'},
+  ]},
+  {id:'code',name:'编码实现',color:'var(--teal)',cards:[
+    {name:'PR#2847 风控重构',owner:'张伟',status:'done',tag:'已合并'},
+    {name:'PR#2851 日志优化',owner:'张伟',status:'hil',tag:'Review中'},
+    {name:'PR#2853 单元测试补全',owner:'王芳',status:'running',tag:'进行中'},
+  ]},
+  {id:'test',name:'测试验证',color:'var(--amber)',cards:[
+    {name:'风控引擎 v3 集成测试',owner:'王芳',status:'running',tag:'进行中'},
+  ]},
+  {id:'deploy',name:'部署上线',color:'var(--orange)',cards:[
+    {name:'预发布 Checklist',owner:'刘洋',status:'idle',tag:'待启动'},
+  ]},
+  {id:'monitor',name:'监控运维',color:'var(--green)',cards:[
+    {name:'NAV 监控告警规则',owner:'刘洋',status:'done',tag:'运行中'},
+  ]},
+];
+
+/* ───────────────────────────────
+   NEW: Workflow Skill Templates
+   每个 Workflow 本身就是一个 Skill，流程中的每个步骤会生成/关联一个任务
+─────────────────────────────── */
+const WORKFLOW_TEMPLATES = [
+  // ─── 研效线 ───
+  {id:'wf-01',name:'Code Review 全流程',role:'研效',icon:'📋',desc:'PR 提交到合并的完整代码审查流程，覆盖安全/性能/规范',skill:'code-review-workflow',steps:[
+    {name:'PR Diff 分析',type:'ai',desc:'自动解析代码变更，标注关键修改点',linked:'code-review'},
+    {name:'安全漏洞扫描',type:'ai',desc:'SQL注入/XSS/敏感信息泄露检测',linked:'security-scan'},
+    {name:'性能影响评估',type:'ai',desc:'识别 N+1 查询、内存泄漏等性能隐患'},
+    {name:'Review 报告生成',type:'ai',desc:'按🔴🟡🟢分级输出结构化报告'},
+    {name:'人工确认合并',type:'hil',desc:'开发者确认修复项后合并 PR'},
+  ]},
+  {id:'wf-02',name:'发布上线流程',role:'研效',icon:'🚀',desc:'从代码合并到生产部署的完整发布流程',skill:'release-workflow',steps:[
+    {name:'测试用例生成',type:'ai',desc:'基于代码变更范围自动生成测试用例',linked:'test-case-gen'},
+    {name:'QA 测试执行',type:'manual',desc:'QA 工程师在测试环境运行回归测试'},
+    {name:'预发布 Checklist',type:'collab',desc:'数字员工辅助核对部署依赖和配置'},
+    {name:'部署审批',type:'hil',desc:'负责人确认后触发部署脚本'},
+    {name:'部署执行',type:'ai',desc:'自动执行部署脚本并监控健康检查'},
+    {name:'上线后监控',type:'ai',desc:'30分钟内持续监控核心指标异常',linked:'monitor-and-alert'},
+  ]},
+  {id:'wf-03',name:'Sprint 回顾报告',role:'研效',icon:'📊',desc:'Sprint 结束时自动生成回顾报告',skill:'sprint-retro',steps:[
+    {name:'Jira 数据采集',type:'ai',desc:'拉取 Sprint 内所有 Story/Bug 的完成情况'},
+    {name:'代码提交统计',type:'ai',desc:'统计 PR 数量、代码行数、Review 轮次'},
+    {name:'效率指标计算',type:'ai',desc:'计算完成率、延期率、缺陷密度等'},
+    {name:'报告生成与推送',type:'ai',desc:'生成可视化报告并推送至飞书群'},
+    {name:'团队确认',type:'manual',desc:'团队成员确认报告内容，补充遗漏'},
+  ]},
+  // ─── HR线 ───
+  {id:'wf-04',name:'招聘评估流程',role:'HR',icon:'🎙️',desc:'从简历筛选到录用决策的完整招聘辅助流程',skill:'recruitment-workflow',steps:[
+    {name:'简历筛选',type:'ai',desc:'简历+JD→逐维度评分+红旗标记',linked:'resume-screen'},
+    {name:'面试排期',type:'collab',desc:'数字员工协调面试官日程，发送邀请'},
+    {name:'面试录音转评估',type:'ai',desc:'录音转写→胜任力模型映射→评分报告',linked:'audio-to-insight'},
+    {name:'评估写入系统',type:'hil',desc:'HR 确认后写入招聘系统'},
+    {name:'Offer 审批',type:'manual',desc:'HR 主管审批 Offer 方案'},
+  ]},
+  {id:'wf-05',name:'新员工入职流程',role:'HR',icon:'⚙️',desc:'入职全流程自动化：系统开通/培训安排/导师分配',skill:'onboarding-workflow',steps:[
+    {name:'系统账号批量申请',type:'ai',desc:'自动申请邮箱/OA/代码仓/VPN等',linked:'onboarding-flow'},
+    {name:'设备领取通知',type:'ai',desc:'推送IT设备领取时间地点'},
+    {name:'入职培训安排',type:'collab',desc:'数字员工协调培训日程'},
+    {name:'导师分配确认',type:'hil',desc:'主管确认导师人选'},
+    {name:'试用期 Checklist',type:'manual',desc:'导师和新员工按清单完成各项任务'},
+  ]},
+  // ─── 财务线 ───
+  {id:'wf-06',name:'月末对账流程',role:'财务',icon:'💰',desc:'银行/账务系统多源数据自动对账',skill:'reconciliation-workflow',steps:[
+    {name:'银行流水拉取',type:'ai',desc:'自动对接银行API拉取当月流水'},
+    {name:'ERP数据提取',type:'ai',desc:'从ERP系统导出当月账务数据'},
+    {name:'自动对账匹配',type:'ai',desc:'逐笔匹配，标注差异项并分类',linked:'financial-report'},
+    {name:'差异审核',type:'hil',desc:'财务人员审核差异项，补充说明'},
+    {name:'生成关账报告',type:'ai',desc:'汇总对账结果，输出可审计报告'},
+    {name:'财务主管签批',type:'manual',desc:'主管在OA系统中完成签批'},
+  ]},
+  {id:'wf-07',name:'信披报告生成',role:'财务',icon:'📄',desc:'定期信息披露报告的自动化生成',skill:'disclosure-workflow',steps:[
+    {name:'基金数据采集',type:'ai',desc:'从PMS/托管系统提取净值/持仓数据'},
+    {name:'报告模板填充',type:'ai',desc:'按监管要求模板自动填充数据'},
+    {name:'数据交叉验证',type:'ai',desc:'多源数据交叉校验，标注异常'},
+    {name:'合规审查',type:'hil',desc:'合规人员审核报告内容'},
+    {name:'提交监管系统',type:'manual',desc:'在监管报送系统中提交'},
+  ]},
+  // ─── 法务线 ───
+  {id:'wf-08',name:'合同审查流程',role:'法务',icon:'📜',desc:'合同从接收到归档的完整审查流程',skill:'contract-review-workflow',steps:[
+    {name:'合同解析与提取',type:'ai',desc:'OCR/文档解析→关键条款提取',linked:'contract-review'},
+    {name:'风险条款标注',type:'ai',desc:'与标准模板对比，标注🔴🟡🟢风险等级'},
+    {name:'法务人工复核',type:'manual',desc:'法务专员逐条审核标注结果'},
+    {name:'修改建议生成',type:'collab',desc:'数字员工辅助生成修改对照表'},
+    {name:'定稿确认',type:'hil',desc:'双方确认最终合同版本'},
+    {name:'合同归档',type:'ai',desc:'自动归档到文档管理系统并建索引'},
+  ]},
+  // ─── 业务线 ───
+  {id:'wf-09',name:'指标监控告警',role:'业务',icon:'🔔',desc:'持续监控关键业务指标，异常时自动预警',skill:'monitor-alert-workflow',steps:[
+    {name:'数据源对接',type:'ai',desc:'配置监控指标数据源和采集频率'},
+    {name:'持续监控采集',type:'ai',desc:'按频率持续拉取数据，计算指标值',linked:'monitor-and-alert'},
+    {name:'异常检测分析',type:'ai',desc:'多规则判断+历史对比，识别异常'},
+    {name:'告警推送',type:'ai',desc:'结构化推送飞书/邮件告警'},
+    {name:'业务确认处置',type:'manual',desc:'业务人员确认告警并执行处置'},
+  ]},
+  {id:'wf-10',name:'数据报表自动化',role:'业务',icon:'📈',desc:'日报/周报/月报的自动化生成与分发',skill:'report-automation-workflow',steps:[
+    {name:'多源数据采集',type:'ai',desc:'从各业务系统拉取数据'},
+    {name:'指标计算与聚合',type:'ai',desc:'按业务口径计算各维度指标',linked:'data-query'},
+    {name:'报表可视化',type:'ai',desc:'生成图表并填充报表模板'},
+    {name:'报表审核',type:'hil',desc:'业务负责人审核报表内容'},
+    {name:'分发推送',type:'ai',desc:'按配置的渠道和名单自动分发'},
+  ]},
+];
+
+/* ───────────────────────────────
+   NEW: Skill Tree (三层架构)
+─────────────────────────────── */
+const SKILL_TREE = {
+  meta: {
+    label:'🏛️ 元能力层',desc:'决定"我是谁"的底层能力',
+    skills:[
+      {name:'记忆管理',lv:4,icon:'🧠',desc:'工作偏好/失败教训/任务经验的持久化'},
+      {name:'推理判断',lv:4,icon:'👁️',desc:'复杂场景的逻辑推理与决策'},
+      {name:'规划调度',lv:3,icon:'☁️',desc:'多分身并行任务的规划与协调'},
+      {name:'反思进化',lv:4,icon:'🛡️',desc:'从失败中学习，持续优化执行质量'},
+      {name:'风险感知',lv:3,icon:'⚠️',desc:'主动识别潜在问题和风险'},
+      {name:'上下文理解',lv:5,icon:'🔗',desc:'深度理解业务上下文和历史背景'},
+    ]
+  },
+  domain: {
+    label:'🎯 领域能力层',desc:'特定领域的综合解决方案',
+    groups:[
+      {name:'研效领域',icon:'💻',skills:[
+        {name:'代码理解',lv:5},{name:'架构分析',lv:4},{name:'安全审计',lv:4},{name:'测试策略',lv:3},
+      ]},
+      {name:'HR领域',icon:'👩',skills:[
+        {name:'人才评估',lv:4},{name:'录音分析',lv:4},{name:'流程编排',lv:3},
+      ]},
+      {name:'财务领域',icon:'💰',skills:[
+        {name:'数据对账',lv:3},{name:'报表生成',lv:3},{name:'异常检测',lv:4},
+      ]},
+      {name:'法务领域',icon:'⚖️',skills:[
+        {name:'合同解析',lv:4},{name:'风险识别',lv:4},{name:'条款比对',lv:3},
+      ]},
+    ]
+  },
+  exec: {
+    label:'🛠️ 执行技能层',desc:'直接完成具体任务的工具',
+    groups:[
+      {name:'代码分析',skills:['code-review','debug-assist','test-case-gen']},
+      {name:'文档处理',skills:['doc-writer','contract-review','financial-report']},
+      {name:'数据分析',skills:['data-query','monitor-and-alert']},
+      {name:'录音解析',skills:['audio-to-insight','resume-screen']},
+      {name:'系统操作',skills:['system-operation','onboarding-flow']},
+    ]
+  }
+};
+
+/* ───────────────────────────────
+   NEW: 成就系统
+─────────────────────────────── */
+const ACHIEVEMENTS = [
+  {id:'a1',icon:'🌱',name:'初次觉醒',desc:'完成第一个任务',rarity:'common',unlocked:'2024-12-01'},
+  {id:'a2',icon:'📋',name:'代码守卫',desc:'完成 100 次 Code Review',rarity:'rare',unlocked:'2025-01-15'},
+  {id:'a3',icon:'🧠',name:'记忆大师',desc:'积累 100 条有效记忆',rarity:'rare',unlocked:'2025-02-08'},
+  {id:'a4',icon:'✨',name:'技能收藏家',desc:'拥有 10 个 Skills',rarity:'rare',unlocked:'2025-02-20'},
+  {id:'a5',icon:'⏱',name:'效率之星',desc:'单周节省工时超过 8 小时',rarity:'epic',unlocked:'2025-03-01'},
+  {id:'a6',icon:'🔔',name:'主动先知',desc:'主动触发被采纳 50 次',rarity:'epic',unlocked:null},
+  {id:'a7',icon:'🤝',name:'跨域协作',desc:'在 3 个以上领域完成任务',rarity:'epic',unlocked:'2025-02-28'},
+  {id:'a8',icon:'🛡️',name:'零失误周',desc:'连续一周所有任务 Evals ≥ 90',rarity:'epic',unlocked:null},
+  {id:'a9',icon:'🌟',name:'数字员工',desc:'升至 Lv.5 满级',rarity:'legend',unlocked:null},
+  {id:'a10',icon:'🏆',name:'团队支柱',desc:'被团队成员引用/复用 Skills 超过 100 次',rarity:'legend',unlocked:null},
+];
+
+/* ───────────────────────────────
+   NEW: 进化时间线
+─────────────────────────────── */
+const EVOLUTION = [
+  {ver:'v1.0',time:'2024-12',icon:'🌱',phase:'初次觉醒',desc:'诞生，学会第一个 Skill（code-review）',tags:['基础对话','单任务']},
+  {ver:'v2.0',time:'2025-01',icon:'📋',phase:'技能积累',desc:'掌握 5 个 Skills，开始辅助日常研发工作',tags:['多Skill','自动触发']},
+  {ver:'v3.0',time:'2025-01',icon:'⚡',phase:'效率提升',desc:'支持多分身并行，单周节省工时 3h+',tags:['多分身','效率可视化']},
+  {ver:'v4.0',time:'2025-02',icon:'🤝',phase:'跨域扩展',desc:'从研效扩展到 HR/法务/财务等领域',tags:['跨域','领域Skill']},
+  {ver:'v5.0',time:'当前',icon:'🌟',phase:'智能协作',desc:'Workflow 编排 + 项目上下文共享 + 主动感知',tags:['Workflow','主动触发','协作']},
+  {ver:'v6.0',time:'未来',icon:'🧠',phase:'深度理解',desc:'业务语义深度理解，预测性分析和建议',tags:['预测','深度理解']},
+  {ver:'v∞',time:'愿景',icon:'🌐',phase:'数字员工',desc:'真正的 AI 同事——主动分忧、持续成长、不可替代',tags:['自主决策','全领域']},
+];
+/* ───────────────────────────────
+   HELPERS
+─────────────────────────────── */
+const fmtMarkdown = t => t
+  .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+  .replace(/`([^`]+)`/g,'<code>$1</code>')
+  .replace(/\n/g,'<br/>');
+
+/* ── Toast 通知 ── */
+let _toastTimer=null;
+function showToast(msg,type='success'){
+  let el=document.getElementById('global-toast');
+  if(!el){el=document.createElement('div');el.id='global-toast';document.body.appendChild(el);}
+  const colors={success:'var(--green)',error:'var(--red)',info:'var(--blue)',warn:'var(--amber)'};
+  const icons={success:'✅',error:'❌',info:'💡',warn:'⚠️'};
+  el.innerHTML=`<div style="position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:9999;background:var(--surface);border:1px solid ${colors[type]||colors.info};border-radius:10px;padding:10px 18px;box-shadow:0 6px 20px rgba(0,0,0,.12);display:flex;align-items:center;gap:8px;font-size:13px;font-family:var(--f-body);animation:fadein .2s ease">${icons[type]||'💡'} ${msg}</div>`;
+  clearTimeout(_toastTimer);
+  _toastTimer=setTimeout(()=>{if(el)el.innerHTML='';},2500);
+}
+window._showToast=showToast;
+
+async function callClaude(msgs, sys, key, onChunk) {
+  const r = await fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1500,system:sys,messages:msgs,stream:true})
+  });
+  if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(e.error?.message||`HTTP ${r.status}`);}
+  const reader=r.body.getReader(),dec=new TextDecoder();
+  let full='';
+  while(true){
+    const{done,value}=await reader.read();if(done)break;
+    for(const line of dec.decode(value).split('\n')){
+      if(line.startsWith('data: ')){try{const d=JSON.parse(line.slice(6));if(d.delta?.text){full+=d.delta.text;onChunk(full);}}catch{}}
+    }
+  }
+  return full;
+}
+
+function mockReply(t){
+  const l=t.toLowerCase();
+  if(l.includes('review')||l.includes('pr')||l.includes('代码'))
+    return `**Code Review 结果**\n\n🔴 **必须修复（2项）**\n- \`L234\` SQL 字符串拼接漏洞，使用 PreparedStatement 替代\n- \`L89\` 空指针未保护（position == null 时抛 NPE）\n\n🟡 **建议修复（3项）**\n- 方法 calcVaR() 圈复杂度 = 15，建议拆分\n- 测试覆盖率 62%（建议 > 80%）\n- 缺少 @Deprecated 注解\n\n🟢 **亮点**\n- retry 逻辑设计合理，历史超时问题的正确处理方式`;
+  if(l.includes('周报')||l.includes('weekly'))
+    return `**技术周报 Week 22 草稿**\n\n✅ **本周完成**\n- 风控引擎 PR#2847 Review 完成（2项安全漏洞修复）\n- 面试评估系统接入 AI 辅助，节省 HR 约 60% 评估时间\n- 月末对账自动化脚本完成（差异检测准确率 98.3%）\n\n⚠️ **风险/阻塞**\n- RISK 模块依赖老版本 SDK，升级影响评估中\n\n📅 **下周计划**\n- 推进 data-query Skill 内测\n- 完成 PR#2851 合并`;
+  if(l.includes('ci')||l.includes('失败')||l.includes('build'))
+    return `**今日 CI 失败分析**\n\n| 时间 | 任务 | 失败阶段 | 初步判断 |\n|------|------|---------|----------|\n| 09:23 | risk-engine | 单元测试 | RiskCalcTest.L45 断言失败，可能是 PR#2847 引入 |\n| 10:15 | data-pipeline | 构建 | Maven 依赖超时（网络偶发）|\n\n**建议**：risk-engine 失败需联系张伟确认，data-pipeline 重跑一次即可`;
+  if(l.includes('简历')||l.includes('候选')||l.includes('招聘')||l.includes('面试'))
+    return `**招聘辅助分析**\n\n| 候选人 | 匹配度 | 关键优势 | 红旗 |\n|--------|--------|----------|------|\n| 张晓雯 | 92% | 系统设计能力突出，大厂背景 | 稳定性待考察 |\n| 李明辉 | 78% | 算法竞赛获奖，学习力强 | 缺乏工程经验 |\n| 王志远 | 85% | 全栈能力强，有创业经历 | 薪资预期偏高 |\n\n**建议**：张晓雯综合评分最高，建议优先安排二面。\n注意：评估结果写入招聘系统前需要你确认（HIL）。`;
+  if(l.includes('对账')||l.includes('财务')||l.includes('报表')||l.includes('月末'))
+    return `**月末对账进度**\n\n✅ **已完成**\n- 工行流水拉取（2,847笔 / ¥12.3M）\n- 招行流水拉取（1,523笔 / ¥8.7M）\n- ERP 账务数据导出\n\n⚡ **进行中**\n- 自动对账匹配（已匹配 3,891/4,370 笔，匹配率 89%）\n- 差异项分类（已分类 328 笔）\n\n⚠️ **待处理**\n- 151 笔差异需人工审核（含 3 笔大额 >50万）\n\n预计今日 16:00 前完成关账报告初稿。`;
+  if(l.includes('合同')||l.includes('条款')||l.includes('审查')||l.includes('法务'))
+    return `**合同审查报告**\n\n🔴 **高风险条款（3项）**\n- 第8条：违约责任上限仅为合同金额10%，低于行业标准（建议≥30%）\n- 第12条：知识产权归属约定模糊，需明确"合作期间产生"的定义\n- 第15条：单方解约通知期仅7天，建议延长至30天\n\n🟡 **需关注（5项）**\n- 付款周期 T+60，建议协商缩短至 T+30\n- 保密期限3年，与行业惯例匹配\n\n🟢 **合规亮点**\n- 争议解决条款完善（仲裁优先）\n- 反腐败条款符合监管要求`;
+  if(l.includes('入职')||l.includes('onboarding')||l.includes('新员工'))
+    return `**新员工入职进度 — 王天明**\n\n✅ 邮箱/OA/代码仓账号已申请\n✅ VPN 权限已开通\n⚡ IT 设备领取通知已推送（明日 10:00 8楼IT部）\n○ 入职培训日程协调中\n○ 导师分配待确认（需HIL）\n\n**Checklist 完成度**: 40% (2/5)\n预计 3月12日前完成全部入职流程。`;
+  return `好的，我来帮你处理这个任务。\n\n基于当前上下文分析：\n- 任务类型：信息处理/分析\n- 预计涉及系统：待权限确认\n- 是否需要 HIL：视写操作而定\n\n能补充一些具体细节吗？这样我可以给出更精准的方案。`;
+}
+
+/* ───────────────────────────────
+   MINI COMPONENTS
+─────────────────────────────── */
+function Dot({s}){return <span className={`dot dot-${s}`}/>}
+function Spinner(){return <div className="spin"/>}
+function ProgressBar({pct,cls='progress-blue'}){
+  return <div className="progress"><div className={`progress-fill ${cls}`} style={{width:`${pct}%`}}/></div>;
+}
+function Badge({t,children}){return <span className={`badge badge-${t}`}>{children}</span>}
+
+function HilCard({onDone,currentRole}){
+  const [dismissed,setDismissed]=useState(false);
+  const hil=ROLE_HIL[currentRole||'dev'];
+  if(dismissed)return(
+    <div className="card card-sm" style={{marginBottom:12}}>
+      <div style={{textAlign:'center',color:'var(--text-3)',fontSize:13}}>✅ 无待审批操作</div>
+    </div>
+  );
+  return(
+    <div className="hil-card" style={{marginBottom:12}}>
+      <div className="hil-title"><span>⏸</span>{hil.title}</div>
+      <div className="hil-body" dangerouslySetInnerHTML={{__html:hil.body.replace(/\n/g,'<br/>')}}/>
+      <div className="diff-block">
+        {hil.diff.map((d,i)=>d.add
+          ?<div key={i} className="diff-add">{d.add}</div>
+          :<div key={i} className="diff-rm">{d.rm}</div>
+        )}
+        <div style={{color:'var(--text-3)'}}>  目标: {hil.target}</div>
+      </div>
+      <div className="hil-actions">
+        <button className="btn btn-blue btn-sm" onClick={()=>{setDismissed(true);onDone?.();}}>✓ 确认</button>
+        <button className="btn btn-outline btn-sm">修改后提交</button>
+        <button className="btn btn-danger btn-sm" onClick={()=>setDismissed(true)}>取消</button>
+      </div>
+    </div>
+  );
+}
+
+function TaskDrawer({task,onClose}){
+  return(
+    <>
+      <div className="drawer-overlay" onClick={onClose}/>
+      <div className="drawer">
+        <div className="drawer-head">
+          <div>
+            <div style={{fontWeight:700,fontSize:15,marginBottom:6}}>{task.name}</div>
+            <div style={{display:'flex',gap:8,alignItems:'center'}}>
+              <Dot s={task.status}/>
+              <span style={{fontSize:12,color:'var(--text-3)'}}>{task.trigger} · {task.time}</span>
+              {task.saved&&<Badge t="green">省 {task.saved}min</Badge>}
+              {task.jira&&<Badge t="blue">{task.jira}</Badge>}
+            </div>
+          </div>
+          <button className="drawer-close" onClick={onClose}>×</button>
+        </div>
+        <div className="drawer-body">
+          <div className="section-label">分身执行过程</div>
+          <div style={{background:'var(--surface-2)',border:'1px solid var(--border)',borderRadius:'var(--radius-lg)',padding:'14px 16px',marginBottom:18}}>
+            <div style={{display:'flex',alignItems:'center',gap:9,marginBottom:12,paddingBottom:12,borderBottom:'1px solid var(--border)'}}>
+              <div style={{width:28,height:28,borderRadius:'50%',background:'var(--amber-bg)',border:'1px solid var(--amber-border)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:14}}>🦞</div>
+              <div>
+                <div style={{fontSize:12.5,fontWeight:600,color:'var(--amber-dim)'}}>AgentCore 协调者</div>
+                <div style={{fontSize:11.5,color:'var(--text-3)'}}>任务规划 · 分身调度 · 结果汇聚</div>
+              </div>
+            </div>
+            {task.steps.map((s,i)=>(
+              <div key={i} style={{display:'flex',alignItems:'flex-start',gap:9,marginBottom:7}}>
+                <div style={{fontSize:14,width:18,textAlign:'center',flexShrink:0,color:s.done?'var(--green)':s.hil?'var(--orange)':s.active?'var(--blue)':'var(--text-4)'}}>
+                  {s.done?'✓':s.hil?'⏸':s.active?'▶':'○'}
+                </div>
+                <div style={{fontSize:13,color:s.done?'var(--text)':s.hil?'var(--orange)':s.active?'var(--blue)':'var(--text-3)'}}>
+                  {s.t}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {task.hil&&task.status==='hil'&&(
+            <>
+              <div className="section-label">HIL 审批节点</div>
+              <div className="hil-card" style={{marginBottom:18}}>
+                <div className="hil-title"><span>⏸</span>{task.hil.op}</div>
+                <div className="hil-body">原因：{task.hil.reason}</div>
+                <div className="hil-actions">
+                  <button className="btn btn-blue btn-sm">✓ 确认</button>
+                  <button className="btn btn-outline btn-sm">取消</button>
+                </div>
+              </div>
+            </>
+          )}
+
+          <div className="section-label">使用的 Skills</div>
+          <div style={{display:'flex',gap:6,flexWrap:'wrap',marginBottom:18}}>
+            {task.skills.map(s=><span key={s} className="tag">{s}</span>)}
+          </div>
+
+          {task.result&&(
+            <>
+              <div className="section-label">执行结果</div>
+              <div className="card card-sm">
+                <div style={{fontSize:13.5,lineHeight:1.65}}>{task.result}</div>
+              </div>
+            </>
+          )}
+
+          {!task.result&&task.status!=='hil'&&(
+            <div style={{textAlign:'center',padding:'20px 0',color:'var(--text-3)',fontSize:13}}>
+              任务执行中...
+            </div>
+          )}
+        </div>
+      </div>
+    </>
+  );
+}
+
+/* ───────────────────────────────
+   NEW: SVG Radar Chart Component
+─────────────────────────────── */
+function RadarChart({data,size=220}){
+  const cx=size/2, cy=size/2, r=size/2-30;
+  const n=data.length;
+  const angle=i=>(Math.PI*2*i/n)-Math.PI/2;
+  const px=(i,pct)=>cx+r*(pct/100)*Math.cos(angle(i));
+  const py=(i,pct)=>cy+r*(pct/100)*Math.sin(angle(i));
+
+  const gridLevels=[20,40,60,80,100];
+  const pts=data.map((_,i)=>`${px(i,data[i].score)},${py(i,data[i].score)}`).join(' ');
+
+  return(
+    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+      {/* Grid */}
+      {gridLevels.map(lv=>(
+        <polygon key={lv} points={data.map((_,i)=>`${px(i,lv)},${py(i,lv)}`).join(' ')}
+          fill="none" stroke="var(--border)" strokeWidth={lv===100?1.2:.6} strokeDasharray={lv<100?'3,3':'none'}/>
+      ))}
+      {/* Axes */}
+      {data.map((_,i)=>(
+        <line key={i} x1={cx} y1={cy} x2={px(i,100)} y2={py(i,100)} stroke="var(--border)" strokeWidth=".6"/>
+      ))}
+      {/* Data area */}
+      <polygon points={pts} fill="rgba(37,99,235,.12)" stroke="var(--blue)" strokeWidth="2"/>
+      {/* Data points */}
+      {data.map((d,i)=>(
+        <circle key={i} cx={px(i,d.score)} cy={py(i,d.score)} r="4" fill="var(--blue)" stroke="#fff" strokeWidth="2"/>
+      ))}
+      {/* Labels */}
+      {data.map((d,i)=>{
+        const lx=px(i,118), ly=py(i,118);
+        return <text key={i} x={lx} y={ly} textAnchor="middle" dominantBaseline="middle"
+          style={{fontSize:10,fill:'var(--text-2)',fontFamily:'var(--f-body)'}}>{d.icon} {d.name}</text>;
+      })}
+    </svg>
+  );
+}
+/* ───────────────────────────────
+   PAGE: 工作台
+─────────────────────────────── */
+function HomePage({apiKey,agentName,currentRole}){
+  const [msgs,setMsgs]=useState([
+    {role:'assistant',content:ROLE_GREET[currentRole||'dev'](agentName)}
+  ]);
+  const [input,setInput]=useState('');
+  const [loading,setLoading]=useState(false);
+  const [stream,setStream]=useState('');
+  const endRef=useRef(null);
+
+  // Reset greeting when role changes
+  useEffect(()=>{
+    setMsgs([{role:'assistant',content:ROLE_GREET[currentRole||'dev'](agentName)}]);
+  },[currentRole,agentName]);
+
+  useEffect(()=>{endRef.current?.scrollIntoView({behavior:'smooth'});},[msgs,stream]);
+
+  const send=useCallback(async(text)=>{
+    if(!text.trim()||loading)return;
+    const um={role:'user',content:text};
+    setMsgs(p=>[...p,um]);setInput('');setLoading(true);setStream('');
+    const sys=`你是一个企业数字员工助手，名字叫「${agentName}」，帮助员工处理日常工作。你了解：企业内部研效/HR/财务/法务等场景。回答要专业、简洁，用中文，适当使用 Markdown。写入操作前总是提醒需要人工确认（HIL）。`;
+    if(!apiKey){
+      await new Promise(r=>setTimeout(r,700));
+      setMsgs(p=>[...p,{role:'assistant',content:mockReply(text)}]);
+      setLoading(false);return;
+    }
+    try{
+      const history=[...msgs,um].map(m=>({role:m.role,content:m.content}));
+      let final='';
+      await callClaude(history,sys,apiKey,p=>{final=p;setStream(p);});
+      setMsgs(p=>[...p,{role:'assistant',content:final||'...'}]);
+    }catch(e){
+      setMsgs(p=>[...p,{role:'assistant',content:`❌ ${e.message}\n\n（切换模拟模式）\n\n${mockReply(text)}`}]);
+    }
+    setStream('');setLoading(false);
+  },[msgs,loading,apiKey,agentName]);
+
+  const QUICK=ROLE_QUICK[currentRole||'dev']||ROLE_QUICK.dev;
+  const proactive=ROLE_PROACTIVE[currentRole||'dev']||ROLE_PROACTIVE.dev;
+  const taskRole=ROLE_TO_TASK_ROLE[currentRole||'dev'];
+
+  // Dynamic stats filtered by role
+  const roleTasks=TASKS.filter(t=>t.role===taskRole);
+  const runningCount=roleTasks.filter(t=>t.status==='running').length;
+  const hilCount=roleTasks.filter(t=>t.status==='hil').length;
+  const doneCount=roleTasks.filter(t=>t.status==='done').length;
+  const savedMin=roleTasks.filter(t=>t.status==='done').reduce((s,t)=>s+(t.saved||0),0);
+  const savedH=(savedMin/60).toFixed(1);
+
+  return(
+    <div className="page-in">
+      <div className="stat-grid">
+        <div className="stat-card"><div className="stat-icon">⚡</div><div className="stat-val" style={{color:'var(--blue)'}}>{runningCount}</div><div className="stat-label">运行中任务</div></div>
+        <div className="stat-card"><div className="stat-icon">⏸</div><div className="stat-val" style={{color:'var(--orange)'}}>{hilCount}</div><div className="stat-label">待 HIL 审批</div>{hilCount>0&&<div className="stat-delta" style={{color:'var(--orange)',fontSize:11}}>需要你确认</div>}</div>
+        <div className="stat-card"><div className="stat-icon">✅</div><div className="stat-val" style={{color:'var(--green)'}}>{doneCount}</div><div className="stat-label">本周完成任务</div><div className="stat-delta" style={{color:'var(--green)',fontSize:11}}>↑ {Math.max(1,Math.floor(doneCount*0.3))} 较上周</div></div>
+        <div className="stat-card"><div className="stat-icon">⏱</div><div className="stat-val" style={{color:'var(--purple)'}}>{savedH}h</div><div className="stat-label">本周节省工时</div><div className="stat-delta" style={{color:'var(--green)',fontSize:11}}>↑ 0.8h 较上周</div></div>
+      </div>
+
+      <div className="col-chat">
+        {/* Chat */}
+        <div className="card" style={{padding:0,overflow:'hidden',display:'flex',flexDirection:'column',height:'100%'}}>
+          <div style={{padding:'12px 16px',borderBottom:'1px solid var(--border)',display:'flex',alignItems:'center',gap:9,background:'var(--surface-2)'}}>
+            <div style={{width:32,height:32,borderRadius:'50%',background:'var(--amber-bg)',border:'1px solid var(--amber-border)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:17}}>🦞</div>
+            <div>
+              <div style={{fontSize:13,fontWeight:600,color:'var(--ink)'}}>{agentName}</div>
+              <div style={{fontSize:11,color:'var(--green)',display:'flex',alignItems:'center',gap:4}}>
+                <Dot s="running"/> 在线 · Lv.4 伙伴
+              </div>
+            </div>
+            <div style={{marginLeft:'auto',fontSize:11,padding:'3px 8px',background:apiKey?'var(--green-bg)':'var(--amber-bg)',color:apiKey?'var(--green)':'var(--amber)',borderRadius:20,border:`1px solid ${apiKey?'#A7F3D0':'var(--amber-border)'}`}}>
+              {apiKey?'🟢 真实 AI':'🟡 模拟模式'}
+            </div>
+          </div>
+          <div className="chat-messages">
+            {msgs.map((m,i)=>(
+              <div key={i} className={`msg ${m.role}`}>
+                <div className={`msg-avatar ${m.role==='assistant'?'ai':''}`}>{m.role==='assistant'?'🦞':'👤'}</div>
+                <div className={`msg-bubble ${m.role==='assistant'?'ai':'user'}`}
+                  dangerouslySetInnerHTML={{__html:fmtMarkdown(m.content)}}/>
+              </div>
+            ))}
+            {loading&&(
+              <div className="msg">
+                <div className="msg-avatar ai">🦞</div>
+                <div className="msg-bubble ai">
+                  {stream?<span dangerouslySetInnerHTML={{__html:fmtMarkdown(stream)}}/>:<div className="typing"><span/><span/><span/></div>}
+                </div>
+              </div>
+            )}
+            <div ref={endRef}/>
+          </div>
+          <div className="chat-foot">
+            <div className="quick-pills">
+              {QUICK.map(q=><button key={q.t} className="quick-pill" onClick={()=>send(q.t)}>{q.t}</button>)}
+            </div>
+            <div className="chat-input-row">
+              <textarea className="field" rows={2} placeholder="发消息给数字员工，或直接粘贴代码..." value={input}
+                onChange={e=>setInput(e.target.value)}
+                onKeyDown={e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send(input);}}}/>
+              <button className="chat-send" disabled={loading||!input.trim()} onClick={()=>send(input)}>➤</button>
+            </div>
+          </div>
+        </div>
+
+        {/* Right panel */}
+        <div style={{display:'flex',flexDirection:'column',gap:12,overflowY:'auto'}}>
+          <HilCard currentRole={currentRole}/>
+          <div className="card">
+            <div className="card-title">近期任务</div>
+            {roleTasks.slice(0,4).map(t=>(
+              <div key={t.id} style={{display:'flex',alignItems:'center',gap:10,padding:'9px 0',borderBottom:'1px solid var(--border)'}}>
+                <Dot s={t.status}/>
+                <div style={{flex:1,minWidth:0}}>
+                  <div style={{fontSize:13,fontWeight:500,whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}>{t.name}</div>
+                  <div style={{fontSize:11,color:'var(--text-3)',marginTop:2}}>{t.time}</div>
+                </div>
+                <div style={{fontSize:11,color:t.status==='done'?'var(--green)':'var(--text-3)',flexShrink:0}}>
+                  {t.status==='done'?`省${t.saved}m`:`${t.progress}%`}
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="card">
+            <div className="card-title">主动触发</div>
+            {proactive.map((n,i)=>(
+              <div key={i} style={{display:'flex',gap:8,padding:'9px 0',borderBottom:i===0?'1px solid var(--border)':'none',alignItems:'flex-start'}}>
+                <span style={{fontSize:14,flexShrink:0}}>{n.icon}</span>
+                <div style={{flex:1}}>
+                  <div style={{fontSize:12.5,lineHeight:1.5}}>{n.txt}</div>
+                  <div style={{fontSize:11,color:'var(--text-3)',marginTop:2}}>{n.time}</div>
+                </div>
+                <button className="btn btn-ghost btn-sm" onClick={()=>send(n.txt)}>处理</button>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+/* ───────────────────────────────
+   PAGE: 任务列表
+─────────────────────────────── */
+function TasksPage({apiKey,currentRole}){
+  const [filter,setFilter]=useState('all');
+  const [selected,setSelected]=useState(null);
+  const [code,setCode]=useState('');
+  const [reviewing,setReviewing]=useState(false);
+  const [reviewResult,setReviewResult]=useState('');
+
+  const taskRole=ROLE_TO_TASK_ROLE[currentRole||'dev'];
+  const roleTasks=TASKS.filter(t=>t.role===taskRole);
+  const filtered=filter==='all'?roleTasks:roleTasks.filter(t=>t.status===filter);
+  const tool=ROLE_TOOL[currentRole||'dev'];
+
+  async function runReview(){
+    if(!code.trim())return;
+    setReviewing(true);setReviewResult('');
+    const sys=`你是代码审查专家。对提交的代码进行专业审查，重点关注：安全漏洞/性能问题/代码规范/逻辑错误。以结构化 Markdown 格式输出，分🔴必须修复、🟡建议修复、🟢亮点。`;
+    if(!apiKey){
+      await new Promise(r=>setTimeout(r,1000));
+      setReviewResult(mockReply('review'));setReviewing(false);return;
+    }
+    try{
+      let r='';
+      await callClaude([{role:'user',content:`请审查：\n\`\`\`\n${code}\n\`\`\``}],sys,apiKey,p=>{r=p;setReviewResult(p);});
+    }catch(e){setReviewResult(`❌ ${e.message}`);}
+    setReviewing(false);
+  }
+
+  return(
+    <div className="page-in" style={{display:'grid',gridTemplateColumns:'1fr 380px',gap:18}}>
+      <div>
+        <div style={{display:'flex',gap:6,marginBottom:14}}>
+          {['all','running','hil','done'].map(f=>(
+            <button key={f} className={`btn btn-sm ${filter===f?'btn-blue':'btn-outline'}`} onClick={()=>setFilter(f)}>
+              {f==='all'?'全部':f==='running'?'⚡ 运行中':f==='hil'?'⏸ 待审批':'✅ 已完成'}
+            </button>
+          ))}
+          <div style={{marginLeft:'auto',fontSize:12,color:'var(--text-3)',alignSelf:'center'}}>{filtered.length} 个任务</div>
+        </div>
+        <div style={{display:'flex',flexDirection:'column',gap:8}}>
+          {filtered.map(t=>(
+            <div key={t.id} className={`task-item ${t.status}`} onClick={()=>setSelected(t)}>
+              <Dot s={t.status}/>
+              <div style={{flex:1,minWidth:0}}>
+                <div className="task-name">{t.name}</div>
+                <div className="task-meta">
+                  <span>{t.time}</span><span>·</span>
+                  <span>{t.trigger}</span><span>·</span>
+                  <span>{t.clones} 个分身</span>
+                  {t.jira&&<><span>·</span><span style={{color:'var(--blue)'}}>{t.jira}</span></>}
+                </div>
+                {t.status!=='done'&&<div style={{marginTop:7}}><ProgressBar pct={t.progress} cls={t.status==='hil'?'progress-amber':'progress-blue'}/></div>}
+              </div>
+              <div style={{flexShrink:0,textAlign:'right'}}>
+                {t.status==='done'
+                  ?<span style={{fontSize:12,color:'var(--green)',fontWeight:600}}>省 {t.saved}min</span>
+                  :<span style={{fontSize:12,color:'var(--text-3)'}}>{t.progress}%</span>}
+              </div>
+            </div>
+          ))}
+          {filtered.length===0&&<div className="empty"><div className="empty-icon">📋</div><div className="empty-text">暂无{filter==='running'?'运行中':filter==='hil'?'待审批':'已完成'}的任务</div></div>}
+        </div>
+      </div>
+
+      <div>
+        <div className="card">
+          <div className="card-title">{tool.title}</div>
+          <textarea className="field" rows={9} style={{marginBottom:10}} value={code}
+            placeholder={tool.placeholder} onChange={e=>setCode(e.target.value)}/>
+          <button className="btn btn-primary" style={{width:'100%'}} disabled={reviewing||!code.trim()} onClick={runReview}>
+            {reviewing?<><Spinner/>分析中...</>:tool.btnLabel}
+          </button>
+          {reviewResult&&(
+            <div style={{marginTop:14,paddingTop:14,borderTop:'1px solid var(--border)',fontSize:13,lineHeight:1.7}}
+              dangerouslySetInnerHTML={{__html:reviewResult
+                .replace(/🔴/g,'<span style="color:var(--red)">🔴</span>')
+                .replace(/🟡/g,'<span style="color:var(--amber)">🟡</span>')
+                .replace(/🟢/g,'<span style="color:var(--green)">🟢</span>')
+                .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+                .replace(/`([^`]+)`/g,'<code style="background:var(--surface-3);padding:1px 4px;border-radius:3px;font-size:11.5px;color:var(--blue)">$1</code>')
+                .replace(/\n/g,'<br/>')}}/>
+          )}
+        </div>
+      </div>
+
+      {selected&&<TaskDrawer task={selected} onClose={()=>setSelected(null)}/>}
+    </div>
+  );
+}
+/* ───────────────────────────────
+   PAGE: 项目空间 (增强版 — 含 Workflow 模板)
+   
+   设计要点：
+   1. Workflow 本身就是一种 Skill（Workflow Skill），可在 Skills 市场复用
+   2. 流程中的每个步骤会生成/关联一个独立任务（linked 字段关联）
+   3. 步骤类型：ai(自动执行) / manual(操作传统软件) / hil(人工审批) / collab(人机协作)
+   4. 不同用户角色看到不同的 Workflow 模板
+─────────────────────────────── */
+function ProjectPage({currentRole}){
+  const [tab,setTab]=useState('pipeline');
+  const [selectedCard,setSelectedCard]=useState(null);
+  const taskRole=ROLE_TO_TASK_ROLE[currentRole||'dev'];
+  const [wfRole,setWfRole]=useState(taskRole);
+  const [selectedWf,setSelectedWf]=useState(null);
+  const [projIdx,setProjIdx]=useState(0);
+
+  const PROJECTS=[
+    {name:'风控引擎 v3 重构',dept:'研效线',members:5,sprint:'3月15日'},
+    {name:'招聘管理系统升级',dept:'职能线',members:3,sprint:'3月20日'},
+    {name:'月度合规报告自动化',dept:'职能线',members:2,sprint:'3月22日'},
+  ];
+  const proj=PROJECTS[projIdx];
+
+  const statusColor={done:'var(--green)',running:'var(--blue)',hil:'var(--orange)',idle:'var(--text-3)'};
+  const statusLabel={done:'已完成',running:'进行中',hil:'待审批',idle:'待启动'};
+  const typeConfig={
+    ai:    {label:'🤖 AI自动',color:'var(--blue)',bg:'var(--blue-bg)',border:'var(--blue-border)'},
+    manual:{label:'👤 人工操作',color:'var(--text-2)',bg:'var(--surface-3)',border:'var(--border-2)'},
+    hil:   {label:'⏸ 审批确认',color:'var(--orange)',bg:'var(--orange-bg)',border:'#FED7AA'},
+    collab:{label:'🤝 人机协作',color:'var(--purple)',bg:'var(--purple-bg)',border:'#DDD6FE'},
+  };
+
+  const wfRoles=['all','研效','HR','财务','法务','业务'];
+  const filteredWf=wfRole==='all'?WORKFLOW_TEMPLATES:WORKFLOW_TEMPLATES.filter(w=>w.role===wfRole);
+
+  return(
+    <div className="page-in">
+      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:16}}>
+        <div style={{display:'flex',alignItems:'center',gap:10}}>
+          <select style={{fontFamily:'var(--f-display)',fontSize:16,fontWeight:700,color:'var(--ink)',background:'transparent',border:'1px solid var(--border-2)',borderRadius:8,padding:'6px 10px',cursor:'pointer'}}
+            value={projIdx} onChange={e=>setProjIdx(Number(e.target.value))}>
+            {PROJECTS.map((p,i)=><option key={i} value={i}>{p.name}</option>)}
+          </select>
+          <div style={{fontSize:12,color:'var(--text-3)',marginTop:2}}>{proj.dept} · {proj.members} 名成员 · Sprint 结束于 {proj.sprint}</div>
+        </div>
+        <div style={{display:'flex',gap:8,alignItems:'center'}}>
+          <div className="tabs">
+            {['pipeline','workflows','context','members','assets'].map(t=>(
+              <div key={t} className={`tab ${tab===t?'active':''}`} onClick={()=>setTab(t)}>
+                {t==='pipeline'?'📋 流程视图':t==='workflows'?'🔄 Workflow 模板':t==='context'?'📚 共享上下文':t==='members'?'👥 成员':'📁 历史资产'}
+              </div>
+            ))}
+          </div>
+          <button className="btn btn-primary btn-sm">+ 新建任务</button>
+        </div>
+      </div>
+
+      {/* ─── Tab: Pipeline（原有） ─── */}
+      {tab==='pipeline'&&(
+        <>
+          <div style={{background:'var(--surface)',border:'1px solid var(--border)',borderRadius:'var(--radius-xl)',overflow:'hidden',boxShadow:'var(--shadow-sm)'}}>
+            <div style={{padding:'12px 16px',borderBottom:'1px solid var(--border)',background:'var(--surface-2)',display:'flex',alignItems:'center',gap:10}}>
+              <span style={{fontSize:12,fontWeight:600,color:'var(--text-2)'}}>研发全流程进度</span>
+              <Badge t="blue">8 个活跃任务</Badge>
+              <Badge t="green">Sprint 完成度 67%</Badge>
+              <div style={{marginLeft:'auto',fontSize:12,color:'var(--text-3)'}}>点击任务卡片查看详情</div>
+            </div>
+            <div className="pipeline" style={{padding:'0 8px 16px'}}>
+              {PROJ_STAGES.map(stage=>(
+                <div key={stage.id} className="pipeline-stage">
+                  <div className="stage-header">
+                    <div style={{display:'flex',alignItems:'center',gap:6}}>
+                      <div style={{width:3,height:14,background:stage.color,borderRadius:2}}/>
+                      <span className="stage-name">{stage.name}</span>
+                    </div>
+                    <span className="stage-count">{stage.cards.length}</span>
+                  </div>
+                  {stage.cards.map((c,i)=>(
+                    <div key={i} className="stage-card" onClick={()=>setSelectedCard({...c,stage:stage.name})}>
+                      <div className="stage-card-name">{c.name}</div>
+                      <div className="stage-card-meta">
+                        <span>{c.owner}</span>
+                        <span>·</span>
+                        <span style={{color:statusColor[c.status]}}>{statusLabel[c.status]}</span>
+                      </div>
+                      <div style={{marginTop:6}}>
+                        <span className="tag" style={{fontSize:10}}>{c.tag}</span>
+                      </div>
+                    </div>
+                  ))}
+                  <button className="btn btn-ghost btn-sm" style={{width:'100%',fontSize:12,color:'var(--text-3)',border:'1px dashed var(--border)',borderRadius:'var(--radius)',padding:'6px'}}>
+                    + 新增
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {selectedCard&&(
+            <>
+              <div className="drawer-overlay" onClick={()=>setSelectedCard(null)}/>
+              <div className="drawer">
+                <div className="drawer-head">
+                  <div>
+                    <div style={{fontWeight:700,fontSize:15,marginBottom:5}}>{selectedCard.name}</div>
+                    <div style={{display:'flex',gap:7,alignItems:'center'}}>
+                      <Badge t="blue">{selectedCard.stage}</Badge>
+                      <span style={{fontSize:12,color:statusColor[selectedCard.status]}}>{statusLabel[selectedCard.status]}</span>
+                    </div>
+                  </div>
+                  <button className="drawer-close" onClick={()=>setSelectedCard(null)}>×</button>
+                </div>
+                <div className="drawer-body">
+                  <div className="section-label">负责人</div>
+                  <div style={{fontSize:13.5,marginBottom:16}}>{selectedCard.owner}</div>
+                  <div className="section-label">数字员工辅助</div>
+                  <div style={{background:'var(--surface-2)',border:'1px solid var(--border)',borderRadius:'var(--radius)',padding:'12px 14px',fontSize:13,lineHeight:1.65}}>
+                    {selectedCard.status==='done'&&'✅ 已完成。数字员工已将执行摘要写入共享上下文，下游阶段可直接检索。'}
+                    {selectedCard.status==='running'&&'⚡ 数字员工正在辅助处理中，结果将自动推送飞书。'}
+                    {selectedCard.status==='hil'&&'⏸ 等待 HIL 确认后继续执行，请在飞书 Bot 或通知中心审批。'}
+                    {selectedCard.status==='idle'&&'○ 任务尚未启动，可触发数字员工开始处理。'}
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+        </>
+      )}
+
+      {/* ─── Tab: Workflow 模板（新增） ─── */}
+      {tab==='workflows'&&(
+        <>
+          <div style={{background:'var(--surface-2)',border:'1px solid var(--border)',borderRadius:'var(--radius)',padding:'12px 16px',marginBottom:16,fontSize:12.5,color:'var(--text-2)',lineHeight:1.6}}>
+            <strong style={{color:'var(--ink)'}}>💡 Workflow = Skill</strong> · 每个 Workflow 本身就是一个 Skill，可以在 Skills 市场复用和分享。
+            流程中的每个步骤会生成一个独立任务，可在「任务列表」中追踪。
+            步骤类型：<span className="wf-type-chip" style={{background:'var(--blue-bg)',color:'var(--blue)'}}>🤖 AI自动</span>{' '}
+            <span className="wf-type-chip" style={{background:'var(--surface-3)',color:'var(--text-2)'}}>👤 人工操作</span>{' '}
+            <span className="wf-type-chip" style={{background:'var(--orange-bg)',color:'var(--orange)'}}>⏸ 审批确认</span>{' '}
+            <span className="wf-type-chip" style={{background:'var(--purple-bg)',color:'var(--purple)'}}>🤝 人机协作</span>
+          </div>
+
+          <div style={{display:'flex',gap:6,marginBottom:16,flexWrap:'wrap'}}>
+            {wfRoles.map(r=>(
+              <button key={r} className={`btn btn-sm ${wfRole===r?'btn-blue':'btn-outline'}`} onClick={()=>{setWfRole(r);setSelectedWf(null);}}>
+                {r==='all'?'全部角色':r}
+              </button>
+            ))}
+            <div style={{marginLeft:'auto',fontSize:12,color:'var(--text-3)',alignSelf:'center'}}>{filteredWf.length} 个模板</div>
+          </div>
+
+          <div style={{display:'grid',gridTemplateColumns:selectedWf?'1fr 1fr':'1fr 1fr',gap:16}}>
+            <div>
+              <div className="wf-grid">
+                {filteredWf.map(wf=>(
+                  <div key={wf.id} className={`wf-card ${selectedWf?.id===wf.id?'selected':''}`}
+                    style={{'--card-color':typeConfig.ai.color}} onClick={()=>setSelectedWf(wf)}>
+                    <div style={{display:'flex',gap:10,alignItems:'flex-start',marginBottom:8}}>
+                      <div style={{fontSize:24,width:40,height:40,display:'flex',alignItems:'center',justifyContent:'center',background:'var(--surface-2)',border:'1px solid var(--border)',borderRadius:10,flexShrink:0}}>{wf.icon}</div>
+                      <div style={{flex:1}}>
+                        <div style={{fontWeight:600,fontSize:13.5,marginBottom:3}}>{wf.name}</div>
+                        <div style={{display:'flex',gap:5}}>
+                          <Badge t="gray">{wf.role}</Badge>
+                          <Badge t="blue">{wf.steps.length} 步</Badge>
+                        </div>
+                      </div>
+                    </div>
+                    <div style={{fontSize:12,color:'var(--text-2)',lineHeight:1.55,marginBottom:8}}>{wf.desc}</div>
+                    <div style={{display:'flex',gap:4,flexWrap:'wrap'}}>
+                      {wf.steps.map((s,i)=>{
+                        const tc=typeConfig[s.type];
+                        return <div key={i} style={{width:18,height:18,borderRadius:'50%',background:tc.bg,border:`1px solid ${tc.border}`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:8}} title={`${i+1}. ${s.name} (${tc.label})`}>
+                          {i+1}
+                        </div>;
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {selectedWf&&(
+              <div>
+                <div className="card" style={{position:'sticky',top:0}}>
+                  <div style={{display:'flex',gap:10,alignItems:'flex-start',marginBottom:14}}>
+                    <div style={{fontSize:28,width:44,height:44,display:'flex',alignItems:'center',justifyContent:'center',background:'var(--surface-2)',border:'1px solid var(--border)',borderRadius:12}}>{selectedWf.icon}</div>
+                    <div style={{flex:1}}>
+                      <div style={{fontWeight:700,fontSize:15,marginBottom:4}}>{selectedWf.name}</div>
+                      <div style={{display:'flex',gap:6}}>
+                        <Badge t="gray">{selectedWf.role}</Badge>
+                        <Badge t="blue">Workflow Skill</Badge>
+                        <Badge t="teal">{selectedWf.steps.length} 步骤</Badge>
+                      </div>
+                    </div>
+                  </div>
+                  <div style={{fontSize:13,color:'var(--text-2)',lineHeight:1.6,marginBottom:16}}>{selectedWf.desc}</div>
+
+                  <div className="section-label">执行步骤</div>
+                  {selectedWf.steps.map((step,i)=>{
+                    const tc=typeConfig[step.type];
+                    return(
+                      <div key={i} className="wf-step">
+                        <div className={`wf-step-num wf-step-${step.type}`}>{i+1}</div>
+                        <div style={{flex:1}}>
+                          <div style={{display:'flex',alignItems:'center',gap:6,marginBottom:3}}>
+                            <span style={{fontWeight:600,fontSize:13}}>{step.name}</span>
+                            <span className="wf-type-chip" style={{background:tc.bg,color:tc.color,border:`1px solid ${tc.border}`}}>{tc.label}</span>
+                          </div>
+                          <div style={{fontSize:12,color:'var(--text-2)',lineHeight:1.5}}>{step.desc}</div>
+                          {step.linked&&(
+                            <div style={{fontSize:11,color:'var(--blue)',marginTop:3}}>
+                              → 关联 Skill: {step.linked}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+
+                  <div style={{display:'flex',gap:8,marginTop:16}}>
+                    <button className="btn btn-primary" style={{flex:1}} onClick={()=>{showToast(`🚀 ${selectedWf.name} 已启动，任务已创建`,'success');setSelectedWf(null);}}>▶ 启动此 Workflow</button>
+                    <button className="btn btn-outline" onClick={()=>showToast(`📋 关联 Skill: ${selectedWf.skill}`,'info')}>查看 Skill 详情</button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </>
+      )}
+
+      {/* ─── Tab: Context（原有） ─── */}
+      {tab==='context'&&(
+        <div className="col-2">
+          <div>
+            <div className="section-label">共享上下文面板</div>
+            <div className="ctx-panel">
+              {[
+                {icon:'📋',title:'需求文档',body:'PRD v2.1 已确认，核心需求：重构风控引擎提升吞吐量 3x，支持新的 VaR 计算模型',role:'PM · 李明',time:'3天前'},
+                {icon:'🏗️',title:'技术方案',body:'采用 CQRS 架构，独立读写模型；主库分片键：fund_id；不走读写分离（历史坑点）',role:'架构师 · 张伟',time:'2天前'},
+                {icon:'⚠️',title:'已知风险',body:'遗留系统 SDK v2.3 有内存泄漏问题，升级前需评估影响；RISK 模块主库依赖需保留',role:'研发 · 张伟',time:'1天前'},
+                {icon:'🧪',title:'测试范围',body:'基于 PR#2847 变更范围，需覆盖：VaR 计算/仓位聚合/风险报告 3 个模块',role:'QA · 王芳',time:'今天'},
+                {icon:'📦',title:'部署依赖',body:'依赖服务：data-pipeline v3.1+；数据库迁移脚本 migration_v3.sql 已准备',role:'运维 · 刘洋',time:'今天'},
+              ].map((c,i)=>(
+                <div key={i} className="ctx-item">
+                  <div className="ctx-icon">{c.icon}</div>
+                  <div style={{flex:1}}>
+                    <div style={{fontWeight:600,fontSize:13.5,marginBottom:3}}>{c.title}</div>
+                    <div style={{fontSize:12.5,color:'var(--text-2)',lineHeight:1.6,marginBottom:5}}>{c.body}</div>
+                    <div style={{fontSize:11,color:'var(--text-3)'}}>{c.role} · {c.time}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div>
+            <div className="section-label">上下文引用统计</div>
+            <div className="card">
+              {[
+                {label:'需求文档被引用',val:14,color:'var(--purple)'},
+                {label:'技术方案被引用',val:11,color:'var(--blue)'},
+                {label:'已知风险被引用',val:8,color:'var(--red)'},
+                {label:'测试范围被引用',val:3,color:'var(--teal)'},
+              ].map(r=>(
+                <div key={r.label} style={{marginBottom:12}}>
+                  <div style={{display:'flex',justifyContent:'space-between',fontSize:12.5,marginBottom:5}}>
+                    <span style={{color:'var(--text-2)'}}>{r.label}</span>
+                    <span style={{fontWeight:700,color:r.color}}>{r.val} 次</span>
+                  </div>
+                  <ProgressBar pct={r.val/14*100} cls={`progress-${r.color==='var(--blue)'?'blue':r.color==='var(--green)'?'green':r.color==='var(--red)'?'':'amber'}`}/>
+                </div>
+              ))}
+              <div style={{marginTop:14,paddingTop:12,borderTop:'1px solid var(--border)',fontSize:12,color:'var(--text-3)',lineHeight:1.6}}>
+                共享上下文被下游分身引用 <strong style={{color:'var(--text)'}}>36 次</strong>，节省信息同步时间约 <strong style={{color:'var(--green)'}}>4.2h</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ─── Tab: Members ─── */}
+      {tab==='members'&&(
+        <div className="card">
+          <table style={{width:'100%',borderCollapse:'collapse',fontSize:13.5}}>
+            <thead>
+              <tr style={{borderBottom:'2px solid var(--border)'}}>
+                {['成员','角色','权限级别','可访问数据','任务数','数字员工等级'].map(h=>(
+                  <th key={h} style={{textAlign:'left',padding:'8px 12px',fontSize:12,fontWeight:600,color:'var(--text-3)',textTransform:'uppercase',letterSpacing:'.05em'}}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {[
+                {name:'李明',role:'PM',perm:'需求管理员',data:'需求+设计（全量）',tasks:12,level:'Lv.4 伙伴'},
+                {name:'张伟',role:'技术负责人',perm:'研发管理员',data:'代码+技术方案（全量）',tasks:87,level:'Lv.5 数字员工'},
+                {name:'王芳',role:'QA工程师',perm:'测试成员',data:'需求+代码变更（只读）',tasks:23,level:'Lv.3 助手'},
+                {name:'刘洋',role:'运维工程师',perm:'部署成员',data:'测试结果+部署配置',tasks:31,level:'Lv.4 伙伴'},
+              ].map((m,i)=>(
+                <tr key={i} style={{borderBottom:'1px solid var(--border)'}}>
+                  <td style={{padding:'11px 12px',fontWeight:500}}>{m.name}</td>
+                  <td style={{padding:'11px 12px',color:'var(--text-2)'}}>{m.role}</td>
+                  <td style={{padding:'11px 12px'}}><Badge t="blue">{m.perm}</Badge></td>
+                  <td style={{padding:'11px 12px',color:'var(--text-2)',fontSize:12.5}}>{m.data}</td>
+                  <td style={{padding:'11px 12px',fontWeight:600,color:'var(--ink)'}}>{m.tasks}</td>
+                  <td style={{padding:'11px 12px'}}><Badge t="amber">{m.level}</Badge></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {/* ─── Tab: Assets ─── */}
+      {tab==='assets'&&(
+        <div className="col-2">
+          {[
+            {icon:'💻',type:'代码仓',name:'risk-engine (GitLab)',status:'已索引',detail:'1,247 个文件 · 摘要 RAG · 上次同步 2小时前',badge:'green'},
+            {icon:'📋',type:'Jira Issues',name:'RISK 项目空间',status:'已索引',detail:'342 个 Issue · Epic-Story 层级 · 含历史 Sprint',badge:'green'},
+            {icon:'📚',type:'Confluence',name:'风控引擎架构文档',status:'已索引',detail:'28 个页面 · 段落级 RAG · 含 v3.2 最新版',badge:'green'},
+            {icon:'🧪',type:'测试用例库',name:'风控模块测试集',status:'已索引',detail:'156 个用例 · 按模块分类 · 含历史失败用例',badge:'green'},
+            {icon:'📦',type:'部署脚本',name:'Runbook / deployment',status:'待录入',detail:'尚未上传，建议上传 deploy.sh 和回滚脚本',badge:'amber'},
+          ].map((a,i)=>(
+            <div key={i} className="card">
+              <div style={{display:'flex',gap:10,alignItems:'flex-start'}}>
+                <div style={{fontSize:24,width:40,height:40,display:'flex',alignItems:'center',justifyContent:'center',background:'var(--surface-2)',border:'1px solid var(--border)',borderRadius:10}}>{a.icon}</div>
+                <div style={{flex:1}}>
+                  <div style={{display:'flex',alignItems:'center',gap:7,marginBottom:3}}>
+                    <span style={{fontSize:11,color:'var(--text-3)'}}>{a.type}</span>
+                    <Badge t={a.badge}>{a.status}</Badge>
+                  </div>
+                  <div style={{fontWeight:600,fontSize:13.5,marginBottom:3}}>{a.name}</div>
+                  <div style={{fontSize:12.5,color:'var(--text-2)',lineHeight:1.5}}>{a.detail}</div>
+                </div>
+              </div>
+              {a.badge==='amber'&&(
+                <button className="btn btn-outline btn-sm" style={{marginTop:10,width:'100%'}}>+ 上传资产</button>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+/* ───────────────────────────────
+   PAGE: 通知中心
+─────────────────────────────── */
+function NotifPage({currentRole}){
+  const taskRole=ROLE_TO_TASK_ROLE[currentRole||'dev'];
+  const [items,setItems]=useState(NOTIFS.filter(n=>n.role===taskRole));
+  const [filterType,setFilterType]=useState('all');
+  const filtered=filterType==='all'?items:items.filter(n=>n.type===filterType);
+
+  // Re-filter when role changes
+  useEffect(()=>{
+    setItems(NOTIFS.filter(n=>n.role===taskRole));
+    setFilterType('all');
+  },[taskRole]);
+
+  return(
+    <div className="page-in">
+      <div style={{display:'flex',gap:6,marginBottom:16}}>
+        {['all','hil','done','alert','suggest'].map(f=>(
+          <button key={f} className={`btn btn-sm ${filterType===f?'btn-blue':'btn-outline'}`} onClick={()=>setFilterType(f)}>
+            {f==='all'?'全部':f==='hil'?'⏸ HIL':f==='done'?'✅ 完成':f==='alert'?'🔔 告警':'💡 建议'}
+          </button>
+        ))}
+        <div style={{marginLeft:'auto'}}>
+          <button className="btn btn-ghost btn-sm" onClick={()=>setItems(p=>p.map(n=>({...n,unread:false})))}>全部已读</button>
+        </div>
+      </div>
+
+      <div className="col-2">
+        <div>
+          <div className="section-label">通知流</div>
+          <div className="card" style={{padding:'6px 16px'}}>
+            {filtered.map((n,i)=>(
+              <div key={n.id} className="notif-item" style={{padding:'12px 0',background:n.unread?'var(--surface-2)':'transparent',margin:n.unread?'0 -16px':0,padding:n.unread?'12px 16px':'12px 0',borderRadius:n.unread?'var(--radius)':0}}>
+                <div className="notif-dot-wrap">
+                  <div className={`dot dot-${n.badge==='hil'?'hil':n.badge==='green'?'done':n.badge==='amber'?'amber':'running'}`}/>
+                  {i<filtered.length-1&&<div className="notif-line"/>}
+                </div>
+                <div style={{flex:1}}>
+                  <div style={{display:'flex',alignItems:'center',gap:7,marginBottom:3}}>
+                    <span style={{fontWeight:n.unread?600:500,fontSize:13.5}}>{n.title}</span>
+                    {n.unread&&<div style={{width:7,height:7,borderRadius:'50%',background:'var(--blue)',flexShrink:0}}/>}
+                  </div>
+                  <div style={{fontSize:12.5,color:'var(--text-2)',lineHeight:1.55,marginBottom:5}}>{n.body}</div>
+                  <div style={{display:'flex',gap:8,alignItems:'center'}}>
+                    <span style={{fontSize:11,color:'var(--text-3)'}}>{n.time}</span>
+                    {n.type==='hil'&&(
+                      <div style={{display:'flex',gap:5}}>
+                        <button className="btn btn-blue btn-sm" style={{padding:'3px 8px',fontSize:11}}
+                          onClick={()=>{setItems(p=>p.map(x=>x.id===n.id?{...x,type:'done',badge:'green',title:'✅ '+x.title,unread:false}:x));showToast('✅ HIL 审批已确认，任务继续执行');}}>
+                          ✓ 确认</button>
+                        <button className="btn btn-danger btn-sm" style={{padding:'3px 8px',fontSize:11}}
+                          onClick={()=>{setItems(p=>p.filter(x=>x.id!==n.id));showToast('已拒绝此操作','warn');}}>
+                          取消</button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+            {filtered.length===0&&<div className="empty"><div className="empty-icon">🔔</div><div className="empty-text">暂无通知</div></div>}
+          </div>
+        </div>
+
+        <div>
+          <div className="section-label">推送规则配置</div>
+          <div className="card">
+            {[
+              {label:'HIL 审批请求',desc:'数字员工需要你确认写操作',enabled:true},
+              {label:'任务完成通知',desc:'任务执行完成后推送摘要',enabled:true},
+              {label:'主动建议',desc:'检测到可处理事项时推送',enabled:true},
+              {label:'数据异常告警',desc:'监控指标超阈值时推送',enabled:true},
+              {label:'每日简报',desc:'工作日早 9:00 推送今日任务',enabled:false},
+            ].map((r,i)=>(
+              <div key={i} style={{display:'flex',alignItems:'flex-start',gap:12,padding:'10px 0',borderBottom:i<4?'1px solid var(--border)':'none'}}>
+                <div style={{flex:1}}>
+                  <div style={{fontWeight:500,fontSize:13,marginBottom:2}}>{r.label}</div>
+                  <div style={{fontSize:11.5,color:'var(--text-3)'}}>{r.desc}</div>
+                </div>
+                <div style={{width:36,height:20,background:r.enabled?'var(--blue)':'var(--border-2)',borderRadius:10,cursor:'pointer',transition:'background .15s',position:'relative',flexShrink:0,marginTop:2}}>
+                  <div style={{position:'absolute',top:2,left:r.enabled?18:2,width:16,height:16,background:'#fff',borderRadius:'50%',transition:'left .15s',boxShadow:'0 1px 2px rgba(0,0,0,.2)'}}/>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="section-label" style={{marginTop:16}}>同步至 IM 端</div>
+          <div className="card">
+            <div style={{display:'flex',gap:10,alignItems:'center',padding:'8px 0',borderBottom:'1px solid var(--border)'}}>
+              <div style={{width:32,height:32,borderRadius:8,background:'var(--blue-bg)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:16}}>💬</div>
+              <div style={{flex:1}}>
+                <div style={{fontWeight:500,fontSize:13}}>飞书 Bot</div>
+                <div style={{fontSize:11.5,color:'var(--green)'}}>✅ 已连接 · 实时同步</div>
+              </div>
+              <Badge t="green">已启用</Badge>
+            </div>
+            <div style={{fontSize:12,color:'var(--text-3)',lineHeight:1.7,marginTop:10}}>
+              Web 端通知中心与飞书 Bot 数据同源：<br/>
+              · Web 端查历史 · 飞书端收实时推送<br/>
+              · HIL 审批可在飞书直接完成，无需打开 Web
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+/* ───────────────────────────────
+   PAGE: Skills 市场
+─────────────────────────────── */
+function SkillsPage({currentRole}){
+  const [tab,setTab]=useState('market');
+  const [cat,setCat]=useState('all');
+  const [search,setSearch]=useState('');
+  const [sel,setSel]=useState(null);
+  const [showSteps,setShowSteps]=useState(false);
+
+  const mySkillIds=ROLE_SKILL_MAP[currentRole||'dev']||[];
+  const isMine=sk=>mySkillIds.includes(sk.name);
+
+  const cats=['all','研效','HR','法务','财务','业务','分析'];
+  const data=SKILLS.filter(s=>{
+    if(tab==='mine'&&!isMine(s))return false;
+    if(cat!=='all'&&s.cat!==cat)return false;
+    if(search&&!s.name.includes(search)&&!s.desc.includes(search)&&!(s.alias||'').includes(search))return false;
+    return true;
+  });
+
+  return(
+    <div className="page-in">
+      <div style={{display:'flex',gap:10,marginBottom:16,alignItems:'center'}}>
+        <div className="tabs">
+          <div className={`tab ${tab==='market'?'active':''}`} onClick={()=>setTab('market')}>🏪 技能市场</div>
+          <div className={`tab ${tab==='mine'?'active':''}`} onClick={()=>setTab('mine')}>⭐ 我的 Skills ({SKILLS.filter(s=>isMine(s)).length})</div>
+        </div>
+        <input className="field" style={{width:200}} placeholder="搜索 Skills..." value={search} onChange={e=>setSearch(e.target.value)}/>
+        <button className="btn btn-primary btn-sm" style={{marginLeft:'auto'}}>+ 创建 Skill</button>
+      </div>
+
+      <div style={{display:'flex',gap:6,marginBottom:16,flexWrap:'wrap'}}>
+        {cats.map(c=>(
+          <button key={c} className={`btn btn-sm ${cat===c?'btn-blue':'btn-outline'}`} onClick={()=>setCat(c)}>
+            {c==='all'?'全部':c}
+          </button>
+        ))}
+        <div style={{marginLeft:'auto',fontSize:12,color:'var(--text-3)',alignSelf:'center'}}>{data.length} 个 Skills</div>
+      </div>
+
+      <div className="skills-grid">
+        {data.map(sk=>(
+          <div key={sk.id} className={`skill-card ${isMine(sk)?'owned':''}`} onClick={()=>setSel(sk)}>
+            <div style={{display:'flex',gap:9,alignItems:'flex-start',marginBottom:10}}>
+              <div style={{fontSize:26,width:40,height:40,display:'flex',alignItems:'center',justifyContent:'center',background:'var(--surface-2)',border:'1px solid var(--border)',borderRadius:10,flexShrink:0}}>{sk.icon}</div>
+              <div style={{flex:1}}>
+                <div style={{fontWeight:600,fontSize:13.5,marginBottom:3}}>{sk.name}</div>
+                <div style={{display:'flex',gap:5}}>
+                  <Badge t="gray">{sk.cat}</Badge>
+                  {sk.hil&&<Badge t="orange">需HIL</Badge>}
+                  {isMine(sk)&&<Badge t="blue">已拥有</Badge>}
+                </div>
+              </div>
+            </div>
+            <div style={{fontSize:12.5,color:'var(--text-2)',lineHeight:1.6,marginBottom:10}}>{sk.desc}</div>
+            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:7}}>
+              <div style={{fontSize:12,color:'var(--amber)'}}>{'★'.repeat(Math.round(sk.rating))}{'☆'.repeat(5-Math.round(sk.rating))} <span style={{color:'var(--text-3)'}}>{sk.rating}</span></div>
+              <div style={{fontSize:11,color:'var(--text-3)'}}>{sk.uses} 次</div>
+            </div>
+            <div>
+              <div style={{display:'flex',justifyContent:'space-between',fontSize:11.5,marginBottom:4}}>
+                <span style={{color:'var(--text-3)'}}>Evals</span>
+                <span style={{fontWeight:600,color:sk.evals>=90?'var(--green)':'var(--text-2)'}}>{sk.evals}</span>
+              </div>
+              <ProgressBar pct={sk.evals} cls={sk.evals>=90?'progress-green':'progress-blue'}/>
+            </div>
+          </div>
+        ))}
+        {data.length===0&&<div className="empty" style={{gridColumn:'1/-1'}}><div className="empty-icon">✨</div><div className="empty-text">{search?`未找到 "${search}" 相关技能`:'当前分类暂无 Skills'}</div></div>}
+      </div>
+
+      {sel&&(
+        <>
+          <div className="drawer-overlay" onClick={()=>setSel(null)}/>
+          <div className="drawer">
+            <div className="drawer-head">
+              <div style={{display:'flex',gap:12,alignItems:'flex-start'}}>
+                <div style={{fontSize:30,width:48,height:48,display:'flex',alignItems:'center',justifyContent:'center',background:'var(--surface-2)',border:'1px solid var(--border)',borderRadius:12,flexShrink:0}}>{sel.icon}</div>
+                <div>
+                  <div style={{fontWeight:700,fontSize:16,marginBottom:5}}>{sel.name}</div>
+                  <div style={{display:'flex',gap:6}}>
+                    <Badge t="gray">{sel.cat}</Badge>
+                    {sel.hil&&<Badge t="orange">需 HIL 审批</Badge>}
+                    {isMine(sel)&&<Badge t="blue">已拥有</Badge>}
+                  </div>
+                </div>
+              </div>
+              <button className="drawer-close" onClick={()=>setSel(null)}>×</button>
+            </div>
+            <div className="drawer-body">
+              <div className="card" style={{marginBottom:14}}>
+                <div style={{fontSize:13.5,color:'var(--text-2)',lineHeight:1.7}}>{sel.desc}</div>
+              </div>
+              <div className="col-3" style={{marginBottom:16}}>
+                {[[sel.evals,'Evals 评分','var(--blue)'],[sel.rating,'用户评分','var(--amber)'],[sel.uses,'使用次数','var(--green)']].map(([v,l,c])=>(
+                  <div key={l} style={{textAlign:'center',background:'var(--surface-2)',border:'1px solid var(--border)',borderRadius:10,padding:'12px 8px'}}>
+                    <div style={{fontFamily:'var(--f-display)',fontWeight:800,fontSize:22,color:c}}>{v}</div>
+                    <div style={{fontSize:11,color:'var(--text-3)',marginTop:2}}>{l}</div>
+                  </div>
+                ))}
+              </div>
+              <div style={{display:'flex',gap:9}}>
+                {isMine(sel)
+                  ?<button className="btn btn-primary" style={{flex:1}} onClick={()=>{showToast('已发送至数字员工，任务创建中...','info');setSel(null);}}>▶ 立即使用</button>
+                  :<button className="btn btn-blue" style={{flex:1}} onClick={()=>{
+                    showToast(`✨ ${sel.name} 已添加到我的 Skills`,'success');setSel(null);
+                  }}>+ 添加到我的 Skills</button>}
+                <button className="btn btn-outline" onClick={()=>setShowSteps(!showSteps)}>{showSteps?'收起步骤':'查看执行步骤'}</button>
+              </div>
+              {showSteps&&(
+                <div style={{marginTop:14,paddingTop:14,borderTop:'1px solid var(--border)'}}>
+                  <div className="section-label">执行步骤</div>
+                  {({
+                    'code-review':['1. 接收 PR Diff 数据','2. 解析代码变更范围','3. 安全漏洞扫描（SQL注入/XSS）','4. 性能隐患识别','5. 代码规范检查','6. 生成结构化 Review 报告（🔴🟡🟢）'],
+                    'debug-assist':['1. 读取报错上下文和堆栈','2. 检索历史 Bug 库','3. 推断可能根因','4. 生成修复方案建议'],
+                    'audio-to-insight':['1. 接收录音文件','2. AI 语音转文字','3. 关键信息提取','4. 胜任力模型映射评分','5. 生成结构化评估报告'],
+                    'contract-review':['1. 合同文档解析（OCR/PDF）','2. 关键条款提取','3. 与标准模板对比','4. 风险等级标注（🔴🟡🟢）','5. 生成审查报告+批注'],
+                    'financial-report':['1. 数据源对接（ERP/银行）','2. 数据清洗与校验','3. 按模板生成报告','4. 异常标注','5. 输出可审计格式'],
+                    'resume-screen':['1. 解析简历结构','2. 提取关键信息','3. JD 维度匹配评分','4. 红旗项标记','5. 生成录用建议'],
+                    'monitor-and-alert':['1. 配置监控指标与阈值','2. 持续数据采集','3. 异常检测（多规则判断）','4. 结构化告警推送'],
+                    'doc-writer':['1. 收集信息源（代码/PRD/会议纪要）','2. 按模板结构化','3. 生成文档初稿','4. 格式规范化'],
+                    'test-case-gen':['1. 分析代码变更范围','2. 检索历史 Bug 库','3. 生成测试用例','4. 覆盖率评估'],
+                    'data-query':['1. 解析自然语言查询','2. 权限校验','3. 生成 SQL','4. 执行并格式化结果','5. 生成分析叙述'],
+                    'onboarding-flow':['1. 批量申请系统账号','2. 推送设备领取通知','3. 安排入职培训','4. 生成 Checklist'],
+                    'system-operation':['1. 识别操作意图','2. 截图确认目标页面','3. 辅助填写表单（强制HIL）','4. 操作结果记录'],
+                  }[sel.name]||['1. 接收任务输入','2. AI 分析处理','3. 输出结构化结果']).map((step,i)=>(
+                    <div key={i} style={{display:'flex',gap:8,padding:'6px 0',fontSize:12.5,color:'var(--text-2)'}}>
+                      <span style={{color:'var(--green)'}}>●</span>
+                      <span>{step}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+/* ───────────────────────────────
+   PAGE: 我的数字员工 (全新重做)
+   
+   借鉴参考页面的三层技能树 + 雷达图 + 成就系统 + 进化时间线
+   Tab 结构：总览 | 能力体系 | 成长记录
+─────────────────────────────── */
+function AgentPage({agentName,setAgentName}){
+  const [tab,setTab]=useState('overview');
+  const [activeAbility,setActiveAbility]=useState(null);
+  const [teachInput,setTeachInput]=useState('');
+  const [taught,setTaught]=useState(false);
+  const [editName,setEditName]=useState(false);
+  const [tempName,setTempName]=useState(agentName);
+  const [mems,setMems]=useState(MEMORIES);
+
+  return(
+    <div className="page-in">
+      {/* ─── Top Hero Card ─── */}
+      <div style={{display:'grid',gridTemplateColumns:'280px 1fr',gap:18,marginBottom:20}}>
+        {/* Pet card */}
+        <div className="card" style={{textAlign:'center',padding:'24px 20px',background:'linear-gradient(135deg,#FFFBEB,#FEF3C7 50%,#FFFBEB)',border:'1px solid var(--amber-border)',position:'relative',overflow:'hidden'}}>
+          <div style={{position:'absolute',top:0,left:0,right:0,height:3,background:'linear-gradient(90deg,var(--amber),#F59E0B,var(--amber))'}}/>
+          <div style={{fontSize:56,marginBottom:6,filter:'drop-shadow(0 2px 8px rgba(217,119,6,.25))',animation:'bob 3s ease-in-out infinite'}}>🦞</div>
+
+          {editName?(
+            <div style={{display:'flex',gap:6,justifyContent:'center',marginBottom:4}}>
+              <input className="field" style={{width:120,textAlign:'center',fontSize:15,fontWeight:700}} value={tempName}
+                onChange={e=>setTempName(e.target.value)} autoFocus/>
+              <button className="btn btn-amber btn-sm" onClick={()=>{setAgentName(tempName);setEditName(false);}}>保存</button>
+            </div>
+          ):(
+            <div style={{fontFamily:'var(--f-display)',fontSize:18,fontWeight:800,color:'var(--amber-dim)',marginBottom:2,display:'flex',alignItems:'center',justifyContent:'center',gap:5}}>
+              {agentName}
+              <button className="btn btn-ghost btn-icon btn-sm" style={{padding:'2px 5px',fontSize:11}} onClick={()=>{setTempName(agentName);setEditName(true);}}>✏️</button>
+            </div>
+          )}
+          <div style={{fontSize:11.5,color:'var(--text-3)',marginBottom:12}}>数字员工 · 在职 287 天</div>
+
+          <div style={{display:'flex',justifyContent:'center',gap:6,marginBottom:14,flexWrap:'wrap'}}>
+            <Badge t="amber">🤝 Lv.4 伙伴</Badge>
+            <Badge t="blue">✨ 8 Skills</Badge>
+            <Badge t="green">✅ 高可用</Badge>
+          </div>
+
+          <div style={{background:'var(--surface)',borderRadius:8,padding:'9px 12px',border:'1px solid var(--amber-border)'}}>
+            <div style={{display:'flex',justifyContent:'space-between',fontSize:11,marginBottom:4}}>
+              <span style={{color:'var(--text-2)'}}>经验值</span>
+              <span style={{color:'var(--amber)',fontWeight:600}}>3,420 / 5,000 XP</span>
+            </div>
+            <ProgressBar pct={68} cls="progress-amber"/>
+            <div style={{fontSize:10.5,color:'var(--text-3)',marginTop:3}}>再 1,580 XP 升至 Lv.5</div>
+          </div>
+
+          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:6,marginTop:12}}>
+            {[['287','完成任务'],['156','记忆条目'],['38.4h','节省工时']].map(([v,l])=>(
+              <div key={l} style={{background:'var(--surface)',borderRadius:6,padding:'7px 4px',border:'1px solid var(--amber-border)'}}>
+                <div style={{fontFamily:'var(--f-display)',fontWeight:800,fontSize:16,color:'var(--amber)'}}>{v}</div>
+                <div style={{fontSize:9.5,color:'var(--text-3)',marginTop:1}}>{l}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Right: Radar + Quick Stats */}
+        <div className="card" style={{display:'flex',alignItems:'center',justifyContent:'center',gap:30}}>
+          <div>
+            <RadarChart data={ABILITIES} size={240}/>
+          </div>
+          <div style={{flex:1,maxWidth:250}}>
+            <div style={{fontFamily:'var(--f-display)',fontWeight:700,fontSize:14,color:'var(--ink)',marginBottom:12}}>AgentCore 能力概览</div>
+            {ABILITIES.map(a=>(
+              <div key={a.name} style={{display:'flex',alignItems:'center',gap:8,marginBottom:8,cursor:'pointer'}}
+                onClick={()=>setActiveAbility(activeAbility?.name===a.name?null:a)}>
+                <span style={{fontSize:16,width:22,textAlign:'center'}}>{a.icon}</span>
+                <div style={{flex:1}}>
+                  <div style={{display:'flex',justifyContent:'space-between',marginBottom:3}}>
+                    <span style={{fontSize:12,fontWeight:500}}>{a.name}</span>
+                    <span style={{fontSize:12,fontWeight:700,color:a.color}}>{a.score}</span>
+                  </div>
+                  <ProgressBar pct={a.score} cls={`progress-${a.color==='var(--blue)'?'blue':a.color==='var(--green)'?'green':'amber'}`}/>
+                </div>
+              </div>
+            ))}
+            {activeAbility&&(
+              <div style={{marginTop:10,padding:'10px 12px',background:'var(--surface-2)',border:'1px solid var(--border)',borderRadius:'var(--radius)',fontSize:12,color:'var(--text-2)',lineHeight:1.55,animation:'pagein .15s ease'}}>
+                <strong style={{color:activeAbility.color}}>{activeAbility.name}</strong>（{activeAbility.sub}）<br/>{activeAbility.tip}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* ─── Tab Bar ─── */}
+      <div style={{display:'flex',gap:10,marginBottom:18,alignItems:'center'}}>
+        <div className="tabs">
+          {[{id:'overview',label:'📊 总览'},{id:'skill-tree',label:'🌳 能力体系'},{id:'growth',label:'📈 成长记录'}].map(t=>(
+            <div key={t.id} className={`tab ${tab===t.id?'active':''}`} onClick={()=>setTab(t.id)}>{t.label}</div>
+          ))}
+        </div>
+      </div>
+
+      {/* ═══ Tab: 总览 ═══ */}
+      {tab==='overview'&&(
+        <div className="col-2">
+          {/* Left: Teach + Memories */}
+          <div>
+            <div className="card" style={{marginBottom:14}}>
+              <div className="card-title">💬 教 TA 新知识</div>
+              {taught?(
+                <div style={{textAlign:'center',padding:'14px 0',color:'var(--green)',fontSize:13}}>
+                  ✅ 已学习！+8 XP 经验值已获得
+                </div>
+              ):(
+                <>
+                  <textarea className="field" rows={3} value={teachInput}
+                    placeholder={`告诉数字员工需要记住的业务规则或工作习惯...`}
+                    onChange={e=>setTeachInput(e.target.value)} style={{marginBottom:8}}/>
+                  <div style={{display:'flex',gap:6,marginBottom:8}}>
+                    {['偏好','教训','知识','经验'].map(t=>(
+                      <span key={t} className="tag" style={{cursor:'pointer',fontSize:11}} onClick={()=>setTeachInput(`[${t}] `+teachInput)}>{t}</span>
+                    ))}
+                  </div>
+                  <button className="btn btn-amber" style={{width:'100%'}} disabled={!teachInput.trim()}
+                    onClick={()=>{
+                      const type=teachInput.startsWith('[')?(teachInput.match(/\[(.+?)\]/)?.[1]||'知识'):'知识';
+                      const text=teachInput.replace(/^\[.+?\]\s*/,'');
+                      setMems(p=>[{type,icon:type==='偏好'?'📌':type==='教训'?'🔴':type==='知识'?'🧠':'💡',text,time:'刚刚',color:'var(--blue)'},...p]);
+                      setTaught(true);setTeachInput('');
+                      setTimeout(()=>setTaught(false),2500);
+                    }}>
+                    ➕ 教数字员工记住这个
+                  </button>
+                </>
+              )}
+            </div>
+
+            <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:10}}>
+              <div className="section-label" style={{marginBottom:0}}>记忆日志</div>
+              <span style={{fontSize:12,color:'var(--text-3)'}}>共 {mems.length} 条</span>
+            </div>
+            <div className="card" style={{padding:'0 14px',maxHeight:300,overflowY:'auto'}}>
+              {mems.map((m,i)=>(
+                <div key={i} className="mem-item">
+                  <div style={{fontSize:14,width:18,textAlign:'center',flexShrink:0,marginTop:1}}>{m.icon}</div>
+                  <div style={{flex:1}}>
+                    <div style={{fontSize:13,lineHeight:1.5}}>{m.text}</div>
+                    <div style={{fontSize:11,color:'var(--text-3)',marginTop:2,display:'flex',gap:6,alignItems:'center'}}>
+                      <Badge t="gray">{m.type}</Badge>{m.time}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Right: Achievements */}
+          <div>
+            <div className="section-label">成就系统</div>
+            <div className="achv-grid">
+              {ACHIEVEMENTS.map(a=>{
+                const rCls=a.rarity==='common'?'':a.rarity==='rare'?'rare':a.rarity==='epic'?'epic':'legend';
+                const rColor={common:'var(--text-3)',rare:'var(--blue)',epic:'var(--purple)',legend:'var(--amber)'}[a.rarity];
+                return(
+                  <div key={a.id} className={`achv-card ${rCls} ${!a.unlocked?'locked':''}`} title={a.desc}>
+                    <div className="achv-icon">{a.unlocked?a.icon:'🔒'}</div>
+                    <div className="achv-name">{a.name}</div>
+                    <div className="achv-rarity" style={{color:rColor}}>{a.rarity==='common'?'普通':a.rarity==='rare'?'稀有':a.rarity==='epic'?'史诗':'传说'}</div>
+                    {a.unlocked&&<div style={{fontSize:10,color:'var(--text-3)',marginTop:2}}>{a.unlocked}</div>}
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="section-label" style={{marginTop:18}}>成长历程</div>
+            <div style={{display:'flex',gap:0,paddingLeft:8}}>
+              {[['🥚 幼苗','已解锁'],['🌿 学徒','已解锁'],['⚡ 助手','已解锁'],['🤝 伙伴','当前'],['🌟 数字员工','待解锁']].map(([l,s],i)=>(
+                <div key={i} style={{flex:1,textAlign:'center',position:'relative'}}>
+                  {i<4&&<div style={{position:'absolute',top:11,left:'50%',right:'-50%',height:2,background:i<3?'var(--green)':i===3?'linear-gradient(90deg,var(--green),var(--border))':'var(--border)',zIndex:0}}/>}
+                  <div style={{width:22,height:22,borderRadius:'50%',background:s==='当前'?'var(--amber)':s==='已解锁'?'var(--green)':'var(--border)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:9,margin:'0 auto 4px',position:'relative',zIndex:1,border:'2px solid var(--surface)',color:'#fff'}}>
+                    {s==='已解锁'||s==='当前'?'✓':''}
+                  </div>
+                  <div style={{fontSize:10,color:s==='当前'?'var(--amber)':s==='已解锁'?'var(--green)':'var(--text-3)',fontWeight:s==='当前'?700:400,lineHeight:1.3}}>{l}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ═══ Tab: 能力体系（三层技能树） ═══ */}
+      {tab==='skill-tree'&&(
+        <div>
+          {/* Meta layer */}
+          <div className="skill-tree-layer layer-meta">
+            <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:12}}>
+              <span style={{fontSize:18}}>{SKILL_TREE.meta.label.split(' ')[0]}</span>
+              <div>
+                <div style={{fontFamily:'var(--f-display)',fontWeight:700,fontSize:14,color:'var(--purple)'}}>{SKILL_TREE.meta.label.split(' ').slice(1).join(' ')}</div>
+                <div style={{fontSize:12,color:'var(--text-2)'}}>{SKILL_TREE.meta.desc}</div>
+              </div>
+            </div>
+            <div style={{display:'flex',flexWrap:'wrap',gap:4}}>
+              {SKILL_TREE.meta.skills.map(sk=>(
+                <div key={sk.name} className="skill-node" title={sk.desc}>
+                  <span style={{fontSize:13}}>{sk.icon}</span>
+                  <span>{sk.name}</span>
+                  <span className={`skill-lv lv-${sk.lv}`}>L{sk.lv}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="layer-connector">↓ 赋能 ↓</div>
+
+          {/* Domain layer */}
+          <div className="skill-tree-layer layer-domain">
+            <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:12}}>
+              <span style={{fontSize:18}}>{SKILL_TREE.domain.label.split(' ')[0]}</span>
+              <div>
+                <div style={{fontFamily:'var(--f-display)',fontWeight:700,fontSize:14,color:'var(--blue)'}}>{SKILL_TREE.domain.label.split(' ').slice(1).join(' ')}</div>
+                <div style={{fontSize:12,color:'var(--text-2)'}}>{SKILL_TREE.domain.desc}</div>
+              </div>
+            </div>
+            <div style={{display:'grid',gridTemplateColumns:'repeat(2,1fr)',gap:10}}>
+              {SKILL_TREE.domain.groups.map(g=>(
+                <div key={g.name} style={{background:'rgba(255,255,255,.6)',border:'1px solid var(--blue-border)',borderRadius:'var(--radius)',padding:'10px 12px'}}>
+                  <div style={{display:'flex',alignItems:'center',gap:5,marginBottom:8}}>
+                    <span style={{fontSize:14}}>{g.icon}</span>
+                    <span style={{fontWeight:600,fontSize:13}}>{g.name}</span>
+                  </div>
+                  <div style={{display:'flex',flexWrap:'wrap',gap:4}}>
+                    {g.skills.map(sk=>(
+                      <div key={sk.name} className="skill-node" style={{fontSize:11.5}}>
+                        <span>{sk.name}</span>
+                        <span className={`skill-lv lv-${sk.lv}`}>L{sk.lv}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="layer-connector">↓ 调用 ↓</div>
+
+          {/* Execution layer */}
+          <div className="skill-tree-layer layer-exec">
+            <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:12}}>
+              <span style={{fontSize:18}}>{SKILL_TREE.exec.label.split(' ')[0]}</span>
+              <div>
+                <div style={{fontFamily:'var(--f-display)',fontWeight:700,fontSize:14,color:'var(--teal)'}}>{SKILL_TREE.exec.label.split(' ').slice(1).join(' ')}</div>
+                <div style={{fontSize:12,color:'var(--text-2)'}}>{SKILL_TREE.exec.desc}</div>
+              </div>
+            </div>
+            <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:10}}>
+              {SKILL_TREE.exec.groups.map(g=>(
+                <div key={g.name} style={{background:'var(--surface-2)',border:'1px solid var(--border)',borderRadius:'var(--radius)',padding:'10px 12px'}}>
+                  <div style={{fontWeight:600,fontSize:12,color:'var(--text-2)',marginBottom:7}}>{g.name}</div>
+                  <div style={{display:'flex',flexDirection:'column',gap:4}}>
+                    {g.skills.map(sName=>{
+                      const sk=SKILLS.find(s=>s.name===sName);
+                      return sk?(
+                        <div key={sName} style={{display:'flex',alignItems:'center',gap:6,fontSize:12}}>
+                          <span style={{fontSize:14}}>{sk.icon}</span>
+                          <span style={{flex:1}}>{sk.name}</span>
+                          {sk.mine&&<Badge t="blue" style={{fontSize:9}}>✓</Badge>}
+                          <span style={{fontSize:10.5,color:'var(--text-3)'}}>{sk.evals}分</span>
+                        </div>
+                      ):<div key={sName} style={{fontSize:12,color:'var(--text-3)'}}>{sName}</div>;
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Stats summary */}
+          <div style={{marginTop:18,display:'grid',gridTemplateColumns:'repeat(5,1fr)',gap:12}}>
+            {[
+              {label:'元能力',val:'6',sub:'平均 L3.8',color:'var(--purple)'},
+              {label:'领域能力',val:'4',sub:'覆盖 4 领域',color:'var(--blue)'},
+              {label:'执行技能',val:'12',sub:'平均 Evals 87',color:'var(--teal)'},
+              {label:'Workflow',val:'10',sub:'5 个角色模板',color:'var(--green)'},
+              {label:'综合评分',val:'82',sub:'高于团队平均',color:'var(--amber)'},
+            ].map(s=>(
+              <div key={s.label} className="card" style={{textAlign:'center',padding:'14px 10px'}}>
+                <div style={{fontFamily:'var(--f-display)',fontWeight:800,fontSize:24,color:s.color}}>{s.val}</div>
+                <div style={{fontSize:12,fontWeight:600,color:'var(--text-2)',marginBottom:2}}>{s.label}</div>
+                <div style={{fontSize:10.5,color:'var(--text-3)'}}>{s.sub}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ═══ Tab: 成长记录（进化时间线） ═══ */}
+      {tab==='growth'&&(
+        <div className="col-2">
+          <div>
+            <div className="section-label">进化时间线</div>
+            <div className="card">
+              <div className="evo-timeline">
+                {EVOLUTION.map((ev,i)=>{
+                  const isCurrent=ev.time==='当前';
+                  const isFuture=ev.time==='未来'||ev.time==='愿景';
+                  return(
+                    <div key={ev.ver} className="evo-item">
+                      <div className={`evo-dot ${isCurrent?'current':isFuture?'future':'past'}`}/>
+                      <div style={{display:'flex',alignItems:'flex-start',gap:10}}>
+                        <div style={{fontSize:22,width:32,textAlign:'center',flexShrink:0}}>{ev.icon}</div>
+                        <div style={{flex:1}}>
+                          <div style={{display:'flex',alignItems:'center',gap:7,marginBottom:3}}>
+                            <span style={{fontWeight:700,fontSize:14,color:isCurrent?'var(--amber)':isFuture?'var(--text-3)':'var(--ink)'}}>{ev.ver}</span>
+                            <Badge t={isCurrent?'amber':isFuture?'gray':'green'}>{ev.phase}</Badge>
+                            <span style={{fontSize:11,color:'var(--text-3)'}}>{ev.time}</span>
+                          </div>
+                          <div style={{fontSize:13,color:isFuture?'var(--text-3)':'var(--text-2)',lineHeight:1.6,marginBottom:5}}>{ev.desc}</div>
+                          <div style={{display:'flex',gap:4,flexWrap:'wrap'}}>
+                            {ev.tags.map(t=><span key={t} className="tag" style={{fontSize:10}}>{t}</span>)}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div className="section-label">成就墙</div>
+            <div className="achv-grid" style={{gridTemplateColumns:'repeat(2,1fr)'}}>
+              {ACHIEVEMENTS.filter(a=>a.unlocked).map(a=>{
+                const rColor={common:'var(--text-3)',rare:'var(--blue)',epic:'var(--purple)',legend:'var(--amber)'}[a.rarity];
+                return(
+                  <div key={a.id} className={`achv-card ${a.rarity!=='common'?a.rarity:''}`}>
+                    <div className="achv-icon">{a.icon}</div>
+                    <div className="achv-name">{a.name}</div>
+                    <div className="achv-rarity" style={{color:rColor}}>{a.rarity==='common'?'普通':a.rarity==='rare'?'稀有':a.rarity==='epic'?'史诗':'传说'}</div>
+                    <div style={{fontSize:10.5,color:'var(--text-2)',marginTop:3,lineHeight:1.4}}>{a.desc}</div>
+                    <div style={{fontSize:10,color:'var(--text-3)',marginTop:2}}>解锁于 {a.unlocked}</div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="section-label" style={{marginTop:18}}>周增长趋势</div>
+            <div className="card">
+              {[
+                {label:'任务完成',val:'+12',pct:67,color:'var(--blue)'},
+                {label:'新增记忆',val:'+6',pct:40,color:'var(--teal)'},
+                {label:'Evals 平均',val:'85.2',pct:85,color:'var(--green)'},
+                {label:'节省工时',val:'+3.2h',pct:56,color:'var(--amber)'},
+              ].map(w=>(
+                <div key={w.label} style={{marginBottom:10}}>
+                  <div style={{display:'flex',justifyContent:'space-between',fontSize:12,marginBottom:4}}>
+                    <span style={{color:'var(--text-2)'}}>{w.label}</span>
+                    <span style={{fontWeight:700,color:w.color}}>{w.val}</span>
+                  </div>
+                  <ProgressBar pct={w.pct} cls={`progress-${w.color==='var(--blue)'?'blue':w.color==='var(--green)'?'green':'amber'}`}/>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+/* ───────────────────────────────
+   PAGE: 管理者视图 (原"团队视图"改造)
+   
+   核心变更：
+   1. 改名为"管理者视图"——只有 Leader 权限才能查看
+   2. 增加隐私边界提示
+   3. 增加 AI 使用率、提效数据、效率排行榜
+   4. 普通成员看到的是权限不足页面
+─────────────────────────────── */
+function ManagerPage({isLeader}){
+  const [dept,setDept]=useState('all');
+  const [dim,setDim]=useState('tasks');
+  const depts=['all','研效线','职能线','业务线'];
+  const filtered=dept==='all'?TEAM:TEAM.filter(m=>m.dept===dept);
+  const lvLabel=l=>['','🥚 幼苗','🌿 学徒','⚡ 助手','🤝 伙伴','🌟 数字员工'][l];
+
+  // Non-leader gate
+  if(!isLeader){
+    return(
+      <div className="page-in">
+        <div className="manager-gate">
+          <div style={{fontSize:48,marginBottom:16,opacity:.4}}>🔒</div>
+          <div style={{fontFamily:'var(--f-display)',fontSize:18,fontWeight:700,color:'var(--ink)',marginBottom:8}}>需要管理者权限</div>
+          <div style={{fontSize:13.5,color:'var(--text-2)',lineHeight:1.7,maxWidth:400,margin:'0 auto'}}>
+            管理者视图仅对拥有 <strong>Leader 权限</strong> 的用户开放。<br/>
+            该页面包含团队成员的 AI 使用数据和效率排行，出于隐私保护仅限管理者查看。
+          </div>
+          <div style={{marginTop:20}}>
+            <button className="btn btn-outline">了解权限说明</button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Sort by dim
+  const sortKey={tasks:'weekTasks',usage:'aiUsageRate',time:'timeSaved'}[dim]||'weekTasks';
+  const sorted=[...filtered].sort((a,b)=>b[sortKey]-a[sortKey]);
+
+  const teamStats={
+    members:TEAM.length,
+    totalTasks:TEAM.reduce((s,m)=>s+m.weekTasks,0),
+    avgUsage:Math.round(TEAM.reduce((s,m)=>s+m.aiUsageRate,0)/TEAM.length),
+    totalSaved:TEAM.reduce((s,m)=>s+m.timeSaved,0).toFixed(1),
+  };
+
+  return(
+    <div className="page-in">
+      {/* Privacy notice */}
+      <div className="privacy-note">
+        <strong>🔐 数据隐私说明</strong> · 本页面数据仅对拥有 Leader 权限的管理者可见。
+        展示的是团队成员的 AI 使用情况和提效数据，旨在帮助管理者了解 AI 辅助工具的团队采用度。
+        <strong>个人对话内容、记忆详情不会展示</strong>，仅显示汇总统计。
+      </div>
+
+      {/* Team stats */}
+      <div className="stat-grid" style={{marginBottom:20}}>
+        <div className="stat-card"><div className="stat-icon">👥</div><div className="stat-val" style={{color:'var(--ink)'}}>{teamStats.members}</div><div className="stat-label">活跃成员</div></div>
+        <div className="stat-card"><div className="stat-icon">📊</div><div className="stat-val" style={{color:'var(--blue)'}}>{teamStats.totalTasks}</div><div className="stat-label">本周团队任务</div><div className="stat-delta" style={{color:'var(--green)',fontSize:11}}>↑ 12 较上周</div></div>
+        <div className="stat-card"><div className="stat-icon">🤖</div><div className="stat-val" style={{color:'var(--purple)'}}>{teamStats.avgUsage}%</div><div className="stat-label">AI 平均使用率</div><div className="stat-delta" style={{color:'var(--green)',fontSize:11}}>↑ 5% 较上月</div></div>
+        <div className="stat-card"><div className="stat-icon">⏱</div><div className="stat-val" style={{color:'var(--green)'}}>{teamStats.totalSaved}h</div><div className="stat-label">本周团队节省工时</div><div className="stat-delta" style={{color:'var(--green)',fontSize:11}}>↑ 4.8h 较上周</div></div>
+      </div>
+
+      {/* Filters */}
+      <div style={{display:'flex',gap:8,marginBottom:18,alignItems:'center'}}>
+        <div style={{display:'flex',gap:6}}>
+          {depts.map(d=>(
+            <button key={d} className={`btn btn-sm ${dept===d?'btn-blue':'btn-outline'}`} onClick={()=>setDept(d)}>
+              {d==='all'?'全部':d}
+            </button>
+          ))}
+        </div>
+        <div style={{marginLeft:'auto',display:'flex',gap:6}}>
+          {[{id:'tasks',label:'按任务数'},{id:'usage',label:'按使用率'},{id:'time',label:'按节省工时'}].map(d=>(
+            <button key={d.id} className={`btn btn-sm ${dim===d.id?'btn-primary':'btn-ghost'}`} onClick={()=>setDim(d.id)}>
+              {d.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Member cards */}
+      <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:24}}>
+        {filtered.map(m=>(
+          <div key={m.name} className="member-card">
+            <div style={{width:44,height:44,borderRadius:'50%',background:'var(--surface-3)',border:'2px solid var(--border)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:20,margin:'0 auto 8px'}}>{m.avatar}</div>
+            <div style={{fontWeight:600,fontSize:13.5,marginBottom:1}}>{m.name}</div>
+            <div style={{fontSize:11.5,color:'var(--text-3)',marginBottom:8}}>{m.role} · {m.dept}</div>
+            <div style={{display:'flex',justifyContent:'center',marginBottom:10}}><Badge t="amber">{lvLabel(m.level)}</Badge></div>
+            <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:4,fontSize:10}}>
+              <div style={{textAlign:'center',background:'var(--surface-2)',borderRadius:6,padding:'6px 2px'}}>
+                <div style={{fontFamily:'var(--f-display)',fontWeight:800,fontSize:15,color:'var(--ink)'}}>{m.weekTasks}</div>
+                <div style={{color:'var(--text-3)'}}>本周任务</div>
+              </div>
+              <div style={{textAlign:'center',background:'var(--surface-2)',borderRadius:6,padding:'6px 2px'}}>
+                <div style={{fontFamily:'var(--f-display)',fontWeight:800,fontSize:15,color:'var(--blue)'}}>{m.aiUsageRate}%</div>
+                <div style={{color:'var(--text-3)'}}>AI使用率</div>
+              </div>
+              <div style={{textAlign:'center',background:'var(--surface-2)',borderRadius:6,padding:'6px 2px'}}>
+                <div style={{fontFamily:'var(--f-display)',fontWeight:800,fontSize:15,color:'var(--green)'}}>{m.timeSaved}h</div>
+                <div style={{color:'var(--text-3)'}}>节省工时</div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Efficiency Leaderboard */}
+      <div className="section-label">本周效率排行榜</div>
+      <div className="card" style={{padding:'0 20px'}}>
+        {sorted.map((m,i)=>{
+          const val=m[sortKey];
+          const maxVal=Math.max(...sorted.map(x=>x[sortKey]));
+          return(
+            <div key={m.name} style={{display:'flex',alignItems:'center',gap:14,padding:'11px 0',borderBottom:i<sorted.length-1?'1px solid var(--border)':'none'}}>
+              <div style={{width:24,textAlign:'center',fontFamily:'var(--f-display)',fontWeight:800,fontSize:14,color:i<3?'var(--amber)':'var(--text-3)'}}>
+                {i<3?['🥇','🥈','🥉'][i]:i+1}
+              </div>
+              <div style={{fontSize:18}}>{m.avatar}</div>
+              <div style={{flex:1}}>
+                <div style={{fontWeight:500,fontSize:14}}>{m.name}{m.isLeader&&<Badge t="blue" style={{marginLeft:6,fontSize:9}}>Leader</Badge>}</div>
+                <div style={{fontSize:11.5,color:'var(--text-3)'}}>{m.role} · {m.dept}</div>
+              </div>
+              <div style={{textAlign:'right',width:70}}>
+                <div style={{fontFamily:'var(--f-display)',fontWeight:700,fontSize:16,color:'var(--ink)'}}>
+                  {dim==='usage'?`${val}%`:dim==='time'?`${val}h`:val}
+                </div>
+                <div style={{fontSize:10,color:'var(--text-3)'}}>
+                  {dim==='tasks'?'本周任务':dim==='usage'?'AI使用率':'节省工时'}
+                </div>
+              </div>
+              <div style={{width:90}}><ProgressBar pct={Math.round(val/maxVal*100)}/></div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* AI Usage Trend */}
+      <div style={{marginTop:24}}>
+        <div className="section-label">团队 AI 使用分布</div>
+        <div className="card">
+          {TEAM.map((m,i)=>(
+            <div key={m.name} className="usage-bar-wrap">
+              <div className="usage-bar-label">{m.name}</div>
+              <div className="usage-bar">
+                <div className="progress" style={{height:8}}>
+                  <div className="progress-fill progress-blue" style={{width:`${m.aiUsageRate}%`,borderRadius:4,transition:'width .6s ease'}}/>
+                </div>
+              </div>
+              <div className="usage-bar-val">{m.aiUsageRate}%</div>
+            </div>
+          ))}
+          <div style={{marginTop:12,paddingTop:12,borderTop:'1px solid var(--border)',display:'flex',justifyContent:'space-between',fontSize:12,color:'var(--text-3)'}}>
+            <span>低使用 (≤50%): {TEAM.filter(m=>m.aiUsageRate<=50).length} 人</span>
+            <span>中使用 (51-80%): {TEAM.filter(m=>m.aiUsageRate>50&&m.aiUsageRate<=80).length} 人</span>
+            <span>高使用 (>80%): {TEAM.filter(m=>m.aiUsageRate>80).length} 人</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+/* ───────────────────────────────
+   NAV CONFIG (更新)
+─────────────────────────────── */
+/* ───────────────────────────────
+   ROLES — Demo 角色切换
+─────────────────────────────── */
+const ROLES = [
+  {id:'dev',label:'研发工程师',icon:'💻',person:'张伟',dept:'研效线'},
+  {id:'hr',label:'HR 经理',icon:'👩',person:'陈静',dept:'职能线'},
+  {id:'finance',label:'财务主管',icon:'📊',person:'赵磊',dept:'职能线'},
+  {id:'legal',label:'法务专员',icon:'⚖️',person:'孙丽',dept:'职能线'},
+  {id:'ops',label:'产品运营',icon:'📈',person:'周浩',dept:'业务线'},
+];
+
+const ROLE_QUICK = {
+  dev: [{t:'分析最近 PR 的安全风险'},{t:'起草技术周报'},{t:'分析今天的 CI 失败'},{t:'生成 Sprint 回顾报告'}],
+  hr: [{t:'筛选高级研发候选人简历'},{t:'生成面试评估报告'},{t:'查看新员工入职进度'},{t:'本周招聘数据汇总'}],
+  finance: [{t:'查看月末对账进度'},{t:'生成信披报告草稿'},{t:'分析本月差异项'},{t:'对比上月关账数据'}],
+  legal: [{t:'审查最新合同草案'},{t:'检索相关法规条款'},{t:'生成合同修改建议'},{t:'查看本周合同审查进度'}],
+  ops: [{t:'查看今日 NAV 监控状态'},{t:'生成本周数据报表'},{t:'分析关键指标趋势'},{t:'查看告警处置进度'}],
+};
+
+const ROLE_GREET = {
+  dev: (name)=>{const r=TASKS.filter(t=>t.status==='running').length,h=TASKS.filter(t=>t.status==='hil').length,d=TASKS.filter(t=>t.status==='done'),saved=d.reduce((s,t)=>s+(t.saved||0),0);return`你好！我是你的数字员工 ${name} 🦞\n\n**今日简报**\n• ${r} 个任务运行中${h?`（其中 ${h} 个待 HIL 审批）`:''}\n• PR#2847 Code Review 已完成，发现 2 项必须修复\n• 本周已节省 **${(saved/60).toFixed(1)} 小时**\n\n有什么需要我帮你处理的？`;},
+  hr: (name)=>`你好！我是你的数字员工 ${name} 🦞\n\n**今日 HR 简报**\n• 候选人张晓雯面试评估已完成，待你确认写入（HIL）\n• 新员工王天明入职流程进行中（60%完成）\n• 本周面试排期：3 场\n\n需要我帮你处理什么？`,
+  finance: (name)=>`你好！我是你的数字员工 ${name} 🦞\n\n**今日财务简报**\n• 月末对账进行中：已匹配 89% 流水，151 笔待审核\n• 3 笔大额差异（>50万）需重点关注\n• 信披报告草稿预计今日完成\n\n有什么需要处理的？`,
+  legal: (name)=>`你好！我是你的数字员工 ${name} 🦞\n\n**今日法务简报**\n• XX资产管理合作协议审查已完成，发现 3 项高风险条款\n• 本周待审合同：2 份\n• 合同模板库最近更新：投资顾问协议 v3.0\n\n需要我帮你审查什么？`,
+  ops: (name)=>`你好！我是你的数字员工 ${name} 🦞\n\n**今日运营简报**\n• NAV 监控正常运行，昨日偏差 0.3%（已推送告警）\n• 周报数据采集中，预计下午完成\n• 关键指标：日活 ↑2.3%，转化率持平\n\n有什么需要分析的？`,
+};
+
+const ROLE_PROACTIVE = {
+  dev: [{icon:'💡',txt:'PR#2851 超 24h 未 Review，有延误风险',time:'10分钟前'},{icon:'📅',txt:'本周 Sprint 明日结束，周报草稿已准备好',time:'1小时前'}],
+  hr: [{icon:'💡',txt:'候选人张晓雯的评估结果已超12h未确认',time:'20分钟前'},{icon:'📅',txt:'下周有 3 位新员工入职，系统账号待批量申请',time:'2小时前'}],
+  finance: [{icon:'💡',txt:'本月对账差异率 2.1%，高于上月1.3%，建议重点复核',time:'30分钟前'},{icon:'📅',txt:'信披报告提交截止日还剩 3 天',time:'1小时前'}],
+  legal: [{icon:'💡',txt:'XX资产管理协议中有 1 项条款与最新监管要求冲突',time:'15分钟前'},{icon:'📅',txt:'本周有 2 份合同即将到期需续签',time:'3小时前'}],
+  ops: [{icon:'💡',txt:'量化3号基金 NAV 偏差连续2日>0.2%，需关注',time:'25分钟前'},{icon:'📅',txt:'月度运营报表明日截止，数据采集已完成 85%',time:'1小时前'}],
+};
+
+/* ── 角色 → 任务角色 映射 ── */
+const ROLE_TO_TASK_ROLE = {
+  dev:'研效', hr:'HR', finance:'财务', legal:'法务', ops:'业务'
+};
+
+/* ── 角色 → 装备的 Skills ── */
+const ROLE_SKILL_MAP = {
+  dev:     ['code-review','debug-assist','doc-writer','test-case-gen','data-query','resume-screen'],
+  hr:      ['audio-to-insight','resume-screen','onboarding-flow'],
+  finance: ['financial-report','data-query','monitor-and-alert'],
+  legal:   ['contract-review'],
+  ops:     ['monitor-and-alert','data-query','system-operation'],
+};
+
+/* ── 角色专属 HIL 卡片内容 ── */
+const ROLE_HIL = {
+  dev: {title:'HIL 待审批 · PR 合并确认',body:'PR#2851 日志优化 已通过 Code Review，确认合并到 main 分支？',diff:[{add:'+ 优化日志级别判断逻辑'},{add:'+ 增加结构化日志字段'},{rm:'- 移除冗余 debug 输出'}],target:'GitLab · main 分支'},
+  hr: {title:'HIL 待审批 · 候选人信息写入',body:'面试评估结果即将写入招聘系统\n候选人：张晓雯 · 岗位：高级研发工程师',diff:[{add:'+ 综合评分: 4.2/5.0'},{add:'+ 推荐进入下一轮: true'},{add:'+ 重点考察: 系统设计能力'}],target:'招聘系统/候选人库'},
+  finance: {title:'HIL 待审批 · 对账差异确认',body:'3 笔大额差异项（>50万）需人工确认分类',diff:[{add:'+ 差异项 #127: ¥82.3万 — 归类为「跨期调整」'},{add:'+ 差异项 #131: ¥55.1万 — 归类为「银行手续费」'},{add:'+ 差异项 #145: ¥67.8万 — 待确认'}],target:'关账报告 · 差异清单'},
+  legal: {title:'HIL 待审批 · 合同修改确认',body:'XX资产管理合作协议修改建议已生成，请确认发送给对方',diff:[{add:'+ 第8条违约上限: 10% → 30%'},{add:'+ 第15条解约通知期: 7天 → 30天'},{rm:'- 第12条知识产权归属保持原文'}],target:'合同管理系统 · 修改对照表'},
+  ops: {title:'HIL 待审批 · 告警处置确认',body:'量化3号基金 NAV 偏差告警，建议标记为「已知风险-持续监控」',diff:[{add:'+ 处置方式: 持续监控（非计算异常）'},{add:'+ 监控频率: 提升至每小时'},{add:'+ 通知: 基金经理已告知'}],target:'监控系统 · 告警处置记录'},
+};
+
+/* ── 角色专属快捷工具（TasksPage 右侧面板） ── */
+const ROLE_TOOL = {
+  dev: {title:'🧪 即时 Code Review',placeholder:'粘贴代码，立即 AI Review...',btnLabel:'▶ 开始 Code Review',hint:'review'},
+  hr: {title:'📋 简历快速评估',placeholder:'粘贴候选人简历信息，快速生成评估...',btnLabel:'▶ 开始简历评估',hint:'简历'},
+  finance: {title:'📊 数据快速查询',placeholder:'输入查询需求，如「本月对账差异率多少」...',btnLabel:'▶ 查询数据',hint:'对账'},
+  legal: {title:'📜 条款快速检索',placeholder:'输入条款关键词或法规名称...',btnLabel:'▶ 检索条款',hint:'合同'},
+  ops: {title:'📈 指标快速查询',placeholder:'输入指标名称，如「今日 NAV 偏差」...',btnLabel:'▶ 查询指标',hint:'指标'},
+};
+
+const getNavGroups = (role) => {
+  const tr=ROLE_TO_TASK_ROLE[role||'dev'];
+  const roleTasks=TASKS.filter(t=>t.role===tr);
+  const roleNotifs=NOTIFS.filter(n=>n.role===tr);
+  return [
+    {label:'工作区',items:[
+      {id:'home',icon:'🏠',label:'工作台',badgeFn:()=>roleTasks.filter(t=>t.status==='hil').length||null},
+      {id:'tasks',icon:'📋',label:'任务列表',countFn:()=>String(roleTasks.length)},
+      {id:'project',icon:'🗂️',label:'项目空间'},
+      {id:'notifs',icon:'🔔',label:'通知中心',badgeFn:()=>roleNotifs.filter(n=>n.unread).length||null},
+    ]},
+    {label:'能力中心',items:[
+      {id:'skills',icon:'✨',label:'Skills 市场',countFn:()=>String((ROLE_SKILL_MAP[role||'dev']||[]).length)},
+      {id:'agent',icon:'🦞',label:'我的数字员工'},
+    ]},
+    {label:'管理',items:[
+      {id:'manager',icon:'📊',label:'管理者视图'},
+      {id:'settings',icon:'⚙️',label:'设置'},
+    ]},
+  ];
+};
+
+const PAGE_META={
+  home:   {title:'工作台',sub:'与数字员工对话，管理今日任务'},
+  tasks:  {title:'任务列表',sub:'查看执行过程与分身详情'},
+  project:{title:'项目空间',sub:'流程管理 · Workflow 模板 · 协作'},
+  notifs: {title:'通知中心',sub:'HIL 审批 · 主动触发 · 推送设置'},
+  skills: {title:'Skills 市场',sub:'浏览、使用、创建和分享 Skills'},
+  agent:  {title:'我的数字员工',sub:'能力体系 · 成就系统 · 进化时间线'},
+  manager:{title:'管理者视图',sub:'团队 AI 使用效率 · 隐私边界保护'},
+  settings:{title:'设置',sub:'API 配置 · 角色偏好 · 个性化'},
+};
+
+/* ───────────────────────────────
+   PAGE: 设置
+─────────────────────────────── */
+function SettingsPage({apiKey,setApiKey,agentName,setAgentName}){
+  const [saved,setSaved]=useState(false);
+  return(
+    <div className="page-in">
+      <div className="col-2">
+        <div>
+          <div className="section-label">基础配置</div>
+          <div className="card">
+            <div style={{marginBottom:16}}>
+              <div style={{fontWeight:500,fontSize:13,marginBottom:6}}>数字员工名称</div>
+              <input className="field" value={agentName} onChange={e=>setAgentName(e.target.value)} style={{width:'100%'}}/>
+              <div style={{fontSize:11,color:'var(--text-3)',marginTop:4}}>修改后将同步到所有页面的显示名称</div>
+            </div>
+            <div style={{marginBottom:16}}>
+              <div style={{fontWeight:500,fontSize:13,marginBottom:6}}>Claude API Key</div>
+              <input className="field" type="password" placeholder="sk-ant-..." value={apiKey}
+                onChange={e=>setApiKey(e.target.value)} style={{width:'100%'}}/>
+              <div style={{fontSize:11,color:'var(--text-3)',marginTop:4}}>
+                {apiKey?<span style={{color:'var(--green)'}}>✅ 已配置 · 真实 AI 模式</span>:'未配置时使用模拟模式，对话将返回预设响应'}
+              </div>
+            </div>
+            <div style={{marginBottom:16}}>
+              <div style={{fontWeight:500,fontSize:13,marginBottom:6}}>模型选择</div>
+              <select className="field" style={{width:'100%',cursor:'pointer'}}>
+                <option>claude-sonnet-4-20250514（推荐）</option>
+                <option>claude-3-5-haiku-20241022</option>
+                <option>claude-3-opus-20240229</option>
+              </select>
+            </div>
+            <button className="btn btn-primary" style={{width:'100%'}} onClick={()=>{showToast('⚙️ 设置已保存');setSaved(true);setTimeout(()=>setSaved(false),2000);}}>
+              {saved?'✅ 已保存':'保存设置'}
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <div className="section-label">系统集成</div>
+          <div className="card">
+            {[
+              {name:'飞书 Bot',icon:'💬',status:'已连接',desc:'消息推送 · HIL 审批 · 任务触发',color:'var(--green)'},
+              {name:'Jira',icon:'📋',status:'已连接',desc:'任务同步 · Sprint 数据 · Issue 追踪',color:'var(--green)'},
+              {name:'GitLab',icon:'🔧',status:'已连接',desc:'代码仓索引 · PR 事件 · CI/CD',color:'var(--green)'},
+              {name:'Confluence',icon:'📚',status:'已连接',desc:'文档 RAG · 知识库索引',color:'var(--green)'},
+              {name:'邮件系统',icon:'📧',status:'未连接',desc:'邮件通知 · 自动回复',color:'var(--text-3)'},
+              {name:'OA 系统',icon:'🏢',status:'未连接',desc:'审批流程 · 报销 · 考勤',color:'var(--text-3)'},
+            ].map((sys,i)=>(
+              <div key={i} style={{display:'flex',alignItems:'center',gap:10,padding:'10px 0',borderBottom:i<5?'1px solid var(--border)':'none'}}>
+                <div style={{fontSize:20,width:36,height:36,display:'flex',alignItems:'center',justifyContent:'center',background:'var(--surface-2)',borderRadius:8}}>{sys.icon}</div>
+                <div style={{flex:1}}>
+                  <div style={{fontWeight:500,fontSize:13}}>{sys.name}</div>
+                  <div style={{fontSize:11,color:'var(--text-3)'}}>{sys.desc}</div>
+                </div>
+                <Badge t={sys.status==='已连接'?'green':'gray'}>{sys.status}</Badge>
+              </div>
+            ))}
+          </div>
+
+          <div className="section-label" style={{marginTop:16}}>数据与隐私</div>
+          <div className="card">
+            {[
+              {label:'对话历史保留',desc:'保留最近 30 天的对话记录',enabled:true},
+              {label:'记忆自动沉淀',desc:'从任务执行中自动提取经验和偏好',enabled:true},
+              {label:'匿名化统计',desc:'管理者仅可查看匿名化的汇总数据',enabled:true},
+            ].map((r,i)=>(
+              <div key={i} style={{display:'flex',alignItems:'flex-start',gap:12,padding:'10px 0',borderBottom:i<2?'1px solid var(--border)':'none'}}>
+                <div style={{flex:1}}>
+                  <div style={{fontWeight:500,fontSize:13,marginBottom:2}}>{r.label}</div>
+                  <div style={{fontSize:11.5,color:'var(--text-3)'}}>{r.desc}</div>
+                </div>
+                <div style={{width:36,height:20,background:r.enabled?'var(--blue)':'var(--border-2)',borderRadius:10,cursor:'pointer',transition:'background .15s',position:'relative',flexShrink:0,marginTop:2}}>
+                  <div style={{position:'absolute',top:2,left:r.enabled?18:2,width:16,height:16,background:'#fff',borderRadius:'50%',transition:'left .15s',boxShadow:'0 1px 2px rgba(0,0,0,.2)'}}/>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ───────────────────────────────
+   APP ROOT
+─────────────────────────────── */
+function App(){
+  const [page,setPage]=useState('home');
+  const [apiKey,setApiKey]=useState('');
+  const [showKey,setShowKey]=useState(false);
+  const [agentName,setAgentName]=useState('小助手');
+  const [isLeader,setIsLeader]=useState(true); // Demo: default Leader mode
+  const [currentRole,setCurrentRole]=useState('dev');
+  const meta=PAGE_META[page];
+  const roleObj=ROLES.find(r=>r.id===currentRole)||ROLES[0];
+
+  const handleRoleChange=(newRole)=>{
+    setCurrentRole(newRole);
+    const r=ROLES.find(x=>x.id===newRole);
+    if(r)showToast(`🔄 已切换为: ${r.icon} ${r.label}（${r.person}）`,'info');
+  };
+
+  return(
+    <div className="app">
+      {/* Sidebar */}
+      <aside className="sidebar">
+        <div className="sidebar-head">
+          <div className="brand-row">
+            <div className="brand-logo">🤖</div>
+            <span className="brand-name">数字员工平台</span>
+          </div>
+          <div className="brand-org">Digital Employee · Web</div>
+          <div className="agent-strip" onClick={()=>setPage('agent')}>
+            <span className="agent-strip-icon">🦞</span>
+            <div className="agent-strip-info">
+              <div className="agent-strip-name">{agentName}</div>
+              <div className="agent-strip-status">
+                <div className="status-pulse"/>在线 · {TASKS.filter(t=>t.status==='running'&&t.role===ROLE_TO_TASK_ROLE[currentRole]).length} 任务运行中
+              </div>
+            </div>
+            <span style={{fontSize:10,color:'var(--amber-dim)'}}>Lv.4</span>
+          </div>
+        </div>
+
+        <nav className="sidebar-nav">
+          {getNavGroups(currentRole).map(g=>(
+            <div key={g.label} className="nav-group">
+              <div className="nav-group-label">{g.label}</div>
+              {g.items.map(n=>{
+                const badge=n.badgeFn?n.badgeFn():n.badge;
+                const count=n.countFn?n.countFn():n.count;
+                return(
+                <div key={n.id} className={`nav-item ${page===n.id?'active':''}`} onClick={()=>setPage(n.id)}>
+                  <span className="nav-icon">{n.icon}</span>
+                  <span className="nav-label">{n.label}</span>
+                  {badge&&<span className="nav-badge">{badge}</span>}
+                  {count&&<span className="nav-count">{count}</span>}
+                </div>
+                );
+              })}
+            </div>
+          ))}
+        </nav>
+
+        <div className="sidebar-foot">
+          <div className="xp-card" onClick={()=>setPage('agent')}>
+            <div className="xp-row">
+              <span className="xp-level">🤝 Lv.4 伙伴</span>
+              <span className="xp-val">3420 / 5000 XP</span>
+            </div>
+            <div className="xp-bar"><div className="xp-fill" style={{width:'68%'}}/></div>
+          </div>
+          {/* Leader toggle for demo */}
+          <div style={{marginTop:8,paddingTop:8,borderTop:'1px solid var(--border)'}}>
+            <div style={{fontSize:10,fontWeight:600,color:'var(--text-3)',textTransform:'uppercase',letterSpacing:'.06em',marginBottom:6}}>Demo 控制台</div>
+            <div style={{marginBottom:6}}>
+              <select style={{width:'100%',padding:'5px 8px',fontSize:11.5,borderRadius:6,border:'1px solid var(--border-2)',background:'var(--surface)',color:'var(--text)',cursor:'pointer',fontFamily:'var(--f-body)'}}
+                value={currentRole} onChange={e=>handleRoleChange(e.target.value)}>
+                {ROLES.map(r=><option key={r.id} value={r.id}>{r.icon} {r.label}（{r.person}）</option>)}
+              </select>
+            </div>
+            <div style={{display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+              <span style={{fontSize:11,color:'var(--text-3)'}}>Leader 权限</span>
+              <div className="toggle-sw" style={{background:isLeader?'var(--blue)':'var(--border-2)'}}
+                onClick={()=>setIsLeader(!isLeader)}>
+                <div className="toggle-knob" style={{left:isLeader?18:2}}/>
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      {/* Main */}
+      <main className="main">
+        <div className="topbar">
+          <div>
+            <span className="topbar-title">{meta.title}</span>
+            <span className="topbar-sub"> · {meta.sub}</span>
+          </div>
+          <div className="topbar-right">
+            <div style={{display:'flex',alignItems:'center',gap:7,padding:'4px 10px',background:'var(--surface-2)',border:'1px solid var(--border)',borderRadius:20,fontSize:12}}>
+              <span>{roleObj.icon}</span>
+              <span style={{fontWeight:600,color:'var(--ink)'}}>{roleObj.person}</span>
+              <span style={{color:'var(--text-3)'}}>{roleObj.dept}</span>
+            </div>
+            {showKey?(
+              <div className="api-banner">
+                <span style={{fontSize:13}}>🔑</span>
+                <input className="api-key-field" type="password" placeholder="sk-ant-..." value={apiKey}
+                  onChange={e=>setApiKey(e.target.value)} autoFocus/>
+                <button className="btn btn-ghost btn-sm" onClick={()=>setShowKey(false)}>完成</button>
+              </div>
+            ):(
+              <button className={`btn btn-sm ${apiKey?'btn-outline':''}`} onClick={()=>setShowKey(true)}
+                style={{fontSize:12,gap:5}}>
+                {apiKey
+                  ?<><span style={{color:'var(--green)'}}>●</span>真实 AI 已启用</>
+                  :<><span style={{color:'var(--amber)'}}>●</span>启用真实 AI</>}
+              </button>
+            )}
+          </div>
+        </div>
+
+        <div className="page-body">
+          {page==='home'&&<HomePage apiKey={apiKey} agentName={agentName} currentRole={currentRole}/>}
+          {page==='tasks'&&<TasksPage apiKey={apiKey} currentRole={currentRole}/>}
+          {page==='project'&&<ProjectPage currentRole={currentRole}/>}
+          {page==='notifs'&&<NotifPage currentRole={currentRole}/>}
+          {page==='skills'&&<SkillsPage currentRole={currentRole}/>}
+          {page==='agent'&&<AgentPage agentName={agentName} setAgentName={setAgentName}/>}
+          {page==='manager'&&<ManagerPage isLeader={isLeader}/>}
+          {page==='settings'&&<SettingsPage apiKey={apiKey} setApiKey={setApiKey} agentName={agentName} setAgentName={setAgentName}/>}
+        </div>
+      </main>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

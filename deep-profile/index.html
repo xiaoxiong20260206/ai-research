@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="description" content="单虓晗深度画像分析 - 基于8年67篇文章36.4万字的系统性分析">
+    <meta name="theme-color" content="#1A7F37">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    
+    <!-- 预加载关键资源 -->
+    <link rel="preload" href="styles.css" as="style">
+    <link rel="preload" href="section-1-identity.html" as="fetch" crossorigin>
+    
+    <!-- DNS预解析 -->
+    <link rel="dns-prefetch" href="https://www.jianshu.com">
+    
+    <title>深度认识单虓晗 - 系统性分析</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- 关键CSS内联 - 首屏渲染优化 -->
+    <style>
+        body { font-family: -apple-system, "system-ui", "Segoe UI", "Noto Sans SC", Helvetica, Arial, sans-serif; background: #FAFBFC; margin: 0; }
+        .container { max-width: 1000px; margin: 0 auto; padding: 24px 16px; }
+        .header { text-align: center; padding: 32px 16px; }
+        .tab-nav { display: flex; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+        .tab-nav::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <span class="header-badge">✦ 深度画像分析</span>
+            <h1 class="header-title">深度认识单虓晗</h1>
+            <p class="header-subtitle">
+                基于8年67篇文章、36.4万字的系统性分析，全面解读一个从程序世界觉醒、经哲学洗礼重建三观的思想者。他用"刻刀"雕刻世界真相，用"画笔"描绘生命意义，以系统黑客的姿态游戏人间。
+            </p>
+            <div class="header-meta">
+                <div class="header-meta-item">
+                    <span>📚</span>
+                    <span>文章：<strong>67篇</strong></span>
+                </div>
+                <div class="header-meta-item">
+                    <span>✍️</span>
+                    <span>字数：<strong>36.4万</strong></span>
+                </div>
+                <div class="header-meta-item">
+                    <span>📅</span>
+                    <span>跨度：<strong>2017-2025</strong></span>
+                </div>
+                <div class="header-meta-item">
+                    <span>📖</span>
+                    <span>专栏：<strong>7+系列</strong></span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Summary Box -->
+        <div class="summary-box">
+            <div class="summary-label">核心画像</div>
+            <h2 class="summary-title">
+                一个从程序世界觉醒的<em>哲学行者</em>，用8年时间构建了融合东西方智慧的认知体系，在求真与求存之间找到平衡，以<em>系统黑客</em>的姿态游戏人间。
+            </h2>
+            <p class="summary-text">
+                他是资深程序员出身的技术管理者，更是一个持续探索人生意义的思想者。他用"刻刀"雕刻世界真相，用"画笔"描绘生命意义，在理性与感性之间自由切换，点亮灯塔照亮后来者。他的两大核心超能力是：<strong>庖丁解牛</strong>（发现事物运作原理）与<strong>小无相功</strong>（极速学习与复刻）。
+            </p>
+        </div>
+
+        <!-- Tab Navigation -->
+        <nav class="tab-nav" role="navigation" aria-label="章节导航">
+            <button class="tab-btn active" data-tab="section-1" aria-selected="true">
+                <span class="tab-btn-num">1</span>
+                <span class="tab-btn-text">身份演化</span>
+            </button>
+            <button class="tab-btn" data-tab="section-2" aria-selected="false">
+                <span class="tab-btn-num">2</span>
+                <span class="tab-btn-text">认知框架</span>
+            </button>
+            <button class="tab-btn" data-tab="section-3" aria-selected="false">
+                <span class="tab-btn-num">3</span>
+                <span class="tab-btn-text">人生哲学</span>
+            </button>
+            <button class="tab-btn" data-tab="section-4" aria-selected="false">
+                <span class="tab-btn-num">4</span>
+                <span class="tab-btn-text">方法论</span>
+            </button>
+            <button class="tab-btn" data-tab="section-5" aria-selected="false">
+                <span class="tab-btn-num">5</span>
+                <span class="tab-btn-text">个人世界</span>
+            </button>
+            <button class="tab-btn" data-tab="section-6" aria-selected="false">
+                <span class="tab-btn-num">6</span>
+                <span class="tab-btn-text">工作经历</span>
+            </button>
+            <button class="tab-btn" data-tab="section-7" aria-selected="false">
+                <span class="tab-btn-num">7</span>
+                <span class="tab-btn-text">AI"算命"</span>
+            </button>
+            <button class="tab-btn" data-tab="section-8" aria-selected="false">
+                <span class="tab-btn-num">附</span>
+                <span class="tab-btn-text">了解他的文章</span>
+            </button>
+        </nav>
+
+        <!-- Tab Panels Container -->
+        <div id="tab-panels">
+            <!-- 章节内容将通过JavaScript动态加载 -->
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p class="footer-text">
+                基于多渠道内容的深度分析 · 2017-2026<br>
+                <span style="font-size: 12px; color: #6E7781;">
+                    📖 <a href="https://www.jianshu.com/u/1eedc2e891da" target="_blank">简书</a> · 
+                    ⭐ <a href="https://wx.zsxq.com/group/48888545458128" target="_blank">研发效能知识星球</a> · 
+                    🎤 <a href="https://mp.weixin.qq.com/s/240vyThBVwsPYpiS5niDyg" target="_blank">QECon演讲</a> · 
+                    🌐 行业峰会
+                </span>
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        // 章节文件列表
+        const sections = [
+            'section-1-identity.html',
+            'section-2-cognitive.html',
+            'section-3-philosophy.html',
+            'section-4-methodology.html',
+            'section-5-personal.html',
+            'section-6-work.html',
+            'section-7-ai-view.html',
+            'section-appendix-articles.html'
+        ];
+
+        // 并行加载所有章节（性能优化）
+        async function loadSections() {
+            const container = document.getElementById('tab-panels');
+            
+            // 显示加载状态
+            container.innerHTML = `
+                <div class="loading-state" style="text-align:center;padding:48px;color:#6E7781;">
+                    <div class="loading-spinner" style="width:32px;height:32px;border:3px solid #EAEEF2;border-top-color:#1A7F37;border-radius:50%;margin:0 auto 16px;animation:spin 0.8s linear infinite;"></div>
+                    <p style="font-size:14px;">正在加载内容...</p>
+                </div>
+            `;
+            
+            try {
+                // 并行请求所有章节
+                const responses = await Promise.all(
+                    sections.map(section => 
+                        fetch(section).then(res => res.ok ? res.text() : '')
+                    )
+                );
+                
+                // 一次性渲染所有内容
+                container.innerHTML = responses.join('');
+                
+                // 初始化Tab切换
+                initTabs();
+            } catch (error) {
+                console.error('Failed to load sections:', error);
+                container.innerHTML = '<p style="text-align:center;color:#CF222E;padding:32px;">加载失败，请刷新页面重试</p>';
+            }
+        }
+
+        // 初始化Tab切换
+        function initTabs() {
+            const tabNav = document.querySelector('.tab-nav');
+            const buttons = document.querySelectorAll('.tab-btn');
+            const panels = document.querySelectorAll('.tab-panel');
+            
+            buttons.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    switchTab(btn, buttons, panels, tabNav);
+                });
+                
+                // 键盘无障碍支持
+                btn.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        switchTab(btn, buttons, panels, tabNav);
+                    }
+                });
+            });
+        }
+        
+        function switchTab(btn, buttons, panels, tabNav) {
+            // 移除所有active
+            buttons.forEach(b => {
+                b.classList.remove('active');
+                b.setAttribute('aria-selected', 'false');
+            });
+            panels.forEach(p => p.classList.remove('active'));
+            
+            // 添加active
+            btn.classList.add('active');
+            btn.setAttribute('aria-selected', 'true');
+            const panel = document.getElementById(btn.dataset.tab);
+            if (panel) {
+                panel.classList.add('active');
+                
+                // 确保选中的Tab按钮在可视区域内
+                btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                
+                // 平滑滚动到内容区域（移动端友好）
+                requestAnimationFrame(() => {
+                    tabNav.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                });
+            }
+        }
+
+        // 页面加载完成后执行
+        document.addEventListener('DOMContentLoaded', loadSections);
+    </script>
+    
+    <!-- 加载动画CSS -->
+    <style>
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</body>
+</html>

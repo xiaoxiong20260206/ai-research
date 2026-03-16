@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>企业数字员工平台 Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Figtree:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#F8F9FB;--surface:#fff;--border:#E5E7EB;--ink:#1A1D21;--text-2:#6B7280;--text-3:#9CA3AF;--blue:#3B82F6;--blue-bg:#EFF6FF;--amber:#D97706;--amber-bg:#FFFBEB;--green:#059669;--purple:#7C3AED;--radius:12px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Figtree','PingFang SC','Microsoft YaHei',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px 20px}
+.container{max-width:720px;width:100%;text-align:center}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;background:var(--amber-bg);border:1px solid #FCD34D;border-radius:20px;font-size:12px;color:var(--amber);font-weight:600;margin-bottom:16px}
+h1{font-family:'Sora',sans-serif;font-size:32px;font-weight:800;letter-spacing:-.02em;margin-bottom:8px;background:linear-gradient(135deg,var(--ink),#374151);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.sub{font-size:15px;color:var(--text-2);line-height:1.6;margin-bottom:36px;max-width:500px;margin-left:auto;margin-right:auto}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:32px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px 24px;text-align:left;cursor:pointer;transition:all .18s ease;text-decoration:none;color:var(--ink);position:relative;overflow:hidden}
+.card:hover{border-color:var(--blue);box-shadow:0 8px 24px rgba(59,130,246,.12);transform:translateY(-2px)}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--blue),var(--purple));opacity:0;transition:opacity .18s}
+.card:hover::before{opacity:1}
+.card-icon{font-size:36px;margin-bottom:14px;display:block}
+.card-title{font-family:'Sora',sans-serif;font-size:17px;font-weight:700;margin-bottom:6px}
+.card-desc{font-size:13px;color:var(--text-2);line-height:1.6;margin-bottom:14px}
+.card-tags{display:flex;gap:5px;flex-wrap:wrap}
+.tag{padding:2px 8px;background:var(--bg);border:1px solid var(--border);border-radius:20px;font-size:11px;color:var(--text-2)}
+.tag-blue{background:var(--blue-bg);border-color:#BFDBFE;color:var(--blue)}
+.features{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:36px}
+.feat{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center}
+.feat-icon{font-size:24px;margin-bottom:6px}
+.feat-label{font-size:12px;font-weight:600;color:var(--text-2)}
+.footer{font-size:12px;color:var(--text-3);line-height:1.8}
+.footer a{color:var(--blue);text-decoration:none}
+.footer a:hover{text-decoration:underline}
+@media(max-width:600px){.cards{grid-template-columns:1fr}.features{grid-template-columns:repeat(2,1fr)}h1{font-size:24px}}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="badge">🤖 AI-Powered Demo</div>
+  <h1>企业数字员工平台</h1>
+  <p class="sub">AI 驱动的企业级数字员工 — 展示"千人千面"的个性化工作台体验<br/>支持 5 种角色切换，覆盖研发、HR、财务、法务、运营场景</p>
+
+  <div class="cards">
+    <a class="card" href="digital_employee_web_v2.html">
+      <span class="card-icon">🖥️</span>
+      <div class="card-title">Web 工作台 Demo</div>
+      <div class="card-desc">完整的数字员工平台界面，包含工作台、任务列表、Skills 市场、项目空间、管理者视图等 8 个页面。</div>
+      <div class="card-tags">
+        <span class="tag tag-blue">千人千面</span>
+        <span class="tag">HIL 审批</span>
+        <span class="tag">Workflow</span>
+        <span class="tag">成长体系</span>
+      </div>
+    </a>
+    <a class="card" href="feishu_bot_demo.html">
+      <span class="card-icon">💬</span>
+      <div class="card-title">飞书机器人 Demo</div>
+      <div class="card-desc">模拟飞书 Bot 对话界面，展示卡片消息、HIL 审批交互、主动触发通知等 IM 端场景。</div>
+      <div class="card-tags">
+        <span class="tag tag-blue">对话交互</span>
+        <span class="tag">卡片消息</span>
+        <span class="tag">HIL 审批</span>
+        <span class="tag">快捷操作</span>
+      </div>
+    </a>
+  </div>
+
+  <div class="features">
+    <div class="feat"><div class="feat-icon">🎭</div><div class="feat-label">5 种角色切换</div></div>
+    <div class="feat"><div class="feat-icon">⏸</div><div class="feat-label">HIL 人机协作</div></div>
+    <div class="feat"><div class="feat-icon">✨</div><div class="feat-label">12 个 AI Skills</div></div>
+    <div class="feat"><div class="feat-icon">🔄</div><div class="feat-label">10 个 Workflow</div></div>
+    <div class="feat"><div class="feat-icon">📊</div><div class="feat-label">管理者视图</div></div>
+    <div class="feat"><div class="feat-icon">🏆</div><div class="feat-label">成就系统</div></div>
+  </div>
+
+  <div class="footer">
+    <strong>使用方式</strong>：打开任一 Demo → 底部「Demo 控制台」切换角色 → 体验个性化内容<br/>
+    <a href="https://github.com/my-ai-research-lab/digital-employee-demo" target="_blank">GitHub</a> · 纯前端实现 · 零依赖
+  </div>
+</div>
+</body>
+</html>
