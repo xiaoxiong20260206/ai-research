@@ -1,0 +1,1716 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>快手AI员工架构 - AI产品终极形态思考</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23059669'/><path d='M16 6c-4.4 0-8 3.6-8 8 0 2.5 1.2 4.8 3 6.2V24l5-3 5 3v-3.8c1.8-1.4 3-3.7 3-6.2 0-4.4-3.6-8-8-8z' fill='none' stroke='white' stroke-width='2' stroke-linejoin='round'/><line x1='16' y1='10' x2='16' y2='15' stroke='white' stroke-width='2' stroke-linecap='round'/><circle cx='16' cy='18' r='1' fill='white'/></svg>">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+/* === Navigation === */
+.site-nav { display:flex; gap:4px; justify-content:center; background:rgba(255,255,255,0.9); backdrop-filter:blur(20px); border:1px solid rgba(255,255,255,0.7); border-radius:14px; padding:5px; margin-bottom:24px; position:sticky; top:12px; z-index:100; box-shadow:0 4px 20px rgba(0,0,0,.08); max-width:960px; margin-left:auto; margin-right:auto; }
+.site-nav a { flex:1; text-align:center; padding:10px 12px; border-radius:10px; font-size:13px; font-weight:500; color:#78716C; text-decoration:none; transition:all .2s; white-space:nowrap; }
+.site-nav a:hover { background:#F5F5F4; color:#44403C; }
+.site-nav a.active { background:linear-gradient(135deg,#059669 0%,#10B981 100%); color:#fff; font-weight:600; box-shadow:0 2px 8px rgba(5,150,105,.3); }
+
+/* === Page Header === */
+.page-header { text-align:center; padding:32px 20px; margin-bottom:24px; background:linear-gradient(135deg, rgba(5,150,105,0.06) 0%, rgba(37,99,235,0.04) 100%); border-radius:18px; }
+.page-badge { display:inline-block; padding:6px 14px; background:linear-gradient(135deg,#059669,#10B981); color:white; border-radius:20px; font-size:12px; font-weight:600; margin-bottom:12px; }
+.page-title { font-size:28px; font-weight:800; color:#1C1917; margin-bottom:8px; letter-spacing:-0.02em; }
+.page-subtitle { font-size:15px; color:#78716C; }
+
+/* === Footer === */
+.footer { text-align:center; padding:24px 0; color:#A8A29E; font-size:12px; border-top:1px solid #E7E5E4; margin-top:32px; }
+
+/* ============================================================
+   快手AI员工架构图 — 完整样式
+   ============================================================ */
+
+/* ---------- design tokens ---------- */
+:root {
+    --emerald:  #059669;
+    --emerald-l:#10B981;
+    --emerald-50:#ECFDF5;
+    --blue:     #2563EB;
+    --blue-l:   #3B82F6;
+    --blue-50:  #EFF6FF;
+    --violet:   #7C3AED;
+    --violet-50:#F5F3FF;
+    --rose:     #E11D48;
+    --rose-50:  #FFF1F2;
+    --amber:    #D97706;
+    --amber-50: #FFFBEB;
+
+    --ink:      #1C1917;
+    --ink-2:    #44403C;
+    --ink-3:    #78716C;
+    --ink-4:    #A8A29E;
+    --border:   #E7E5E4;
+    --border-l: #F5F5F4;
+    --bg:       #F8FAFB;
+    --card:     #FFFFFF;
+
+    --font: -apple-system, 'SF Pro Display', 'PingFang SC', 'Noto Sans SC', sans-serif;
+    --max-w: 1200px;
+    --r-sm: 10px; --r-md: 14px; --r-lg: 18px; --r-xl: 24px;
+}
+
+/* ---------- reset & base ---------- */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+    font-family: var(--font);
+    font-size: 15px;
+    line-height: 1.75;
+    color: var(--ink-2);
+    background: var(--bg);
+    background-image:
+        radial-gradient(ellipse at 15% 8%, rgba(5,150,105,.07) 0%, transparent 55%),
+        radial-gradient(ellipse at 85% 70%, rgba(37,99,235,.05) 0%, transparent 55%),
+        radial-gradient(ellipse at 50% 50%, rgba(124,58,237,.03) 0%, transparent 60%);
+    background-attachment: fixed;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ---------- layout ---------- */
+.container { max-width: var(--max-w); margin: 0 auto; padding: 24px; }
+.wrap { max-width: 100%; margin: 0 auto; padding: 0; }
+
+/* ---------- fade-in animation ---------- */
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(5,150,105,.15); }
+    50%      { box-shadow: 0 0 0 8px rgba(5,150,105,0); }
+}
+
+/* ---------- chapter ---------- */
+.chapter {
+    margin-bottom: 48px;
+    scroll-margin-top: 72px;
+    animation: fadeUp .5s ease-out;
+}
+
+.chapter-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
+.chapter-label.violet  { color: var(--violet); }
+
+.chapter h2 {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--ink);
+    letter-spacing: -.02em;
+    margin-bottom: 8px;
+}
+
+.chapter-lead {
+    font-size: 16px;
+    color: var(--ink-3);
+    margin-bottom: 22px;
+    line-height: 1.65;
+}
+
+#archPage { max-width: 100%; margin: 0 auto; }
+#ch6 { max-width: 100%; }
+#ch6 .chapter-lead { max-width: 680px; }
+
+/* ============================================================
+   泳道架构样式
+   ============================================================ */
+
+/* --- user segments + products in aligned columns --- */
+.touch-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto 1fr;
+    gap: 10px;
+    margin-bottom: 10px;
+    position: relative;
+}
+.touch-col {
+    display: grid;
+    grid-row: span 2;
+    grid-template-rows: subgrid;
+    gap: 10px;
+}
+.user-seg {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    position: relative;
+    border-radius: 10px;
+    border: 2px solid transparent;
+    box-shadow: 0 1px 4px rgba(0,0,0,.04);
+    transition: all .3s cubic-bezier(.4,0,.2,1);
+    cursor: default;
+}
+.user-seg:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0,0,0,.08);
+}
+.user-seg-eng {
+    background: linear-gradient(150deg, #F8FBFF 0%, #DBEAFE 100%);
+    border-color: rgba(37,99,235,.3);
+}
+.user-seg-all {
+    background: linear-gradient(150deg, #FAF8FF 0%, #EDE9FE 100%);
+    border-color: rgba(124,58,237,.25);
+}
+.user-seg-icon { font-size: 24px; flex-shrink: 0; }
+.user-seg-title { font-size: 15px; font-weight: 800; color: var(--ink); letter-spacing: -.01em; }
+.user-seg-desc { font-size: 11px; color: var(--ink-3); margin-top: 2px; letter-spacing: .01em; }
+
+/* --- swimlane container --- */
+.arch-swimlanes {
+    display: grid;
+    grid-template-columns: 55fr 45fr;
+    gap: 0;
+    position: relative;
+    margin-bottom: 0;
+    border: 2px solid var(--border);
+    border-radius: 20px;
+    overflow: visible;
+    box-shadow:
+        0 2px 8px rgba(0,0,0,.03),
+        0 12px 40px rgba(0,0,0,.06);
+}
+
+/* --- object-level mapping SVG overlay --- */
+#mappingSvg {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 50;
+}
+
+/* --- lane --- */
+.arch-lane { position: relative; z-index: 1; }
+.arch-lane:hover { z-index: 2; }
+.arch-lane-hd { color: #fff; padding: 16px 22px; text-align: center; min-height: 80px; display: flex; flex-direction: column; justify-content: center; }
+.arch-lane:first-child .arch-lane-hd { border-radius: 18px 0 0 0; }
+.arch-lane:last-child .arch-lane-hd { border-radius: 0 18px 0 0; }
+.arch-lane-title { font-size: 17px; font-weight: 700; letter-spacing: .01em; }
+.arch-lane-sub { font-size: 12px; opacity: .85; margin-top: 3px; letter-spacing: .02em; }
+.arch-lane-bd {
+    padding: 18px;
+    background: #FAFBFC;
+    display: flex;
+    flex-direction: column;
+}
+.arch-lane:first-child .arch-lane-bd {
+    border-right: 1px dashed rgba(0,0,0,.08);
+    border-radius: 0 0 0 18px;
+}
+.arch-lane:last-child .arch-lane-bd {
+    border-radius: 0 0 18px 0;
+}
+
+/* --- layer section --- */
+.arch-lv {
+    margin-bottom: 10px;
+    background: var(--card);
+    border-radius: 14px;
+    padding: 14px 16px;
+    border-left: 4px solid var(--lv-color);
+    box-shadow: 0 1px 4px rgba(0,0,0,.04);
+    transition: box-shadow .3s;
+    position: relative;
+}
+.arch-lv-group {
+    margin-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: var(--card);
+    border-radius: 14px;
+    padding: 10px;
+    border-left: 4px solid #059669;
+    box-shadow: 0 1px 4px rgba(0,0,0,.04);
+}
+.arch-lv-group > .arch-lv {
+    margin-bottom: 0;
+    border-left: none;
+    box-shadow: none;
+    background: rgba(5, 150, 105, .04);
+    border: 1px solid rgba(5, 150, 105, .12);
+}
+.arch-lv-group > .arch-lv:hover {
+    box-shadow: 0 2px 12px rgba(0,0,0,.05);
+}
+.arch-lv:last-child { margin-bottom: 0; }
+.arch-lv-group:last-child { margin-bottom: 0; }
+.arch-lv:hover { box-shadow: 0 4px 18px rgba(0,0,0,.07); }
+.arch-lv:has(.arch-mod:hover),
+.arch-lv:has(.arch-evolution:hover),
+.arch-lv:has(.cloud-agent-bar:hover),
+.arch-lv:has(.scene-tag:hover) { z-index: 9000 !important; }
+.arch-lane:has(.arch-mod:hover),
+.arch-lane:has(.arch-evolution:hover),
+.arch-lane:has(.cloud-agent-bar:hover),
+.arch-lane:has(.scene-tag:hover) { z-index: 9000 !important; }
+.arch-lv-label {
+    font-size: 14px; font-weight: 700; color: var(--lv-color);
+    margin-bottom: 10px; padding-bottom: 8px;
+    border-bottom: 1px solid var(--border-l);
+    letter-spacing: .01em;
+}
+
+/* ============================================================
+   产品卡片和触点样式
+   ============================================================ */
+
+/* --- touchpoint product split (inside touch-col) --- */
+.touch-product {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: visible;
+    background: #fff;
+    transition: all .25s;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+.touch-product:hover { box-shadow: 0 4px 16px rgba(0,0,0,.06); transform: translateY(-1px); }
+.touch-product-hd {
+    padding: 10px 12px;
+    font-size: 14px;
+    font-weight: 800;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    flex-wrap: wrap;
+}
+.touch-product-hd.cf {
+    background: linear-gradient(150deg, var(--blue) 0%, var(--blue-l) 100%);
+    border-radius: 12px 12px 0 0;
+}
+.touch-product-hd.ka {
+    background: linear-gradient(150deg, var(--violet) 0%, #8B5CF6 100%);
+    border-radius: 12px 12px 0 0;
+}
+.touch-product-sub {
+    font-size: 11px;
+    font-weight: 600;
+    opacity: .85;
+    width: 100%;
+}
+.touch-product .arch-mods {
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.touch-product .arch-mod-mini {
+    text-align: left;
+}
+.touch-product .arch-mod-mini .arch-mod-nm {
+    font-size: 12px;
+    gap: 4px;
+}
+.touch-product .arch-mod-mini .arch-mod-nm span { font-size: 13px; }
+.touch-product .arch-mod-mini .arch-mod-ds { font-size: 11px; }
+
+/* MyFlicker horizontal layout */
+.arch-mods-horizontal {
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: stretch !important;
+}
+.arch-mods-horizontal .arch-mod-mini {
+    flex: 1 1 0;
+    min-width: 0;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 8px;
+}
+.arch-mods-horizontal .arch-mod-mini .arch-mod-nm {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 0;
+    line-height: 1.3;
+    white-space: nowrap;
+}
+.arch-mods-horizontal .arch-mod-mini .arch-mod-nm span {
+    font-size: 22px;
+    display: block;
+    line-height: 1;
+}
+/* CodeFlicker single-card: match MyFlicker row height */
+.touch-cf .arch-mods {
+    flex: 1;
+}
+.touch-cf .arch-mod-mini {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.touch-product .arch-mods {
+    flex: 1;
+}
+.touch-product .arch-mods-horizontal {
+    flex: 1;
+}
+
+/* CodeFlicker → MyFlicker connection arrow */
+.cf-to-myflicker-arrow {
+    display: none;
+}
+
+/* Cloud Code Agent bar */
+.cloud-agent-bar {
+    margin-top: 10px;
+    padding: 12px 16px !important;
+    background: linear-gradient(150deg, #EFF6FF 0%, #DBEAFE 50%, #BFDBFE 100%) !important;
+    border: 2px solid rgba(37,99,235,.25) !important;
+    border-radius: 12px !important;
+    cursor: pointer;
+    position: relative;
+}
+.cloud-agent-bar:hover {
+    border-color: var(--blue) !important;
+    box-shadow: 0 4px 14px rgba(37,99,235,.1) !important;
+    transform: translateY(-1px) !important;
+}
+.cloud-agent-inner {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+.cloud-agent-icon {
+    font-size: 24px;
+    flex-shrink: 0;
+}
+.cloud-agent-title {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--blue);
+    letter-spacing: .01em;
+}
+.cloud-agent-desc {
+    font-size: 12.5px;
+    color: var(--ink-3);
+    margin-top: 3px;
+    line-height: 1.5;
+}
+
+/* ============================================================
+   模块卡片和工具提示样式
+   ============================================================ */
+
+/* --- module cards --- */
+.arch-mods { display: flex; flex-direction: column; gap: 7px; }
+.arch-mods-row { flex-direction: row; flex-wrap: wrap; }
+.arch-mods-row .arch-mod-mini { flex: 1 1 0; min-width: 0; text-align: center; }
+.arch-mods-row .arch-mod-mini .arch-mod-nm { justify-content: center; font-size: 12px; gap: 5px; margin-bottom: 2px; }
+.arch-mods-row .arch-mod-mini .arch-mod-nm span { font-size: 15px; }
+.arch-mods-row .arch-mod-mini .arch-mod-ds { font-size: 11px; text-align: center; color: var(--ink-4); }
+
+.arch-mods-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.arch-mods-grid .arch-mod { text-align: center; padding: 12px 10px; }
+.arch-mods-grid .arch-mod .arch-mod-nm { justify-content: center; font-size: 12px; gap: 5px; margin-bottom: 3px; }
+.arch-mods-grid .arch-mod .arch-mod-nm span { font-size: 16px; }
+.arch-mods-grid .arch-mod .arch-mod-ds { font-size: 11px; text-align: center; color: var(--ink-4); }
+
+/* AgentCore special */
+.arch-lv-agentcore { border-left-width: 4px; background: linear-gradient(135deg, #ECFDF5 0%, #fff 100%); }
+
+/* Agent能力层 special */
+.arch-lv-agent {
+    border-left-width: 4px;
+    background: linear-gradient(135deg, #F5F3FF 0%, #fff 100%);
+    padding: 14px 16px;
+}
+
+/* Agent sub-layers */
+.agent-sub-layer {
+    background: rgba(124,58,237,.04);
+    border: 1px solid rgba(124,58,237,.12);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+    overflow: visible;
+}
+.agent-sub-layer:last-child { margin-bottom: 0; }
+.agent-sub-label {
+    font-size: 12px; font-weight: 700;
+    color: var(--violet);
+    margin-bottom: 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px dashed rgba(124,58,237,.15);
+}
+
+/* Scene tags */
+.scene-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.scene-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 5px 14px;
+    background: linear-gradient(135deg, #F5F3FF 0%, #EDE9FE 100%);
+    border: 1px solid rgba(124,58,237,.15);
+    border-radius: 16px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--violet);
+    transition: all .2s ease;
+    cursor: default;
+    position: relative;
+}
+.scene-tag:hover {
+    background: linear-gradient(135deg, #EDE9FE 0%, #DDD6FE 100%);
+    border-color: rgba(124,58,237,.3);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(124,58,237,.12);
+    z-index: 9990;
+}
+
+/* scene tag tooltip */
+.scene-tip {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%) translateY(6px);
+    width: 200px;
+    background: #fff;
+    border: 1px solid rgba(124,58,237,.15);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(124,58,237,.12), 0 2px 6px rgba(0,0,0,.06);
+    pointer-events: none;
+    z-index: 99999;
+    opacity: 0; visibility: hidden;
+    transition: opacity .22s cubic-bezier(.25,1,.5,1),
+                visibility .22s cubic-bezier(.25,1,.5,1),
+                transform .22s cubic-bezier(.25,1,.5,1);
+}
+.scene-tip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: #fff;
+}
+.scene-tag:hover .scene-tip { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
+.scene-tip-title {
+    padding: 8px 12px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #fff;
+    background: linear-gradient(135deg, var(--violet) 0%, #8B5CF6 100%);
+}
+.scene-tip ul {
+    list-style: none;
+    padding: 8px 12px;
+    margin: 0;
+}
+.scene-tip ul li {
+    font-size: 12px;
+    color: var(--ink-2);
+    padding: 3px 0;
+    position: relative;
+    padding-left: 12px;
+}
+.scene-tip ul li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 9px;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--violet);
+    opacity: .4;
+}
+.scene-tip ul li.more {
+    color: var(--ink-4);
+    font-style: italic;
+    text-align: center;
+    padding-left: 0;
+    padding-top: 2px;
+}
+.scene-tip ul li.more::before { display: none; }
+
+/* self-evolution engine bar */
+.arch-evolution {
+    display: flex; align-items: center; gap: 12px;
+    margin-top: 10px; padding: 12px 14px;
+    background: linear-gradient(150deg, var(--emerald) 0%, #10B981 50%, #059669 100%);
+    border-radius: 12px;
+    cursor: pointer; position: relative;
+    transition: all .25s cubic-bezier(.4,0,.2,1);
+}
+.arch-evolution:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(5,150,105,.25); z-index: 9990 !important; }
+.arch-evolution-icon { font-size: 24px; flex-shrink: 0; }
+.arch-evolution-title { font-size: 14px; font-weight: 800; color: #fff; letter-spacing: .01em; }
+.arch-evolution-desc { font-size: 12px; color: rgba(255,255,255,.85); margin-top: 2px; }
+
+/* module card */
+.arch-mod {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 14px;
+    cursor: pointer; position: relative;
+    transition: all .2s cubic-bezier(.25,1,.5,1);
+    box-shadow: 0 1px 3px rgba(0,0,0,.04);
+}
+.arch-mod:hover {
+    border-color: var(--lv-color); z-index: 9990 !important;
+    transform: translateY(-1px); box-shadow: 0 4px 16px rgba(0,0,0,.07);
+}
+.arch-mod-nm { font-size: 13px; font-weight: 700; color: var(--ink); display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+.arch-mod-nm span { font-size: 15px; }
+.arch-mod-ds { font-size: 12px; color: var(--ink-3); line-height: 1.5; }
+.arch-mod-tags { margin-top: 8px; display: flex; gap: 6px; flex-wrap: wrap; }
+.arch-tag { display: inline-flex; padding: 3px 10px; border-radius: 8px; font-size: 11px; font-weight: 600; }
+.arch-tag.logic { background: var(--blue-50); color: var(--blue); }
+.arch-tag.phys  { background: var(--amber-50); color: var(--amber); }
+
+/* ============================================================
+   工具提示样式
+   ============================================================ */
+
+/* --- tooltip --- */
+.arch-mod .arch-tip {
+    position: absolute; z-index: 99999;
+    bottom: calc(100% + 8px); width: 360px; max-width: 90vw;
+    background: #fff; border: 1px solid rgba(0,0,0,.1);
+    border-radius: var(--r-lg); overflow: hidden;
+    box-shadow: 0 8px 30px rgba(0,0,0,.12), 0 2px 8px rgba(0,0,0,.06);
+    pointer-events: none;
+    opacity: 0; visibility: hidden;
+    transform: translateY(6px);
+    transition: opacity .22s cubic-bezier(.25,1,.5,1),
+                visibility .22s cubic-bezier(.25,1,.5,1),
+                transform .22s cubic-bezier(.25,1,.5,1);
+}
+.arch-mod .arch-tip::after {
+    content: ''; position: absolute; top: 100%;
+    border: 7px solid transparent; border-top-color: #fff;
+}
+.arch-mod:hover .arch-tip { opacity: 1; visibility: visible; transform: translateY(0); }
+.arch-tip-hd { padding: 12px 16px; font-size: 14px; font-weight: 700; color: #fff; background: var(--lv-color, var(--emerald)); }
+.arch-tip-bd { padding: 14px 16px; font-size: 13px; line-height: 1.75; color: var(--ink-2); }
+.arch-tip-bd p { margin: 0 0 8px; }
+.arch-tip-bd ul { margin: 0; padding: 0; list-style: none; }
+.arch-tip-bd ul li { position: relative; padding-left: 16px; margin-bottom: 5px; }
+.arch-tip-bd ul li::before {
+    content: ''; position: absolute; left: 2px; top: 8px;
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--lv-color, var(--emerald)); opacity: .6;
+}
+.arch-tip-ft { padding: 10px 16px; background: var(--bg); border-top: 1px solid var(--border-l); font-size: 12px; color: var(--ink-3); font-style: italic; }
+
+/* tooltip position: left lane */
+.arch-lane:first-child .arch-mod .arch-tip { left: 0; right: auto; }
+.arch-lane:first-child .arch-mod .arch-tip::after { left: 30px; }
+.arch-lane:first-child .arch-mods-row .arch-mod .arch-tip,
+.arch-lane:first-child .arch-mods-grid .arch-mod .arch-tip { left: 0; right: auto; transform: none; }
+.arch-lane:first-child .arch-mods-row .arch-mod .arch-tip::after,
+.arch-lane:first-child .arch-mods-grid .arch-mod .arch-tip::after { left: 30px; transform: none; }
+/* tooltip in touch-product */
+.touch-product .arch-mod .arch-tip { left: 0; right: auto; }
+.touch-product .arch-mod .arch-tip::after { left: 30px; }
+/* tooltip position: right lane */
+.arch-lane:last-child .arch-mod .arch-tip { left: auto; right: 0; }
+.arch-lane:last-child .arch-mod .arch-tip::after { left: auto; right: 30px; }
+
+/* cloud-agent-bar tooltip */
+.cloud-agent-bar .arch-tip {
+    position: absolute;
+    z-index: 99999;
+    bottom: calc(100% + 8px);
+    left: 0;
+    width: 400px;
+    max-width: 90vw;
+    background: #fff;
+    border: 1px solid rgba(0,0,0,.1);
+    border-radius: var(--r-lg);
+    overflow: hidden;
+    box-shadow: 0 8px 30px rgba(0,0,0,.12), 0 2px 8px rgba(0,0,0,.06);
+    pointer-events: none;
+    opacity: 0; visibility: hidden;
+    transform: translateY(6px);
+    transition: opacity .22s cubic-bezier(.25,1,.5,1),
+                visibility .22s cubic-bezier(.25,1,.5,1),
+                transform .22s cubic-bezier(.25,1,.5,1);
+}
+.cloud-agent-bar .arch-tip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 30px;
+    border: 7px solid transparent;
+    border-top-color: #fff;
+}
+.cloud-agent-bar:hover .arch-tip { opacity: 1; visibility: visible; transform: translateY(0); }
+.cloud-agent-bar .arch-tip .arch-tip-hd { background: var(--blue); }
+
+/* evolution tooltip */
+.arch-evolution .arch-tip {
+    position: absolute; z-index: 99999;
+    bottom: calc(100% + 8px); left: 0;
+    width: 360px; max-width: 90vw;
+    background: #fff; border: 1px solid rgba(0,0,0,.1);
+    border-radius: var(--r-lg); overflow: hidden;
+    box-shadow: 0 8px 30px rgba(0,0,0,.12), 0 2px 8px rgba(0,0,0,.06);
+    pointer-events: none;
+    opacity: 0; visibility: hidden;
+    transform: translateY(6px);
+    transition: opacity .22s cubic-bezier(.25,1,.5,1),
+                visibility .22s cubic-bezier(.25,1,.5,1),
+                transform .22s cubic-bezier(.25,1,.5,1);
+}
+.arch-evolution .arch-tip::after {
+    content: ''; position: absolute; top: 100%; left: 30px;
+    border: 7px solid transparent; border-top-color: #fff;
+}
+.arch-evolution:hover .arch-tip { opacity: 1; visibility: visible; transform: translateY(0); }
+.arch-evolution .arch-tip .arch-tip-hd { background: var(--emerald); }
+
+/* ============================================================
+   存储层和图例样式
+   ============================================================ */
+
+/* --- storage bar --- */
+.arch-storage {
+    background: linear-gradient(150deg, #D1FAE5 0%, #A7F3D0 50%, #6EE7B7 100%);
+    border: 2px solid rgba(5,150,105,.25); border-radius: 20px;
+    padding: 0; margin-top: 16px; margin-bottom: 16px;
+    box-shadow: 0 2px 12px rgba(5,150,105,.08);
+    position: relative;
+    z-index: 5;
+}
+.arch-storage-hd {
+    font-size: 16px; font-weight: 800; color: #fff;
+    padding: 16px 28px;
+    background: linear-gradient(150deg, #059669 0%, #10B981 100%);
+    border-radius: 18px 18px 0 0;
+    display: flex; align-items: center; gap: 8px;
+}
+.arch-storage-bd { display: grid; grid-template-columns: 1fr auto; gap: 24px; align-items: center; padding: 18px 24px; }
+.arch-storage-feat {
+    font-size: 12.5px; color: #047857; padding: 6px 12px; line-height: 1.6;
+    background: rgba(255,255,255,.6); border-radius: 8px;
+    border-left: 3px solid var(--emerald); margin-bottom: 6px;
+}
+.arch-storage-feat strong { color: #065F46; }
+.arch-storage-sync {
+    display: flex; align-items: center; justify-content: center; gap: 16px;
+    background: rgba(255,255,255,.7); border-radius: 16px;
+    padding: 16px 24px; border: 1px solid rgba(5,150,105,.15);
+}
+.arch-sync-node { text-align: center; font-size: 12px; font-weight: 700; color: #065F46; padding: 8px 12px; background: rgba(16,185,129,.1); border-radius: 12px; }
+.arch-sync-node span { font-size: 32px; display: block; margin-bottom: 4px; }
+.arch-sync-arrow { font-size: 24px; color: var(--emerald); font-weight: 700; }
+
+/* --- mapping badges --- */
+.map-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: .02em;
+    vertical-align: middle;
+    margin-left: 6px;
+    white-space: nowrap;
+}
+.map-badge.blue    { background: rgba(37,99,235,.12); color: #2563EB; }
+.map-badge.violet  { background: rgba(124,58,237,.1); color: #7C3AED; }
+.map-badge.amber   { background: rgba(217,119,6,.1); color: #D97706; }
+.map-badge.emerald { background: rgba(5,150,105,.1); color: #059669; }
+.map-badge.rose    { background: rgba(225,29,72,.1); color: #E11D48; }
+
+/* --- legend --- */
+.arch-legend {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 16px; padding: 18px 24px;
+    box-shadow: 0 1px 4px rgba(0,0,0,.03);
+}
+.arch-legend-title { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 12px; }
+.arch-legend-items { display: flex; gap: 16px; flex-wrap: wrap; }
+.arch-legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-3); font-weight: 600; }
+.arch-legend-line { display: inline-block; width: 24px; height: 3px; border-radius: 2px; background-image: repeating-linear-gradient(90deg, currentColor 0 8px, transparent 8px 13px); background-color: transparent !important; }
+
+/* --- responsive --- */
+@media (max-width: 900px) {
+    .arch-swimlanes { grid-template-columns: 1fr; }
+    #mappingSvg { display: none; }
+    .arch-legend { display: none; }
+    .arch-lane:first-child, .arch-lane:last-child { grid-column: auto; }
+    .arch-lane:first-child .arch-lane-bd { border-right: none; border-bottom: 2px dashed var(--border); border-radius: 0; }
+    .arch-lane:last-child .arch-lane-bd { border-radius: 0 0 18px 18px; }
+    .arch-lane:first-child .arch-lane-hd { border-radius: 18px 18px 0 0; }
+    .arch-lane:last-child .arch-lane-hd { border-radius: 0; }
+    .arch-storage-bd { grid-template-columns: 1fr; }
+    .touch-columns { grid-template-columns: 1fr; }
+    .arch-legend-items { gap: 10px; }
+    .arch-legend-item { font-size: 11px; }
+}
+@media (max-width: 768px) {
+    .touch-columns { grid-template-columns: 1fr; gap: 8px; }
+    .arch-mods-grid { grid-template-columns: repeat(2, 1fr); }
+    .scene-tags { gap: 6px; }
+    .scene-tag { font-size: 10.5px; padding: 3px 10px; }
+    .site-nav { flex-wrap:wrap; }
+    .site-nav a { font-size:12px; padding:8px 8px; }
+}
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- Navigation -->
+    <nav class="site-nav">
+        <a href="index.html">首页</a>
+        <a href="deep-dive.html">详细论证</a>
+        <a href="evidence.html">AI分身实证</a>
+        <a href="architecture.html">架构全景</a>
+        <a href="implementation.html">技术实施</a>
+        <a href="kuaishou-arch.html" class="active">快手落地</a>
+    </nav>
+
+    <!-- Page Header -->
+    <header class="page-header">
+        <div class="page-badge">🏗️ 落地架构</div>
+        <h1 class="page-title">快手AI员工架构</h1>
+        <p class="page-subtitle">产品架构（用户视角）↔ 技术架构（实现逻辑）的双泳道对照视图 · 鼠标悬停查看详情</p>
+    </header>
+
+<div class="wrap" id="archPage">
+    <section class="chapter" id="ch6" style="margin-bottom:0;">
+
+        <!-- 泳道容器 -->
+        <div class="arch-swimlanes" id="archSwim">
+            <svg id="mappingSvg"></svg>
+
+            <!-- 左泳道：产品架构 -->
+            <div class="arch-lane" id="laneLeft">
+                <div class="arch-lane-hd" style="background: linear-gradient(135deg, var(--emerald) 0%, var(--emerald-l) 100%);">
+                    <div class="arch-lane-title">🎨 产品架构</div>
+                    <div class="arch-lane-sub">用户视角的功能与价值</div>
+                </div>
+                <div class="arch-lane-bd">
+
+                    <!-- 用户触点层 -->
+                    <div class="arch-lv" data-pair="row1" style="--lv-color: var(--blue);">
+                        <div class="arch-lv-label">🌍 用户触点层 <span class="map-badge blue">→ T1 接入层</span></div>
+
+                        <div class="touch-columns">
+                            <!-- 左列：工程师 + CodeFlicker -->
+                            <div class="touch-col">
+                                <div class="user-seg user-seg-eng" id="userSegEng">
+                                    <div class="user-seg-icon">🔧</div>
+                                    <div class="user-seg-info">
+                                        <div class="user-seg-title">工程师</div>
+                                        <div class="user-seg-desc">研发 · 测试 · 运维 · 数据</div>
+                                    </div>
+                                </div>
+                                <div class="touch-product touch-cf" id="touchCf">
+                                    <div class="touch-product-hd cf">
+                                        <span>💻</span> CodeFlicker
+                                        <div class="touch-product-sub">AI 编码助手 → AI 工程师</div>
+                                    </div>
+                                    <div class="arch-mods arch-mods-horizontal">
+                                        <div class="arch-mod arch-mod-mini" data-n="p-cf-ide">
+                                            <div class="arch-mod-nm"><span>⌨️</span> AI IDE · 插件</div>
+                                            <div class="arch-tip">
+                                                <div class="arch-tip-hd">⌨️ AI IDE · 插件</div>
+                                                <div class="arch-tip-bd">
+                                                    <p>深度嵌入开发者日常 IDE 工作流</p>
+                                                    <ul>
+                                                        <li><strong>智能补全</strong>：上下文感知的代码补全</li>
+                                                        <li><strong>Code Review</strong>：AI 辅助代码审查</li>
+                                                        <li><strong>Debug 助手</strong>：错误分析和修复建议</li>
+                                                        <li><strong>架构分析</strong>：代码理解和重构建议</li>
+                                                    </ul>
+                                                </div>
+                                                <div class="arch-tip-ft">面向工程师的本地 IDE 插件</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 右列：所有员工 + MyFlicker -->
+                            <div class="touch-col">
+                                <div class="user-seg user-seg-all" id="userSegAll">
+                                    <div class="user-seg-icon">👥</div>
+                                    <div class="user-seg-info">
+                                        <div class="user-seg-title">所有员工</div>
+                                        <div class="user-seg-desc">产品 · 运营 · 市场 · 管理 · HR · 财务 …</div>
+                                    </div>
+                                </div>
+
+                                <div class="touch-product touch-ka" id="touchKa">
+                                    <div class="touch-product-hd ka">
+                                        <span>🤖</span> MyFlicker
+                                        <div class="touch-product-sub">AI 员工</div>
+                                    </div>
+                                    <div class="arch-mods arch-mods-horizontal">
+                                        <div class="arch-mod arch-mod-mini" data-n="p-kim">
+                                            <div class="arch-mod-nm"><span>💬</span> KIM 机器人</div>
+                                            <div class="arch-tip">
+                                                <div class="arch-tip-hd">💬 KIM 机器人</div>
+                                                <div class="arch-tip-bd">
+                                                    <p>企业IM即时交互入口，消息号「卡瓦」</p>
+                                                    <ul>
+                                                        <li>用户在KIM中直接与AI对话，无需切换工具</li>
+                                                        <li>覆盖日常办公、IM场景</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="arch-mod arch-mod-mini" data-n="p-web">
+                                            <div class="arch-mod-nm"><span>🌐</span> 网页端</div>
+                                            <div class="arch-tip">
+                                                <div class="arch-tip-hd">🌐 网页端</div>
+                                                <div class="arch-tip-bd">
+                                                    <p>一键激活部署和可视化监控</p>
+                                                    <ul>
+                                                        <li>Skill管理、系统配置、监控仪表盘</li>
+                                                        <li>支持AI交流&学习社区入口、用户激活流程</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="arch-mod arch-mod-mini" data-n="p-local">
+                                            <div class="arch-mod-nm"><span>🖥️</span> 本地应用</div>
+                                            <div class="arch-tip">
+                                                <div class="arch-tip-hd">🖥️ 本地应用</div>
+                                                <div class="arch-tip-bd">
+                                                    <p>面向深度任务处理场景</p>
+                                                    <ul>
+                                                        <li>云端↔本地实时增量同步</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="cf-to-myflicker-arrow" title="CodeFlicker → MyFlicker"></div>
+                        </div>
+
+                        <!-- 云端 Code Agent -->
+                        <div class="cloud-agent-bar arch-mod" data-n="p-cf-cloud">
+                            <div class="cloud-agent-inner">
+                                <div class="cloud-agent-icon">☁️</div>
+                                <div class="cloud-agent-info">
+                                    <div class="cloud-agent-title">云端 Code Agent</div>
+                                    <div class="cloud-agent-desc">合盖继续工作 · 自动PR · 多任务并行 — 共同支撑 CodeFlicker & MyFlicker</div>
+                                </div>
+                            </div>
+                            <div class="arch-tip">
+                                <div class="arch-tip-hd">☁️ 云端 Code Agent（核心进化）</div>
+                                <div class="arch-tip-bd">
+                                    <p>从本地工具升级为云端 AI 工程师，同时支撑 CodeFlicker 和 MyFlicker 两条产品线</p>
+                                    <ul>
+                                        <li><strong>合盖工作</strong>：电脑合上，Agent 在云端继续执行任务</li>
+                                        <li><strong>自动 PR</strong>：自主提交代码 + 跑测试 + 修 Bug</li>
+                                        <li><strong>CI/CD 集成</strong>：嵌入完整研发流程</li>
+                                        <li><strong>多任务并行</strong>：同时处理多个代码任务</li>
+                                    </ul>
+                                </div>
+                                <div class="arch-tip-ft">从「编码助手」到「AI 工程师」的关键一步</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 继续添加Agent能力层、服务层、AgentCore层... -->
+
+                    <!-- Agent 能力层 -->
+                    <div class="arch-lv arch-lv-agent" data-pair="row2" style="--lv-color: var(--violet);">
+                        <div class="arch-lv-label">🤖 Agent 能力层 <span class="map-badge violet">→ T3 计算层</span></div>
+
+                        <!-- 子层1：场景层 -->
+                        <div class="agent-sub-layer">
+                            <div class="agent-sub-label">🎯 场景层</div>
+                            <div class="scene-tags">
+                                <span class="scene-tag" data-n="p-scene-dev">💻 开发
+                                    <div class="scene-tip">
+                                        <div class="scene-tip-title">💻 开发场景</div>
+                                        <ul>
+                                            <li>代码生成 / 智能补全</li>
+                                            <li>Code Review · 代码审查</li>
+                                            <li>Bug 定位 · 修复建议</li>
+                                            <li>架构设计 · 重构优化</li>
+                                            <li>单元测试 · 自动化测试</li>
+                                            <li class="more">…</li>
+                                        </ul>
+                                    </div>
+                                </span>
+                                <span class="scene-tag" data-n="p-scene-office">📋 办公
+                                    <div class="scene-tip">
+                                        <div class="scene-tip-title">📋 办公场景</div>
+                                        <ul>
+                                            <li>日报 / 周报撰写</li>
+                                            <li>会议纪要 · 总结提炼</li>
+                                            <li>邮件撰写 · 翻译</li>
+                                            <li>PPT / 汇报材料</li>
+                                            <li class="more">…</li>
+                                        </ul>
+                                    </div>
+                                </span>
+                                <span class="scene-tag" data-n="p-scene-doc">📄 文档
+                                    <div class="scene-tip">
+                                        <div class="scene-tip-title">📄 文档场景</div>
+                                        <ul>
+                                            <li>技术文档 · API 文档</li>
+                                            <li>需求文档 · PRD</li>
+                                            <li>知识库维护 · 整理</li>
+                                            <li>文档翻译 · 格式转换</li>
+                                            <li class="more">…</li>
+                                        </ul>
+                                    </div>
+                                </span>
+                                <span class="scene-tag" data-n="p-scene-research">🔍 调研
+                                    <div class="scene-tip">
+                                        <div class="scene-tip-title">🔍 调研场景</div>
+                                        <ul>
+                                            <li>竞品分析 · 产品对比</li>
+                                            <li>技术选型 · 方案评估</li>
+                                            <li>行业趋势 · 信息收集</li>
+                                            <li>用户调研 · 数据洞察</li>
+                                            <li class="more">…</li>
+                                        </ul>
+                                    </div>
+                                </span>
+                                <span class="scene-tag" data-n="p-scene-ops">📊 运营
+                                    <div class="scene-tip">
+                                        <div class="scene-tip-title">📊 运营场景</div>
+                                        <ul>
+                                            <li>活动策划 · 方案输出</li>
+                                            <li>内容审核 · 合规检查</li>
+                                            <li>用户增长 · 策略分析</li>
+                                            <li>渠道管理 · 效果评估</li>
+                                            <li class="more">…</li>
+                                        </ul>
+                                    </div>
+                                </span>
+                                <span class="scene-tag" data-n="p-scene-cs">🎧 客服
+                                    <div class="scene-tip">
+                                        <div class="scene-tip-title">🎧 客服场景</div>
+                                        <ul>
+                                            <li>智能问答 · 自动回复</li>
+                                            <li>工单处理 · 分类流转</li>
+                                            <li>话术推荐 · 知识辅助</li>
+                                            <li>情感分析 · 满意度监控</li>
+                                            <li class="more">…</li>
+                                        </ul>
+                                    </div>
+                                </span>
+                                <span class="scene-tag" data-n="p-scene-data">📈 数据
+                                    <div class="scene-tip">
+                                        <div class="scene-tip-title">📈 数据场景</div>
+                                        <ul>
+                                            <li>SQL 生成 · 数据查询</li>
+                                            <li>报表生成 · 自动化</li>
+                                            <li>数据清洗 · ETL</li>
+                                            <li>可视化 · 看板搭建</li>
+                                            <li class="more">…</li>
+                                        </ul>
+                                    </div>
+                                </span>
+                                <span class="scene-tag" data-n="p-scene-more">⋯ 更多</span>
+                            </div>
+                        </div>
+
+                        <!-- 子层2：Skill & 知识市场 -->
+                        <div class="agent-sub-layer">
+                            <div class="agent-sub-label">🏪 Skill & 知识市场</div>
+                            <div class="arch-mods arch-mods-row">
+                                <div class="arch-mod arch-mod-mini" data-n="p-skills">
+                                    <div class="arch-mod-nm"><span>🏢</span> 公司级</div>
+                                    <div class="arch-mod-ds">默认生效 · 评测驱动</div>
+                                    <div class="arch-tip">
+                                        <div class="arch-tip-hd">🏢 公司级 Skills</div>
+                                        <div class="arch-tip-bd">
+                                            <ul>
+                                                <li><strong>默认预装</strong> — 评测驱动，人人用最优方案</li>
+                                                <li>代码补全、Review、翻译、日报等通用技能</li>
+                                            </ul>
+                                        </div>
+                                        <div class="arch-tip-ft">类比：手机预装应用</div>
+                                    </div>
+                                </div>
+                                <div class="arch-mod arch-mod-mini" data-n="p-skills-biz">
+                                    <div class="arch-mod-nm"><span>🏭</span> 业务级</div>
+                                    <div class="arch-mod-ds">合作共建 · 场景专属</div>
+                                    <div class="arch-tip">
+                                        <div class="arch-tip-hd">🏭 业务级 Skills</div>
+                                        <div class="arch-tip-bd">
+                                            <p>与各业务线合作共建</p>
+                                            <ul>
+                                                <li>电商场景：商品分析、选品助手</li>
+                                                <li>客服场景：话术助手、工单处理</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="arch-mod arch-mod-mini" data-n="p-skills-personal">
+                                    <div class="arch-mod-nm"><span>👤</span> 个人级</div>
+                                    <div class="arch-mod-ds">开放生态 · 自由创建</div>
+                                    <div class="arch-tip">
+                                        <div class="arch-tip-hd">👤 个人级 Skills</div>
+                                        <div class="arch-tip-bd">
+                                            <p>开放平台，每个人都能创建自己的 Skill</p>
+                                            <ul>
+                                                <li>个性化工作流自动化</li>
+                                                <li>社区分享与评分机制</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="arch-mod arch-mod-mini" data-n="p-market">
+                                    <div class="arch-mod-nm"><span>🌐</span> 第三方技能市场</div>
+                                    <div class="arch-mod-ds">OpenClaw、ClaudeCode等</div>
+                                    <div class="arch-tip">
+                                        <div class="arch-tip-hd">🏪 Skill & 知识市场</div>
+                                        <div class="arch-tip-bd">
+                                            <ul>
+                                                <li>Skills/知识包的发现、试用、安装</li>
+                                                <li>类似 App Store 的浏览选购体验</li>
+                                                <li>支持公司级、业务级、个人级三层分发</li>
+                                            </ul>
+                                        </div>
+                                        <div class="arch-tip-ft">让能力可共享、可流通、可进化</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 服务层 -->
+                    <div class="arch-lv" data-pair="row3" style="--lv-color: var(--amber);">
+                        <div class="arch-lv-label">🛡️ 服务层 <span class="map-badge amber">→ T2 网关层</span></div>
+                        <div class="arch-mods arch-mods-row">
+                            <div class="arch-mod arch-mod-mini" data-n="p-routing">
+                                <div class="arch-mod-nm"><span>🎯</span> 智能路由</div>
+                                <div class="arch-mod-ds">成本优化50%+</div>
+                                <div class="arch-tip">
+                                    <div class="arch-tip-hd">🎯 智能模型路由</div>
+                                    <div class="arch-tip-bd">
+                                        <p>按任务复杂度自动选最优模型</p>
+                                        <ul>
+                                            <li><strong>复杂推理</strong> → Claude / 万擎大杯</li>
+                                            <li><strong>常规分析</strong> → 万擎中杯</li>
+                                            <li><strong>简单对话</strong> → 万擎小杯</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="arch-mod arch-mod-mini" data-n="p-security">
+                                <div class="arch-mod-nm"><span>🔐</span> 安全审计</div>
+                                <div class="arch-mod-ds">全链路追溯</div>
+                                <div class="arch-tip">
+                                    <div class="arch-tip-hd">🔐 安全审计体系</div>
+                                    <div class="arch-tip-bd">
+                                        <ul>
+                                            <li>万擎平台租户级<strong>数据隔离</strong></li>
+                                            <li>统一Skill审核，上架前<strong>安全检查</strong></li>
+                                            <li>统一日志 + 异常检测 + <strong>事件追溯</strong></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- AgentCore 核心能力层 -->
+                    <div class="arch-lv arch-lv-agentcore" data-pair="row4" style="--lv-color: var(--emerald);">
+                        <div class="arch-lv-label">🤖 AgentCore · 能力内核 <span class="map-badge emerald">→ T4 推理层</span> <span class="map-badge rose">→ T5 存储层</span></div>
+                        <div class="arch-mods arch-mods-grid">
+                            <div class="arch-mod" data-n="p-memory">
+                                <div class="arch-mod-nm"><span>🧠</span> Memory</div>
+                                <div class="arch-mod-ds">记忆系统</div>
+                                <div class="arch-tip">
+                                    <div class="arch-tip-hd">🧠 Memory 记忆系统</div>
+                                    <div class="arch-tip-bd">
+                                        <ul>
+                                            <li><strong>长期记忆</strong>：用户偏好、历史对话积累</li>
+                                            <li><strong>工作记忆</strong>：当前任务上下文管理</li>
+                                            <li><strong>用户画像</strong>：个性化行为建模</li>
+                                        </ul>
+                                    </div>
+                                    <div class="arch-tip-ft">基于KFS存储，云↔本地实时增量同步</div>
+                                </div>
+                            </div>
+                            <div class="arch-mod" data-n="p-reasoning">
+                                <div class="arch-mod-nm"><span>💡</span> Reasoning</div>
+                                <div class="arch-mod-ds">推理引擎</div>
+                                <div class="arch-tip">
+                                    <div class="arch-tip-hd">💡 Reasoning 推理引擎</div>
+                                    <div class="arch-tip-bd">
+                                        <ul>
+                                            <li><strong>意图理解</strong>：深度理解用户真实需求</li>
+                                            <li><strong>逻辑推导</strong>：多步骤推理链</li>
+                                            <li><strong>决策支持</strong>：在多方案中选最优解</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="arch-mod" data-n="p-planning">
+                                <div class="arch-mod-nm"><span>📋</span> Planning</div>
+                                <div class="arch-mod-ds">规划引擎</div>
+                                <div class="arch-tip">
+                                    <div class="arch-tip-hd">📋 Planning 规划引擎</div>
+                                    <div class="arch-tip-bd">
+                                        <ul>
+                                            <li><strong>任务分解</strong>：复杂目标拆解为子任务</li>
+                                            <li><strong>步骤规划</strong>：确定最优执行路径</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="arch-mod" data-n="p-orchestration">
+                                <div class="arch-mod-nm"><span>🎼</span> Orchestration</div>
+                                <div class="arch-mod-ds">调度引擎</div>
+                                <div class="arch-tip">
+                                    <div class="arch-tip-hd">🎼 Orchestration 调度引擎</div>
+                                    <div class="arch-tip-bd">
+                                        <ul>
+                                            <li><strong>Skill选择</strong>：按任务自动匹配最优技能</li>
+                                            <li><strong>执行编排</strong>：串行/并行任务协调</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="arch-mod" data-n="p-reflection">
+                                <div class="arch-mod-nm"><span>🔄</span> Reflection</div>
+                                <div class="arch-mod-ds">反思引擎</div>
+                                <div class="arch-tip">
+                                    <div class="arch-tip-hd">🔄 Reflection 反思引擎</div>
+                                    <div class="arch-tip-bd">
+                                        <ul>
+                                            <li><strong>执行评估</strong>：完成后自我检查质量</li>
+                                            <li><strong>经验沉淀</strong>：将教训转化为能力提升</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="arch-mod" data-n="p-integration">
+                                <div class="arch-mod-nm"><span>🔌</span> Integration</div>
+                                <div class="arch-mod-ds">集成层</div>
+                                <div class="arch-tip">
+                                    <div class="arch-tip-hd">🔌 Integration 集成层</div>
+                                    <div class="arch-tip-bd">
+                                        <ul>
+                                            <li><strong>外部系统</strong>：对接企业内部各类平台</li>
+                                            <li><strong>MCP协议</strong>：标准化工具调用接口</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="arch-evolution" data-n="p-evolution">
+                            <div class="arch-evolution-icon">🚀</div>
+                            <div class="arch-evolution-text">
+                                <div class="arch-evolution-title">自进化引擎 · Self-Evolution Engine</div>
+                                <div class="arch-evolution-desc">Code Agent 核心驱动 · 能力无上限 · 缺什么写代码补 · 持续自我迭代进化</div>
+                            </div>
+                            <div class="arch-tip">
+                                <div class="arch-tip-hd">🚀 自进化引擎（最核心）</div>
+                                <div class="arch-tip-bd">
+                                    <p>Code Agent 是能力天花板最高的 Agent 类型</p>
+                                    <ul>
+                                        <li><strong>自主编程</strong>：缺什么能力，写代码补上</li>
+                                        <li><strong>Skill自创建</strong>：自动将成功经验沉淀为新Skill</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- 左泳道结束，继续添加右泳道... -->
+
+            <!-- 右泳道：技术架构 -->
+            <div class="arch-lane" id="laneRight">
+                <div class="arch-lane-hd" style="background: linear-gradient(135deg, var(--blue) 0%, var(--blue-l) 100%);">
+                    <div class="arch-lane-title">🏗️ 技术架构</div>
+                    <div class="arch-lane-sub">实现逻辑 + 部署拓扑</div>
+                </div>
+                <div class="arch-lane-bd">
+                    <!-- T1 接入层 -->
+                    <div class="arch-lv" data-pair="row1" style="--lv-color: var(--blue);">
+                        <div class="arch-lv-label">📥 T1 接入层 <span class="map-badge blue">← 触点层</span></div>
+                        <div class="arch-mods">
+                            <div class="arch-mod" data-n="t-access">
+                                <div class="arch-mod-nm"><span>📨</span> 多端请求接入</div>
+                                <div class="arch-mod-ds">接收 IDE/KIM/Web/本地 四端请求，统一协议</div>
+                                <div class="arch-mod-tags">
+                                    <span class="arch-tag logic">逻辑: HTTP/WebSocket</span>
+                                    <span class="arch-tag phys">物理: KIM平台 + Nginx</span>
+                                </div>
+                                <div class="arch-tip">
+                                    <div class="arch-tip-hd" style="background:var(--blue)">📨 多端请求接入</div>
+                                    <div class="arch-tip-bd">
+                                        <p>统一接收来自四个端的请求：</p>
+                                        <ul>
+                                            <li>IDE 插件 → VS Code / JetBrains 端</li>
+                                            <li>KIM 对话 → 企业 IM 消息通道</li>
+                                            <li>Web 管理台 → 浏览器前端</li>
+                                            <li>本地端 → macOS/Windows 本地进程</li>
+                                        </ul>
+                                    </div>
+                                    <div class="arch-tip-ft">协议归一化：所有端统一走 HTTP/WebSocket</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- T3 计算层 -->
+                    <div class="arch-lv" data-pair="row2" style="--lv-color: var(--violet);">
+                        <div class="arch-lv-label">⚙️ T3 计算层 <span class="map-badge violet">← Agent能力层</span></div>
+                        <div class="arch-mods">
+                            <div class="arch-mod" data-n="t-agent">
+                                <div class="arch-mod-nm"><span>📦</span> OpenClaw Agent 处理</div>
+                                <div class="arch-mod-ds">调用Skills · 代码生成 · 沙箱执行</div>
+                                <div class="arch-mod-tags">
+                                    <span class="arch-tag logic">逻辑: Agent + Skills调度</span>
+                                    <span class="arch-tag phys">物理: K8S Pod | 4C8G</span>
+                                </div>
+                                <div class="arch-tip">
+                                    <div class="arch-tip-hd" style="background:var(--violet)">📦 OpenClaw Agent 处理</div>
+                                    <div class="arch-tip-bd">
+                                        <ul>
+                                            <li>Agent 运行容器：每个用户独占 Pod（4C8G）</li>
+                                            <li>Skills 调度：动态加载所需技能包</li>
+                                            <li>代码生成：AST 级别代码修改与创建</li>
+                                            <li>沙箱执行：隔离环境运行用户代码</li>
+                                        </ul>
+                                    </div>
+                                    <div class="arch-tip-ft">K8S 弹性伸缩 · 支持 GPU 推理加速</div>
+                                </div>
+                            </div>
+                            <div class="arch-mod" data-n="t-hub">
+                                <div class="arch-mod-nm"><span>🏪</span> Skills Hub 技能中心</div>
+                                <div class="arch-mod-ds">Schema管理 · 版本控制 · 分发</div>
+                                <div class="arch-mod-tags">
+                                    <span class="arch-tag logic">逻辑: 注册+审核+版本</span>
+                                    <span class="arch-tag phys">物理: S3 + CDN</span>
+                                </div>
+                                <div class="arch-tip">
+                                    <div class="arch-tip-hd" style="background:var(--violet)">🏪 Skills Hub 技能中心</div>
+                                    <div class="arch-tip-bd">
+                                        <ul>
+                                            <li>技能注册：Schema 定义 + 自动校验</li>
+                                            <li>版本管理：语义化版本 + 灰度发布</li>
+                                            <li>审核流：安全扫描 + 人工审批</li>
+                                            <li>CDN 分发：全球加速 + 按需拉取</li>
+                                        </ul>
+                                    </div>
+                                    <div class="arch-tip-ft">S3 存储 + CDN 分发 · 支持私有技能</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- T2 网关层 -->
+                    <div class="arch-lv" data-pair="row3" style="--lv-color: var(--amber);">
+                        <div class="arch-lv-label">🚪 T2 网关层 <span class="map-badge amber">← 服务层</span></div>
+                        <div class="arch-mods">
+                            <div class="arch-mod" data-n="t-gateway">
+                                <div class="arch-mod-nm"><span>🛡️</span> Gateway 鉴权路由</div>
+                                <div class="arch-mod-ds">Token验证 · 消息路由 · 协议桥接</div>
+                                <div class="arch-mod-tags">
+                                    <span class="arch-tag logic">逻辑: JWT鉴权 + 路由</span>
+                                    <span class="arch-tag phys">物理: Node.js | 18789</span>
+                                </div>
+                                <div class="arch-tip">
+                                    <div class="arch-tip-hd" style="background:var(--amber)">🛡️ Gateway 鉴权路由</div>
+                                    <div class="arch-tip-bd">
+                                        <ul>
+                                            <li>JWT Token 身份验证（SSO 统一登录）</li>
+                                            <li>消息路由：根据请求类型分发到对应 Agent</li>
+                                            <li>协议桥接：WebSocket ↔ HTTP 双向转换</li>
+                                            <li>流量管控：限流 + 降级 + 熔断</li>
+                                        </ul>
+                                    </div>
+                                    <div class="arch-tip-ft">Node.js 网关 · 端口 18789</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- T4推理层+T5存储层 -->
+                    <div class="arch-lv-group" data-pair="row4" style="border-left: 4px solid #059669;">
+                        <div class="arch-lv" style="--lv-color: var(--emerald);">
+                            <div class="arch-lv-label">🧠 T4 推理层 <span class="map-badge emerald">← AgentCore</span></div>
+                            <div class="arch-mods">
+                                <div class="arch-mod" data-n="t-model">
+                                    <div class="arch-mod-nm"><span>🎯</span> 智能模型路由 + 推理</div>
+                                    <div class="arch-mod-ds">按任务复杂度选模型：简单→小杯 · 复杂→大杯</div>
+                                    <div class="arch-mod-tags">
+                                        <span class="arch-tag logic">逻辑: 复杂度评估+路由</span>
+                                        <span class="arch-tag phys">物理: 万擎+Claude | MAAS</span>
+                                    </div>
+                                    <div class="arch-tip">
+                                        <div class="arch-tip-hd" style="background:var(--emerald)">🎯 智能模型路由 + 推理</div>
+                                        <div class="arch-tip-bd">
+                                            <ul>
+                                                <li>复杂度评估：自动判断任务难度</li>
+                                                <li>小杯任务 → 轻量模型（低延迟、低成本）</li>
+                                                <li>大杯任务 → 旗舰模型（高精度推理）</li>
+                                                <li>Fallback 机制：主模型不可用自动切换备选</li>
+                                            </ul>
+                                        </div>
+                                        <div class="arch-tip-ft">MAAS 统一调度 · 万擎 + Claude 双引擎</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="arch-lv" style="--lv-color: var(--emerald);">
+                            <div class="arch-lv-label">💾 T5 存储层 <span class="map-badge emerald">← AgentCore</span></div>
+                            <div class="arch-mods">
+                                <div class="arch-mod" data-n="t-storage">
+                                    <div class="arch-mod-nm"><span>🗄️</span> KFS 存储 + 同步</div>
+                                    <div class="arch-mod-ds">持久化 · 记忆写入 · 云↔本地同步</div>
+                                    <div class="arch-mod-tags">
+                                        <span class="arch-tag logic">逻辑: 流式返回+增量同步</span>
+                                        <span class="arch-tag phys">物理: KFS卷 | /home/node/.openclaw</span>
+                                    </div>
+                                    <div class="arch-tip">
+                                        <div class="arch-tip-hd" style="background:var(--emerald)">🗄️ KFS 存储 + 同步</div>
+                                        <div class="arch-tip-bd">
+                                            <ul>
+                                                <li>KFS 持久卷：配置/会话/记忆中心化存储</li>
+                                                <li>云↔本地同步：实时增量，换设备无缝衔接</li>
+                                                <li>流式返回：大文件分块传输</li>
+                                                <li>秒级 Failover：Pod 故障数据自动迁移</li>
+                                            </ul>
+                                        </div>
+                                        <div class="arch-tip-ft">KFS 卷挂载 · /home/node/.openclaw</div>
+                                    </div>
+                                </div>
+                                <div class="arch-mod" data-n="t-monitor">
+                                    <div class="arch-mod-nm"><span>📊</span> 监控 + 日志</div>
+                                    <div class="arch-mod-ds">任务统计 · 成本追踪 · 异常告警</div>
+                                    <div class="arch-mod-tags">
+                                        <span class="arch-tag logic">逻辑: 指标采集+告警规则</span>
+                                        <span class="arch-tag phys">物理: Prometheus + Grafana</span>
+                                    </div>
+                                    <div class="arch-tip">
+                                        <div class="arch-tip-hd" style="background:var(--emerald)">📊 监控 + 日志</div>
+                                        <div class="arch-tip-bd">
+                                            <ul>
+                                                <li>任务统计：完成率/延迟/错误率仪表盘</li>
+                                                <li>成本追踪：Token 消耗 + 模型调用计费</li>
+                                                <li>异常告警：P0 故障 < 1min 触达</li>
+                                                <li>日志聚合：全链路 Trace ID 串联</li>
+                                            </ul>
+                                        </div>
+                                        <div class="arch-tip-ft">Prometheus 指标 + Grafana 可视化</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div><!-- 泳道容器结束 -->
+
+        <!-- 存储基础 -->
+        <div class="arch-storage" style="padding:0 !important; overflow:visible !important; background:#D1FAE5 !important; background-image:linear-gradient(135deg,#D1FAE5 0%,#A7F3D0 50%,#6EE7B7 100%) !important; border:2px solid rgba(5,150,105,.35); border-radius:24px;">
+            <div class="arch-storage-hd" style="display:flex !important; background-color:#059669 !important; background-image:linear-gradient(135deg,#059669 0%,#10B981 100%) !important; color:#fff !important; padding:14px 24px !important; border-radius:22px 22px 0 0; font-size:15px; font-weight:800; margin:0 !important;">💾 存储架构基础 — 支撑所有功能层</div>
+            <div class="arch-storage-bd" style="padding:18px 24px;">
+                <div class="arch-storage-feats">
+                    <div class="arch-storage-feat">✓ <strong>独立KFS存储</strong> · 配置/会话/记忆中心化</div>
+                    <div class="arch-storage-feat">✓ <strong>云端↔本地同步</strong> · 实时增量，换设备无缝</div>
+                    <div class="arch-storage-feat">✓ <strong>秒级Failover</strong> · Pod故障数据自动迁移</div>
+                </div>
+                <div class="arch-storage-sync">
+                    <div class="arch-sync-node"><span>☁️</span><br>云端KFS</div>
+                    <div class="arch-sync-arrow">⇄</div>
+                    <div class="arch-sync-node"><span>🖥️</span><br>本地Pod</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 映射关系图例 -->
+        <div class="arch-legend">
+            <div class="arch-legend-title">📊 产品架构 ↔ 技术架构 映射关系</div>
+            <div class="arch-legend-items">
+                <div class="arch-legend-item"><span class="arch-legend-line" style="color:#2563EB"></span> <span class="map-badge blue" style="position:static;">①</span> 用户触点层 ↔ T1 接入层</div>
+                <div class="arch-legend-item"><span class="arch-legend-line" style="color:#7C3AED"></span> <span class="map-badge violet" style="position:static;">②</span> Agent能力层 ↔ T3 计算层</div>
+                <div class="arch-legend-item"><span class="arch-legend-line" style="color:#D97706"></span> <span class="map-badge amber" style="position:static;">③</span> 服务层 ↔ T2 网关层</div>
+                <div class="arch-legend-item"><span class="arch-legend-line" style="color:#059669"></span> <span class="map-badge emerald" style="position:static;">④</span> AgentCore ↔ T4+T5</div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<script>
+// ============================================================
+// 快手AI员工架构图 — JavaScript 交互逻辑
+// ============================================================
+
+// Layer-level mapping lines configuration
+const LAYER_MAPPINGS = [
+    { pair: 'row1', color: '#2563EB', label: '用户触点层 ↔ T1 接入层' },
+    { pair: 'row2', color: '#7C3AED', label: 'Agent能力层 ↔ T3 计算层' },
+    { pair: 'row3', color: '#D97706', label: '服务层 ↔ T2 网关层' },
+    { pair: 'row4', color: '#059669', label: 'AgentCore ↔ T4+T5' },
+];
+
+// Draw mapping connection lines between lanes
+function drawMappingLines() {
+    const svg = document.getElementById('mappingSvg');
+    const swim = document.getElementById('archSwim');
+    const leftLane = document.getElementById('laneLeft');
+    const rightLane = document.getElementById('laneRight');
+    if (!svg || !swim || !leftLane || !rightLane) return;
+
+    const sRect = swim.getBoundingClientRect();
+    const W = sRect.width;
+    const H = sRect.height;
+    if (H < 10 || W < 100) return;
+
+    svg.setAttribute('width', W);
+    svg.setAttribute('height', H);
+    svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+    svg.innerHTML = '';
+
+    const NS = 'http://www.w3.org/2000/svg';
+    const defs = document.createElementNS(NS, 'defs');
+
+    // Animated dash keyframes via CSS
+    const style = document.createElementNS(NS, 'style');
+    style.textContent = `
+        @keyframes flowDash { to { stroke-dashoffset: -24; } }
+        .map-line { animation: flowDash 2s linear infinite; }
+        .map-line-hover { transition: opacity .3s, stroke-width .3s; }
+    `;
+    defs.appendChild(style);
+
+    // Gradient defs + arrow markers per color
+    LAYER_MAPPINGS.forEach(m => {
+        const hex = m.color.slice(1);
+        // Gradient
+        const grad = document.createElementNS(NS, 'linearGradient');
+        grad.setAttribute('id', `grad-${hex}`);
+        grad.setAttribute('x1', '0%'); grad.setAttribute('x2', '100%');
+        const s1 = document.createElementNS(NS, 'stop');
+        s1.setAttribute('offset', '0%'); s1.setAttribute('stop-color', m.color); s1.setAttribute('stop-opacity', '0.7');
+        const s2 = document.createElementNS(NS, 'stop');
+        s2.setAttribute('offset', '100%'); s2.setAttribute('stop-color', m.color); s2.setAttribute('stop-opacity', '0.5');
+        grad.appendChild(s1); grad.appendChild(s2);
+        defs.appendChild(grad);
+        // Arrow marker
+        const mk = document.createElementNS(NS, 'marker');
+        mk.setAttribute('id', `arr-${hex}`);
+        mk.setAttribute('viewBox', '0 0 10 8');
+        mk.setAttribute('refX', '9'); mk.setAttribute('refY', '4');
+        mk.setAttribute('markerWidth', '8'); mk.setAttribute('markerHeight', '6');
+        mk.setAttribute('orient', 'auto');
+        const pg = document.createElementNS(NS, 'polygon');
+        pg.setAttribute('points', '0 1, 10 4, 0 7');
+        pg.setAttribute('fill', m.color); pg.setAttribute('opacity', '0.65');
+        mk.appendChild(pg); defs.appendChild(mk);
+        // Glow filter
+        const flt = document.createElementNS(NS, 'filter');
+        flt.setAttribute('id', `glow-${hex}`);
+        flt.setAttribute('x', '-20%'); flt.setAttribute('y', '-20%');
+        flt.setAttribute('width', '140%'); flt.setAttribute('height', '140%');
+        const blur = document.createElementNS(NS, 'feGaussianBlur');
+        blur.setAttribute('stdDeviation', '2'); blur.setAttribute('result', 'blur');
+        flt.appendChild(blur);
+        const merge = document.createElementNS(NS, 'feMerge');
+        const mn1 = document.createElementNS(NS, 'feMergeNode'); mn1.setAttribute('in', 'blur');
+        const mn2 = document.createElementNS(NS, 'feMergeNode'); mn2.setAttribute('in', 'SourceGraphic');
+        merge.appendChild(mn1); merge.appendChild(mn2);
+        flt.appendChild(merge); defs.appendChild(flt);
+    });
+    svg.appendChild(defs);
+
+    // Draw layer-to-layer connections
+    LAYER_MAPPINGS.forEach(m => {
+        const leftEl = leftLane.querySelector(`[data-pair="${m.pair}"]`);
+        const rightEl = rightLane.querySelector(`[data-pair="${m.pair}"]`);
+        if (!leftEl || !rightEl) return;
+
+        const lRect = leftEl.getBoundingClientRect();
+        const rRect = rightEl.getBoundingClientRect();
+        const hex = m.color.slice(1);
+
+        // Source: right edge center of left layer
+        const x1 = lRect.right - sRect.left;
+        const y1 = lRect.top + lRect.height * 0.5 - sRect.top;
+        // Dest: left edge center of right layer
+        const x2 = rRect.left - sRect.left;
+        const y2 = rRect.top + rRect.height * 0.5 - sRect.top;
+
+        const gap = x2 - x1;
+        const cpOff = gap * 0.45;
+
+        // Smooth S-curve bezier
+        const d = `M ${x1} ${y1} C ${x1 + cpOff} ${y1}, ${x2 - cpOff} ${y2}, ${x2} ${y2}`;
+
+        // Background glow line
+        const bgPath = document.createElementNS(NS, 'path');
+        bgPath.setAttribute('d', d);
+        bgPath.setAttribute('stroke', m.color);
+        bgPath.setAttribute('stroke-width', '6');
+        bgPath.setAttribute('fill', 'none');
+        bgPath.setAttribute('opacity', '0.08');
+        bgPath.setAttribute('stroke-linecap', 'round');
+        svg.appendChild(bgPath);
+
+        // Main line with gradient + animated dash
+        const mainPath = document.createElementNS(NS, 'path');
+        mainPath.setAttribute('d', d);
+        mainPath.setAttribute('stroke', `url(#grad-${hex})`);
+        mainPath.setAttribute('stroke-width', '2.5');
+        mainPath.setAttribute('fill', 'none');
+        mainPath.setAttribute('stroke-dasharray', '8,4');
+        mainPath.setAttribute('stroke-linecap', 'round');
+        mainPath.setAttribute('marker-end', `url(#arr-${hex})`);
+        mainPath.setAttribute('filter', `url(#glow-${hex})`);
+        mainPath.classList.add('map-line', 'map-line-hover');
+        mainPath.dataset.pair = m.pair;
+        svg.appendChild(mainPath);
+
+        // Source dot
+        const dot1 = document.createElementNS(NS, 'circle');
+        dot1.setAttribute('cx', x1); dot1.setAttribute('cy', y1);
+        dot1.setAttribute('r', '4');
+        dot1.setAttribute('fill', m.color); dot1.setAttribute('opacity', '0.55');
+        svg.appendChild(dot1);
+
+        // Destination dot
+        const dot2 = document.createElementNS(NS, 'circle');
+        dot2.setAttribute('cx', x2); dot2.setAttribute('cy', y2);
+        dot2.setAttribute('r', '3');
+        dot2.setAttribute('fill', m.color); dot2.setAttribute('opacity', '0.4');
+        svg.appendChild(dot2);
+    });
+
+    // Hover interaction
+    document.querySelectorAll('[data-pair]').forEach(el => {
+        el.addEventListener('mouseenter', () => {
+            const pair = el.dataset.pair;
+            svg.querySelectorAll('.map-line').forEach(p => {
+                if (p.dataset.pair === pair) {
+                    p.style.opacity = '1';
+                    p.style.strokeWidth = '3.5';
+                } else {
+                    p.style.opacity = '0.15';
+                }
+            });
+        });
+        el.addEventListener('mouseleave', () => {
+            svg.querySelectorAll('.map-line').forEach(p => {
+                p.style.opacity = '';
+                p.style.strokeWidth = '';
+            });
+        });
+    });
+}
+
+// Align layer heights between left and right lanes
+function alignLayerHeights() {
+    const leftLane = document.getElementById('laneLeft');
+    const rightLane = document.getElementById('laneRight');
+    if (!leftLane || !rightLane) return;
+
+    // Reset all min-heights first
+    leftLane.querySelectorAll('[data-pair]').forEach(el => el.style.minHeight = '');
+    rightLane.querySelectorAll('[data-pair]').forEach(el => el.style.minHeight = '');
+
+    // Match pairs
+    const pairs = ['row1', 'row2', 'row3', 'row4'];
+    pairs.forEach(pair => {
+        const left = leftLane.querySelector(`[data-pair="${pair}"]`);
+        const right = rightLane.querySelector(`[data-pair="${pair}"]`);
+        if (!left || !right) return;
+        const lh = left.offsetHeight;
+        const rh = right.offsetHeight;
+        const max = Math.max(lh, rh);
+        left.style.minHeight = max + 'px';
+        right.style.minHeight = max + 'px';
+    });
+
+    // Force row4 group border color
+    const row4Right = rightLane.querySelector('.arch-lv-group[data-pair="row4"]');
+    if (row4Right) {
+        row4Right.style.borderLeft = '4px solid #059669';
+    }
+}
+
+// Debounced redraw
+function scheduleRedraw() {
+    clearTimeout(scheduleRedraw._t);
+    scheduleRedraw._t = setTimeout(() => {
+        alignLayerHeights();
+        drawMappingLines();
+    }, 100);
+}
+
+// Tooltip viewport-aware repositioning
+document.addEventListener('mouseover', e => {
+    const mod = e.target.closest('.arch-mod, .arch-evolution, .cloud-agent-bar, .scene-tag');
+    if (!mod) return;
+    const tip = mod.querySelector('.arch-tip') || mod.querySelector('.scene-tip');
+    if (!tip) return;
+    tip.style.left = ''; tip.style.right = ''; tip.style.transform = '';
+    tip.style.bottom = ''; tip.style.top = '';
+    requestAnimationFrame(() => {
+        const tr = tip.getBoundingClientRect();
+        const vw = document.documentElement.clientWidth;
+        const pad = 12;
+        if (tr.right > vw - pad) { tip.style.left = `${-(tr.right - vw + pad)}px`; tip.style.right = 'auto'; }
+        if (tr.left < pad) { tip.style.left = `${pad - tr.left}px`; tip.style.right = 'auto'; }
+        if (tr.top < pad) { tip.style.bottom = 'auto'; tip.style.top = 'calc(100% + 10px)'; }
+    });
+});
+
+// Initialize on load
+window.addEventListener('resize', scheduleRedraw);
+
+document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => {
+        alignLayerHeights();
+        drawMappingLines();
+    }, 200);
+});
+</script>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>AI产品终极形态思考 v6.0 · 快手AI员工架构 | 2026-03</p>
+    </footer>
+</div>
+</body>
+</html>
