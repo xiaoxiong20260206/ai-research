@@ -3,15 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>快手AI员工架构图 · AI产品终极形态思考</title>
+    <title>快手AI员工 · 完整架构图</title>
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23059669'/><path d='M16 6c-4.4 0-8 3.6-8 8 0 2.5 1.2 4.8 3 6.2V24l5-3 5 3v-3.8c1.8-1.4 3-3.7 3-6.2 0-4.4-3.6-8-8-8z' fill='none' stroke='white' stroke-width='2' stroke-linejoin='round'/><line x1='16' y1='10' x2='16' y2='15' stroke='white' stroke-width='2' stroke-linecap='round'/><circle cx='16' cy='18' r='1' fill='white'/></svg>">
     <style>
         :root {
-            --c-primary: #059669;
-            --c-primary-light: #10B981;
-            --c-accent: #0969DA;
-            --c-accent-light: #54AEFF;
-            --c-warning: #EA580C;
+            --c-product: #0969DA;
             --c-text: #1F2328;
             --c-text-2: #4D5561;
             --c-text-3: #656D76;
@@ -19,9 +15,7 @@
             --c-border-light: #E8ECF0;
             --c-bg: #F6F8FA;
             --c-card: #FFFFFF;
-            --shadow-sm: 0 1px 3px rgba(31,35,40,.06);
             --shadow-card: 0 2px 8px rgba(31,35,40,.06), 0 1px 2px rgba(31,35,40,.04);
-            --shadow-hover: 0 8px 24px rgba(31,35,40,.12);
             --r-sm: 6px; --r-md: 10px; --r-lg: 14px; --r-full: 999px;
             --font: -apple-system, "system-ui", "Segoe UI", "Noto Sans SC", Helvetica, Arial, sans-serif;
             --ease: cubic-bezier(0.25, 1, 0.5, 1);
@@ -32,7 +26,7 @@
             color: var(--c-text-2); background: var(--c-bg);
             -webkit-font-smoothing: antialiased;
         }
-        .page { max-width: 1300px; margin: 0 auto; padding: 24px 20px 48px; }
+        .page { max-width: 1600px; margin: 0 auto; padding: 24px 20px 48px; }
 
         /* === TAB NAV === */
         .tab-nav {
@@ -41,6 +35,7 @@
             border-radius: var(--r-lg); padding: 6px;
             margin-bottom: 24px; box-shadow: var(--shadow-card);
             position: sticky; top: 12px; z-index: 100; overflow-x: auto;
+            max-width: 700px;
         }
         .tab-btn {
             flex: 1; display: flex; align-items: center; justify-content: center;
@@ -51,386 +46,360 @@
         }
         .tab-btn:hover { background: var(--c-bg); color: var(--c-text); }
         .tab-btn.active {
-            background: linear-gradient(135deg, #059669 0%, #10B981 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: #fff; font-weight: 600;
-            box-shadow: 0 2px 8px rgba(5,150,105,.25);
+            box-shadow: 0 2px 8px rgba(102,126,234,.25);
         }
 
-        /* === HEADER === */
-        .header { text-align: center; margin-bottom: 28px; }
-        .header-badge {
-            display: inline-flex; align-items: center; gap: 6px;
-            padding: 4px 14px; border-radius: var(--r-full);
-            background: linear-gradient(135deg, #E6F7ED 0%, #E1F0F8 100%);
-            color: var(--c-primary); font-size: 12px; font-weight: 600;
-            margin-bottom: 10px;
+        /* === CANVAS === */
+        .canvas {
+            background: white;
+            border-radius: 24px;
+            padding: 48px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
         }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+        
         .header h1 {
-            font-size: 26px; font-weight: 800; color: var(--c-text);
-            letter-spacing: -0.5px; margin-bottom: 6px;
-        }
-        .header p { font-size: 13px; color: var(--c-text-3); }
-
-        /* === ARCHITECTURE === */
-        .arch-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-        }
-        .arch-lane {
-            background: var(--c-card);
-            border: 1px solid var(--c-border-light);
-            border-radius: var(--r-lg);
-            overflow: hidden;
-        }
-        .arch-lane-header {
-            padding: 12px 16px;
-            border-bottom: 1px solid var(--c-border-light);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .arch-lane-header.product {
-            background: linear-gradient(135deg, rgba(5,150,105,0.06) 0%, rgba(16,185,129,0.04) 100%);
-        }
-        .arch-lane-header.tech {
-            background: linear-gradient(135deg, rgba(9,105,218,0.06) 0%, rgba(84,174,255,0.04) 100%);
-        }
-        .arch-lane-icon { font-size: 18px; }
-        .arch-lane-title { font-size: 14px; font-weight: 800; color: var(--c-text); }
-        .arch-lane-subtitle { font-size: 11px; color: var(--c-text-3); margin-left: auto; }
-
-        .arch-lane-body { padding: 16px; }
-
-        /* Layer rows */
-        .arch-row {
+            font-size: 42px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 900;
             margin-bottom: 12px;
-            padding: 12px;
-            background: var(--c-bg);
-            border-radius: var(--r-md);
-            border: 1px solid var(--c-border-light);
         }
-        .arch-row:last-child { margin-bottom: 0; }
-        .arch-row-header {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 10px;
-            font-size: 12px;
-            font-weight: 700;
-            color: var(--c-text);
+        
+        .header .subtitle {
+            font-size: 18px;
+            color: #64748b;
+            font-weight: 500;
         }
-        .arch-row-header .layer-tag {
-            padding: 2px 8px;
-            border-radius: var(--r-full);
-            font-size: 10px;
-            font-weight: 700;
-            color: #fff;
-            background: var(--c-primary);
-        }
-        .arch-row-header .layer-tag.tech {
-            background: var(--c-accent);
-        }
-        .arch-row-header .mapping {
-            margin-left: auto;
-            font-size: 10px;
-            font-weight: 600;
-            color: var(--c-text-3);
-            opacity: 0.8;
-        }
-
-        /* Product cards */
-        .product-grid {
+        
+        /* 双泳道 */
+        .swimlanes {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px;
+            gap: 0;
+            position: relative;
+            margin-bottom: 40px;
         }
-        .product-card {
-            padding: 10px 12px;
-            background: var(--c-card);
-            border: 1px solid var(--c-border-light);
-            border-radius: var(--r-sm);
-            border-left: 3px solid var(--c-primary);
-            transition: all 200ms var(--ease);
-            cursor: default;
+        
+        .swimlane {
             position: relative;
         }
-        .product-card:hover {
-            box-shadow: var(--shadow-card);
-            transform: translateY(-1px);
+        
+        .lane-header {
+            color: white;
+            padding: 20px 24px;
+            text-align: center;
         }
-        .product-card.codeflicker { border-left-color: #0969DA; }
-        .product-card.myflicker { border-left-color: #7C3AED; }
-        .product-card .card-title {
+        
+        .lane-header:first-child {
+            border-radius: 16px 0 0 0;
+        }
+        
+        .lane-title {
+            font-size: 22px;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+        
+        .lane-subtitle {
             font-size: 13px;
+            opacity: 0.9;
+        }
+        
+        .lane-body {
+            padding: 24px;
+            background: #fafbfc;
+            min-height: 100%;
+        }
+        
+        .swimlane:first-child .lane-body {
+            border-right: 3px dashed #cbd5e1;
+        }
+        
+        /* 层级区块 */
+        .layer-block {
+            margin-bottom: 24px;
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            border-left: 6px solid var(--color);
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+        }
+        
+        .layer-block:last-child {
+            margin-bottom: 0;
+        }
+        
+        .layer-title {
+            font-size: 14px;
             font-weight: 700;
-            color: var(--c-text);
+            color: var(--color);
+            margin-bottom: 14px;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f1f5f9;
         }
-        .product-card .card-subtitle {
-            font-size: 10px;
-            color: var(--c-text-3);
-            margin-top: 2px;
-        }
-        .product-card .card-features {
+        
+        .modules {
             display: flex;
-            flex-wrap: wrap;
-            gap: 4px;
-            margin-top: 8px;
+            flex-direction: column;
+            gap: 12px;
         }
-        .product-card .feature-tag {
-            padding: 2px 6px;
-            border-radius: var(--r-full);
-            font-size: 9px;
-            font-weight: 600;
-            background: rgba(5,150,105,0.08);
-            color: var(--c-primary);
+        
+        .mod {
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 14px 16px;
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
         }
-
-        /* Tooltip */
-        .tooltip-content {
-            display: none;
-            position: absolute;
-            left: 0; right: 0; top: 100%;
-            margin-top: 8px;
-            padding: 12px;
-            background: var(--c-card);
-            border: 1px solid var(--c-border);
-            border-radius: var(--r-md);
-            box-shadow: var(--shadow-hover);
-            font-size: 11px;
-            line-height: 1.5;
-            color: var(--c-text-2);
-            z-index: 10;
+        
+        .mod:hover {
+            border-color: var(--color);
+            transform: translateX(4px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
         }
-        .product-card:hover .tooltip-content {
-            display: block;
-        }
-        .tooltip-content h4 {
-            font-size: 12px;
+        
+        .mod-name {
+            font-size: 15px;
             font-weight: 700;
-            color: var(--c-text);
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 8px;
             margin-bottom: 6px;
         }
-        .tooltip-content ul {
-            margin: 0;
-            padding-left: 16px;
+        
+        .mod-desc {
+            font-size: 12px;
+            color: #64748b;
+            line-height: 1.6;
         }
-        .tooltip-content li {
-            margin-bottom: 3px;
-        }
-
-        /* Scene tags */
-        .scene-row {
+        
+        .mod-tags {
+            margin-top: 8px;
             display: flex;
-            flex-wrap: wrap;
             gap: 6px;
+            flex-wrap: wrap;
         }
-        .scene-tag {
-            padding: 4px 10px;
-            background: var(--c-card);
-            border: 1px solid var(--c-border-light);
-            border-radius: var(--r-full);
-            font-size: 11px;
+        
+        .tag {
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 10px;
             font-weight: 600;
-            color: var(--c-text-2);
-            cursor: default;
-            transition: all 200ms var(--ease);
-            position: relative;
         }
-        .scene-tag:hover {
-            background: rgba(5,150,105,0.08);
-            border-color: var(--c-primary);
-            color: var(--c-primary);
+        
+        .tag-logic {
+            background: #dbeafe;
+            color: #1e40af;
         }
-
-        /* Skill market */
-        .skill-grid {
+        
+        .tag-physical {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        /* SVG连线 */
+        #connSvg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10;
+        }
+        
+        /* 存储基础 */
+        .storage-bar {
+            margin-top: 32px;
+            padding: 28px 32px;
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            border-radius: 16px;
+            border: 4px solid #10b981;
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 24px;
+            align-items: center;
         }
-        .skill-card {
-            padding: 8px 10px;
-            background: var(--c-card);
-            border: 1px solid var(--c-border-light);
-            border-radius: var(--r-sm);
-            text-align: center;
-            transition: all 200ms var(--ease);
-            cursor: default;
-        }
-        .skill-card:hover {
-            box-shadow: var(--shadow-sm);
-            transform: translateY(-1px);
-        }
-        .skill-card .skill-icon { font-size: 16px; margin-bottom: 4px; }
-        .skill-card .skill-name { font-size: 10px; font-weight: 700; color: var(--c-text); }
-        .skill-card .skill-desc { font-size: 9px; color: var(--c-text-3); }
-
-        /* Service layer */
-        .service-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-        .service-card {
-            padding: 10px 12px;
-            background: var(--c-card);
-            border: 1px solid var(--c-border-light);
-            border-radius: var(--r-sm);
+        
+        .storage-label {
+            font-size: 20px;
+            font-weight: 800;
+            color: #065f46;
             display: flex;
             align-items: center;
             gap: 10px;
         }
-        .service-card .service-icon {
-            font-size: 20px;
-            width: 36px;
-            height: 36px;
+        
+        .storage-features {
+            font-size: 13px;
+            color: #047857;
+            line-height: 1.8;
+        }
+        
+        .storage-features strong {
+            color: #065f46;
+        }
+        
+        .storage-sync {
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(5,150,105,0.08);
-            border-radius: var(--r-sm);
-        }
-        .service-card .service-info { flex: 1; }
-        .service-card .service-name { font-size: 12px; font-weight: 700; color: var(--c-text); }
-        .service-card .service-desc { font-size: 10px; color: var(--c-text-3); }
-
-        /* AgentCore */
-        .core-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-        }
-        .core-card {
-            padding: 10px;
-            background: var(--c-card);
-            border: 1px solid var(--c-border-light);
-            border-radius: var(--r-sm);
-            text-align: center;
-            transition: all 200ms var(--ease);
-            cursor: default;
-            position: relative;
-        }
-        .core-card:hover {
-            box-shadow: var(--shadow-sm);
-        }
-        .core-card .core-icon { font-size: 18px; margin-bottom: 4px; }
-        .core-card .core-name { font-size: 11px; font-weight: 700; color: var(--c-text); }
-        .core-card .core-desc { font-size: 9px; color: var(--c-text-3); }
-
-        /* Self-evolution */
-        .evolution-banner {
-            margin-top: 12px;
-            padding: 12px 16px;
-            background: linear-gradient(135deg, rgba(5,150,105,0.08) 0%, rgba(9,105,218,0.06) 100%);
-            border: 1px solid rgba(5,150,105,0.2);
-            border-radius: var(--r-md);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        .evolution-banner .evo-icon { font-size: 24px; }
-        .evolution-banner .evo-content { flex: 1; }
-        .evolution-banner .evo-title {
-            font-size: 13px;
-            font-weight: 800;
-            color: var(--c-primary);
-        }
-        .evolution-banner .evo-desc {
-            font-size: 11px;
-            color: var(--c-text-2);
-        }
-
-        /* Tech layer cards */
-        .tech-card {
-            padding: 10px 12px;
-            background: var(--c-card);
-            border: 1px solid var(--c-border-light);
-            border-radius: var(--r-sm);
-            margin-bottom: 8px;
-            position: relative;
-        }
-        .tech-card:last-child { margin-bottom: 0; }
-        .tech-card .tech-header {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 6px;
-        }
-        .tech-card .tech-icon { font-size: 16px; }
-        .tech-card .tech-title { font-size: 12px; font-weight: 700; color: var(--c-text); }
-        .tech-card .tech-subtitle {
-            font-size: 10px;
-            color: var(--c-text-3);
-            margin-left: auto;
-        }
-        .tech-card .tech-body {
-            font-size: 10px;
-            color: var(--c-text-2);
-            display: flex;
             gap: 16px;
         }
-        .tech-card .tech-label {
+        
+        .sync-icon {
+            font-size: 36px;
+        }
+        
+        .sync-arrow {
+            font-size: 28px;
+            color: #10b981;
+            font-weight: 700;
+        }
+        
+        .sync-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #065f46;
+        }
+        
+        /* 图例 */
+        .legend {
+            margin-top: 28px;
+            padding: 20px 24px;
+            background: #f8fafc;
+            border-radius: 12px;
+            border: 2px solid #e2e8f0;
+        }
+        
+        .legend-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 12px;
+        }
+        
+        .legend-items {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #475569;
             font-weight: 600;
-            color: var(--c-text-3);
+        }
+        
+        .legend-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+        }
+        
+        .legend-line {
+            width: 32px;
+            height: 3px;
+            border-radius: 2px;
         }
 
-        /* Storage base */
-        .storage-base {
-            margin-top: 20px;
+        /* Tooltip */
+        .tooltip {
+            position: absolute;
+            z-index: 1000;
+            max-width: 320px;
             padding: 14px 16px;
-            background: linear-gradient(135deg, rgba(36,41,47,0.04) 0%, rgba(61,68,77,0.02) 100%);
-            border: 1px solid var(--c-border-light);
-            border-radius: var(--r-lg);
+            background: rgba(255,255,255,0.98);
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            box-shadow: 0 12px 32px rgba(0,0,0,0.15);
+            font-size: 12px;
+            line-height: 1.6;
+            pointer-events: none;
+            opacity: 0;
+            transform: translateY(8px);
+            transition: all 0.2s ease;
         }
-        .storage-base h3 {
-            font-size: 13px;
-            font-weight: 800;
-            color: var(--c-text);
-            margin-bottom: 10px;
+        
+        .tooltip.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .tooltip-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 8px;
             display: flex;
             align-items: center;
             gap: 8px;
         }
-        .storage-features {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
+        
+        .tooltip-content {
+            color: #64748b;
         }
-        .storage-feature {
-            padding: 6px 12px;
-            background: var(--c-card);
-            border: 1px solid var(--c-border-light);
-            border-radius: var(--r-full);
+        
+        .tooltip-content ul {
+            margin: 8px 0 0 16px;
+        }
+        
+        .tooltip-content li {
+            margin-bottom: 4px;
+        }
+        
+        .tooltip-footer {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #e2e8f0;
             font-size: 11px;
-            font-weight: 600;
-            color: var(--c-text-2);
-        }
-        .storage-feature strong {
-            color: var(--c-text);
+            color: #94a3b8;
         }
 
         /* Footer */
         .footer {
-            text-align: center; padding: 20px 0; margin-top: 32px;
-            border-top: 1px solid var(--c-border-light);
-            color: var(--c-text-3); font-size: 11px;
+            text-align: center;
+            padding: 24px 0;
+            margin-top: 32px;
+            border-top: 1px solid #e2e8f0;
+            color: #94a3b8;
+            font-size: 12px;
         }
 
         /* Responsive */
-        @media (max-width: 900px) {
-            .arch-container { grid-template-columns: 1fr; }
-            .product-grid { grid-template-columns: 1fr; }
-            .skill-grid { grid-template-columns: repeat(2, 1fr); }
-            .core-grid { grid-template-columns: repeat(2, 1fr); }
+        @media (max-width: 1200px) {
+            .canvas { padding: 32px; }
+            .header h1 { font-size: 32px; }
         }
+        
+        @media (max-width: 900px) {
+            .swimlanes { grid-template-columns: 1fr; }
+            .swimlane:first-child .lane-body { border-right: none; border-bottom: 3px dashed #cbd5e1; }
+            .storage-bar { grid-template-columns: 1fr; text-align: center; }
+        }
+        
         @media (max-width: 600px) {
-            .header h1 { font-size: 20px; }
-            .scene-row { gap: 4px; }
-            .skill-grid { grid-template-columns: 1fr 1fr; }
+            .canvas { padding: 20px; border-radius: 16px; }
+            .header h1 { font-size: 24px; }
+            .tab-nav { max-width: 100%; }
         }
     </style>
 </head>
@@ -441,354 +410,387 @@
         <a href="index.html" class="tab-btn"><span>🏠</span><span>首页</span></a>
         <a href="deep-dive.html" class="tab-btn"><span>📖</span><span>详细论证</span></a>
         <a href="evidence.html" class="tab-btn"><span>🧬</span><span>AI分身实证</span></a>
-        <a href="architecture.html" class="tab-btn active"><span>🗺️</span><span>快手AI员工架构</span></a>
+        <a href="architecture.html" class="tab-btn active"><span>🗺️</span><span>架构全景</span></a>
     </nav>
 
-    <!-- Header -->
-    <header class="header">
-        <div class="header-badge">🗺️ ARCHITECTURE</div>
-        <h1>快手AI员工 · 完整架构图</h1>
-        <p>两类用户 · 两个产品 · 一套基础设施 — 鼠标悬停模块查看详细说明</p>
-    </header>
-
-    <!-- Architecture Diagram -->
-    <div class="arch-container">
-        <!-- 左泳道：产品架构 -->
-        <div class="arch-lane">
-            <div class="arch-lane-header product">
-                <span class="arch-lane-icon">🎨</span>
-                <span class="arch-lane-title">产品架构</span>
-                <span class="arch-lane-subtitle">用户视角的功能与价值</span>
+    <div class="canvas">
+        <div class="header">
+            <h1>⚡ 快手AI员工 · 完整架构图</h1>
+            <div class="subtitle">产品架构 ↔ 技术架构（逻辑+物理）· 精准模块映射 — 鼠标悬停模块查看详细说明</div>
+        </div>
+        
+        <div class="swimlanes" id="swimlanes">
+            <svg id="connSvg"></svg>
+            
+            <!-- 左泳道：产品架构 -->
+            <div class="swimlane">
+                <div class="lane-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 16px 0 0 0;">
+                    <div class="lane-title">🎨 产品架构</div>
+                    <div class="lane-subtitle">用户视角的功能与价值</div>
+                </div>
+                <div class="lane-body">
+                    <!-- 用户触点层 -->
+                    <div class="layer-block" style="--color: #667eea;">
+                        <div class="layer-title">
+                            <span>🌍</span>
+                            <span>L1.1 用户触点层</span>
+                        </div>
+                        <div class="modules">
+                            <div class="mod" data-m="p-kim" data-tooltip="KIM 对话|企业IM即时交互入口，消息号「卡瓦」|用户在KIM中直接与AI对话，无需切换工具|覆盖日常办公、IM场景">
+                                <div class="mod-name"><span>💬</span> KIM 对话</div>
+                                <div class="mod-desc">企业IM即时交互 · 消息号：卡瓦</div>
+                            </div>
+                            <div class="mod" data-m="p-web" data-tooltip="Web 管理|一键激活部署和可视化监控|Skill管理、系统配置、监控仪表盘|支持技能市场入口、用户激活流程">
+                                <div class="mod-name"><span>🌐</span> Web 管理</div>
+                                <div class="mod-desc">一键激活部署 · 可视化监控</div>
+                            </div>
+                            <div class="mod" data-m="p-local" data-tooltip="本地客户端|深度嵌入开发者日常 IDE 工作流|智能补全、Code Review、Debug 助手、架构分析|面向工程师的本地 IDE 插件">
+                                <div class="mod-name"><span>🖥️</span> 本地客户端</div>
+                                <div class="mod-desc">深度任务处理 · 独立沙箱</div>
+                            </div>
+                            <div class="mod" data-m="p-market" data-tooltip="全局知识&技能市场|Skills/知识包的发现、试用、安装|类似 App Store 的浏览选购体验|支持公司级、业务级、个人级三层分发">
+                                <div class="mod-name"><span>🏪</span> 全局知识&技能市场</div>
+                                <div class="mod-desc">Web平台 · Skills/知识浏览选购 · 独立站</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 核心能力层 -->
+                    <div class="layer-block" style="--color: #10b981;">
+                        <div class="layer-title">
+                            <span>🤖</span>
+                            <span>L1.2 核心能力层</span>
+                        </div>
+                        <div class="modules">
+                            <div class="mod" data-m="p-skills" data-tooltip="Skills 能力|500+ 精品技能 · 开箱即用|公司级默认预装（评测驱动）|业务级合作共建 · 个人级开放生态">
+                                <div class="mod-name"><span>📚</span> Skills 能力</div>
+                                <div class="mod-desc">500+ 精品技能 · 开箱即用</div>
+                            </div>
+                            <div class="mod" data-m="p-agent" data-tooltip="全能 Agent|Code Agent 是能力天花板最高的 Agent 类型|自主编程：缺什么能力，写代码补上|Skill自创建：自动将成功经验沉淀为新Skill">
+                                <div class="mod-name"><span>⚡</span> 全能 Agent</div>
+                                <div class="mod-desc">以Code Agent为核心 · 能力无上限</div>
+                            </div>
+                            <div class="mod" data-m="p-memory" data-tooltip="记忆系统|长期记忆：用户偏好、历史对话积累|工作记忆：当前任务上下文管理|基于KFS存储，云↔本地实时增量同步">
+                                <div class="mod-name"><span>🧠</span> 记忆系统</div>
+                                <div class="mod-desc">用户偏好 · 云端同步</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 增值服务层 -->
+                    <div class="layer-block" style="--color: #8b5cf6;">
+                        <div class="layer-title">
+                            <span>⚡</span>
+                            <span>L1.3 增值服务层</span>
+                        </div>
+                        <div class="modules">
+                            <div class="mod" data-m="p-routing" data-tooltip="智能路由|按任务复杂度自动选最优模型|复杂推理 → Claude / 万擎大杯|常规分析 → 万擎中杯|简单对话 → 万擎小杯">
+                                <div class="mod-name"><span>🎯</span> 智能路由</div>
+                                <div class="mod-desc">自动选模型 · 成本优化50%+</div>
+                            </div>
+                            <div class="mod" data-m="p-security" data-tooltip="安全审计|万擎平台租户级数据隔离|统一Skill审核，上架前安全检查|统一日志 + 异常检测 + 事件追溯">
+                                <div class="mod-name"><span>🔐</span> 安全审计</div>
+                                <div class="mod-desc">全链路追溯 · 权限管理</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="arch-lane-body">
-                <!-- 用户触点层 -->
-                <div class="arch-row">
-                    <div class="arch-row-header">
-                        <span class="layer-tag">触点层</span>
-                        🌍 用户触点层
-                        <span class="mapping">→ T1 接入层</span>
-                    </div>
-                    <div class="product-grid">
-                        <div class="product-card codeflicker">
-                            <div class="card-title"><span>💻</span> CodeFlicker</div>
-                            <div class="card-subtitle">AI 编码助手 → AI 工程师</div>
-                            <div class="card-features">
-                                <span class="feature-tag">⌨️ AI IDE · 插件</span>
-                            </div>
-                            <div class="tooltip-content">
-                                <h4>⌨️ AI IDE · 插件</h4>
-                                <p>深度嵌入开发者日常 IDE 工作流</p>
-                                <ul>
-                                    <li><strong>智能补全</strong>：上下文感知的代码补全</li>
-                                    <li><strong>Code Review</strong>：AI 辅助代码审查</li>
-                                    <li><strong>Debug 助手</strong>：错误分析和修复建议</li>
-                                    <li><strong>架构分析</strong>：代码理解和重构建议</li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="product-card myflicker">
-                            <div class="card-title"><span>🤖</span> MyFlicker</div>
-                            <div class="card-subtitle">AI 员工（所有员工）</div>
-                            <div class="card-features">
-                                <span class="feature-tag">💬 KIM 机器人</span>
-                                <span class="feature-tag">🌐 网页端</span>
-                            </div>
-                            <div class="tooltip-content">
-                                <h4>💬 KIM 机器人 / 🌐 网页端</h4>
-                                <p>面向产品·运营·市场·管理·HR·财务等所有员工</p>
-                                <ul>
-                                    <li>KIM中直接与AI对话，无需切换工具</li>
-                                    <li>Skill管理、系统配置、监控仪表盘</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Cloud Code Agent -->
-                    <div class="product-card" style="margin-top: 10px; border-left-color: #059669;">
-                        <div class="card-title"><span>☁️</span> 云端 Code Agent</div>
-                        <div class="card-subtitle">合盖继续工作 · 自动PR · 多任务并行 — 共同支撑 CodeFlicker & MyFlicker</div>
-                        <div class="tooltip-content">
-                            <h4>☁️ 云端 Code Agent（核心进化）</h4>
-                            <p>从本地工具升级为云端 AI 工程师</p>
-                            <ul>
-                                <li><strong>合盖工作</strong>：电脑合上，Agent 在云端继续执行任务</li>
-                                <li><strong>自动 PR</strong>：自主提交代码 + 跑测试 + 修 Bug</li>
-                                <li><strong>CI/CD 集成</strong>：嵌入完整研发流程</li>
-                                <li><strong>多任务并行</strong>：同时处理多个代码任务</li>
-                            </ul>
-                        </div>
-                    </div>
+            
+            <!-- 右泳道：技术架构（逻辑+物理合一） -->
+            <div class="swimlane">
+                <div class="lane-header" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-radius: 0 16px 0 0;">
+                    <div class="lane-title">🏗️ 技术架构</div>
+                    <div class="lane-subtitle">实现逻辑 + 部署拓扑</div>
                 </div>
-
-                <!-- Agent 能力层 -->
-                <div class="arch-row">
-                    <div class="arch-row-header">
-                        <span class="layer-tag">能力层</span>
-                        🤖 Agent 能力层
-                        <span class="mapping">→ T3 计算层</span>
-                    </div>
-                    <!-- 场景层 -->
-                    <div style="margin-bottom: 10px;">
-                        <div style="font-size: 11px; font-weight: 700; color: var(--c-text-3); margin-bottom: 6px;">🎯 场景层</div>
-                        <div class="scene-row">
-                            <span class="scene-tag">💻 开发</span>
-                            <span class="scene-tag">📋 办公</span>
-                            <span class="scene-tag">📄 文档</span>
-                            <span class="scene-tag">🔍 调研</span>
-                            <span class="scene-tag">📊 运营</span>
-                            <span class="scene-tag">🎧 客服</span>
-                            <span class="scene-tag">📈 数据</span>
-                            <span class="scene-tag">⋯ 更多</span>
+                <div class="lane-body">
+                    <!-- 接入层 -->
+                    <div class="layer-block" style="--color: #667eea;">
+                        <div class="layer-title">
+                            <span>📥</span>
+                            <span>T1 接入层</span>
                         </div>
-                    </div>
-                    <!-- Skill & 知识市场 -->
-                    <div style="font-size: 11px; font-weight: 700; color: var(--c-text-3); margin-bottom: 6px;">🏪 Skill & 知识市场</div>
-                    <div class="skill-grid">
-                        <div class="skill-card">
-                            <div class="skill-icon">🏢</div>
-                            <div class="skill-name">公司级</div>
-                            <div class="skill-desc">默认生效 · 评测驱动</div>
-                        </div>
-                        <div class="skill-card">
-                            <div class="skill-icon">🏭</div>
-                            <div class="skill-name">业务级</div>
-                            <div class="skill-desc">合作共建 · 场景专属</div>
-                        </div>
-                        <div class="skill-card">
-                            <div class="skill-icon">👤</div>
-                            <div class="skill-name">个人级</div>
-                            <div class="skill-desc">开放生态 · 自由创建</div>
-                        </div>
-                        <div class="skill-card">
-                            <div class="skill-icon">🌐</div>
-                            <div class="skill-name">第三方</div>
-                            <div class="skill-desc">OpenClaw、ClaudeCode等</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 服务层 -->
-                <div class="arch-row">
-                    <div class="arch-row-header">
-                        <span class="layer-tag">服务层</span>
-                        🛡️ 服务层
-                        <span class="mapping">→ T2 网关层</span>
-                    </div>
-                    <div class="service-row">
-                        <div class="service-card">
-                            <div class="service-icon">🎯</div>
-                            <div class="service-info">
-                                <div class="service-name">智能路由</div>
-                                <div class="service-desc">成本优化50%+</div>
-                            </div>
-                        </div>
-                        <div class="service-card">
-                            <div class="service-icon">🔐</div>
-                            <div class="service-info">
-                                <div class="service-name">安全审计</div>
-                                <div class="service-desc">全链路追溯</div>
+                        <div class="modules">
+                            <div class="mod" data-m="t-access" data-tooltip="多端请求接入|统一接收来自四个端的请求|IDE 插件 → VS Code / JetBrains 端|KIM 对话 → 企业 IM 消息通道|Web 管理台 → 浏览器前端|本地端 → macOS/Windows 本地进程">
+                                <div class="mod-name"><span>📨</span> 多端请求接入</div>
+                                <div class="mod-desc">接收KIM/Web/本地三端请求，统一协议格式</div>
+                                <div class="mod-tags">
+                                    <span class="tag tag-logic">逻辑: HTTP/WebSocket协议</span>
+                                    <span class="tag tag-physical">物理: KIM平台 + Nginx + React SPA</span>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-
-                <!-- AgentCore -->
-                <div class="arch-row">
-                    <div class="arch-row-header">
-                        <span class="layer-tag">内核</span>
-                        🤖 AgentCore · 能力内核
-                        <span class="mapping">→ T4推理层 → T5存储层</span>
-                    </div>
-                    <div class="core-grid">
-                        <div class="core-card">
-                            <div class="core-icon">🧠</div>
-                            <div class="core-name">Memory</div>
-                            <div class="core-desc">记忆系统</div>
+                    
+                    <!-- 网关层 -->
+                    <div class="layer-block" style="--color: #f59e0b;">
+                        <div class="layer-title">
+                            <span>🚪</span>
+                            <span>T2 网关层</span>
                         </div>
-                        <div class="core-card">
-                            <div class="core-icon">💡</div>
-                            <div class="core-name">Reasoning</div>
-                            <div class="core-desc">推理引擎</div>
-                        </div>
-                        <div class="core-card">
-                            <div class="core-icon">📋</div>
-                            <div class="core-name">Planning</div>
-                            <div class="core-desc">规划引擎</div>
-                        </div>
-                        <div class="core-card">
-                            <div class="core-icon">🎼</div>
-                            <div class="core-name">Orchestration</div>
-                            <div class="core-desc">调度引擎</div>
-                        </div>
-                        <div class="core-card">
-                            <div class="core-icon">🔄</div>
-                            <div class="core-name">Reflection</div>
-                            <div class="core-desc">反思引擎</div>
-                        </div>
-                        <div class="core-card">
-                            <div class="core-icon">🔌</div>
-                            <div class="core-name">Integration</div>
-                            <div class="core-desc">集成层</div>
+                        <div class="modules">
+                            <div class="mod" data-m="t-gateway" data-tooltip="Gateway 鉴权路由|JWT Token 身份验证（SSO 统一登录）|消息路由：根据请求类型分发到对应 Agent|协议桥接：WebSocket ↔ HTTP 双向转换|流量管控：限流 + 降级 + 熔断">
+                                <div class="mod-name"><span>🛡️</span> Gateway 鉴权路由</div>
+                                <div class="mod-desc">Token验证 · 消息路由分发 · 协议桥接 · 状态管理</div>
+                                <div class="mod-tags">
+                                    <span class="tag tag-logic">逻辑: JWT鉴权 + 路由分发</span>
+                                    <span class="tag tag-physical">物理: Node.js Service | Port 18789</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <!-- 自进化引擎 -->
-                    <div class="evolution-banner">
-                        <div class="evo-icon">🚀</div>
-                        <div class="evo-content">
-                            <div class="evo-title">自进化引擎 · Self-Evolution Engine</div>
-                            <div class="evo-desc">Code Agent 核心驱动 · 能力无上限 · 缺什么写代码补 · 持续自我迭代进化</div>
+                    
+                    <!-- 计算层 -->
+                    <div class="layer-block" style="--color: #10b981;">
+                        <div class="layer-title">
+                            <span>⚙️</span>
+                            <span>T3 计算层</span>
+                        </div>
+                        <div class="modules">
+                            <div class="mod" data-m="t-agent" data-tooltip="OpenClaw Agent 处理|Agent 运行容器：每个用户独占 Pod（4C8G）|Skills 调度：动态加载所需技能包|代码生成：AST 级别代码修改与创建|沙箱执行：隔离环境运行用户代码">
+                                <div class="mod-name"><span>📦</span> OpenClaw Agent 处理</div>
+                                <div class="mod-desc">调用Skills · 生成代码 · 访问记忆 · 沙箱执行</div>
+                                <div class="mod-tags">
+                                    <span class="tag tag-logic">逻辑: Code Agent + Skills调度</span>
+                                    <span class="tag tag-physical">物理: K8S Pod池 | 4C8G/Pod | StatefulSet</span>
+                                </div>
+                            </div>
+                            <div class="mod" data-m="t-skills-hub" data-tooltip="Skills Hub 技能中心|技能注册：Schema 定义 + 自动校验|版本管理：语义化版本 + 灰度发布|审核流：安全扫描 + 人工审批|CDN 分发：全球加速 + 按需拉取">
+                                <div class="mod-name"><span>🏪</span> Skills Hub 技能中心</div>
+                                <div class="mod-desc">Schema管理 · 版本控制 · 安全审计 · 分发推送</div>
+                                <div class="mod-tags">
+                                    <span class="tag tag-logic">逻辑: 技能注册+审核+版本</span>
+                                    <span class="tag tag-physical">物理: S3 + CDN + Git版本管理</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 推理层 -->
+                    <div class="layer-block" style="--color: #8b5cf6;">
+                        <div class="layer-title">
+                            <span>🧠</span>
+                            <span>T4 推理层</span>
+                        </div>
+                        <div class="modules">
+                            <div class="mod" data-m="t-model" data-tooltip="智能模型路由 + 推理|复杂度评估：自动判断任务难度|小杯任务 → 轻量模型（低延迟、低成本）|大杯任务 → 旗舰模型（高精度推理）|Fallback 机制：主模型不可用自动切换备选">
+                                <div class="mod-name"><span>🎯</span> 智能模型路由 + 推理</div>
+                                <div class="mod-desc">按任务复杂度自动选模型：简单→小杯 · 复杂→大杯/Claude</div>
+                                <div class="mod-tags">
+                                    <span class="tag tag-logic">逻辑: 复杂度评估 + 路由策略</span>
+                                    <span class="tag tag-physical">物理: 万擎(大中小杯) + Claude | MAAS API</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 存储层 -->
+                    <div class="layer-block" style="--color: #ec4899;">
+                        <div class="layer-title">
+                            <span>💾</span>
+                            <span>T5 存储层</span>
+                        </div>
+                        <div class="modules">
+                            <div class="mod" data-m="t-storage" data-tooltip="KFS 存储 + 同步|KFS 持久卷：配置/会话/记忆中心化存储|云↔本地同步：实时增量，换设备无缝衔接|流式返回：大文件分块传输|秒级 Failover：Pod 故障数据自动迁移">
+                                <div class="mod-name"><span>🗄️</span> KFS 存储 + 同步</div>
+                                <div class="mod-desc">结果持久化 · 记忆写入 · 云端↔本地双向同步</div>
+                                <div class="mod-tags">
+                                    <span class="tag tag-logic">逻辑: 流式返回 + 增量同步</span>
+                                    <span class="tag tag-physical">物理: KFS分布式卷 | 挂载 /home/node/.openclaw</span>
+                                </div>
+                            </div>
+                            <div class="mod" data-m="t-monitor" data-tooltip="监控 + 日志|任务统计：完成率/延迟/错误率仪表盘|成本追踪：Token 消耗 + 模型调用计费|异常告警：P0 故障 < 1min 触达|日志聚合：全链路 Trace ID 串联">
+                                <div class="mod-name"><span>📊</span> 监控 + 日志</div>
+                                <div class="mod-desc">任务统计 · 成本追踪 · 异常告警</div>
+                                <div class="mod-tags">
+                                    <span class="tag tag-physical">物理: Prometheus + Grafana</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- 右泳道：技术架构 -->
-        <div class="arch-lane">
-            <div class="arch-lane-header tech">
-                <span class="arch-lane-icon">🏗️</span>
-                <span class="arch-lane-title">技术架构</span>
-                <span class="arch-lane-subtitle">实现逻辑 + 部署拓扑</span>
+        
+        <!-- 存储基础 -->
+        <div class="storage-bar">
+            <div class="storage-label">
+                <span>💾</span>
+                <span>存储架构基础</span>
             </div>
-            <div class="arch-lane-body">
-                <!-- T1 接入层 -->
-                <div class="arch-row">
-                    <div class="arch-row-header">
-                        <span class="layer-tag tech">T1</span>
-                        📥 接入层
-                        <span class="mapping">← 触点层</span>
-                    </div>
-                    <div class="tech-card">
-                        <div class="tech-header">
-                            <span class="tech-icon">📨</span>
-                            <span class="tech-title">多端请求接入</span>
-                            <span class="tech-subtitle">IDE/KIM/Web/本地 四端</span>
-                        </div>
-                        <div class="tech-body">
-                            <span><span class="tech-label">逻辑:</span> HTTP/WebSocket</span>
-                            <span><span class="tech-label">物理:</span> KIM平台 + Nginx</span>
-                        </div>
-                    </div>
+            <div class="storage-features">
+                <strong>独立KFS存储</strong> · 配置/会话/记忆中心化<br>
+                <strong>秒级Failover</strong> · Pod故障数据自动迁移<br>
+                <strong>跨Pod迁移</strong> · 历史数据完整保留
+            </div>
+            <div class="storage-sync">
+                <div style="text-align: center;">
+                    <div class="sync-icon">☁️</div>
+                    <div class="sync-label">云端KFS</div>
                 </div>
-
-                <!-- T3 计算层 -->
-                <div class="arch-row">
-                    <div class="arch-row-header">
-                        <span class="layer-tag tech">T3</span>
-                        ⚙️ 计算层
-                        <span class="mapping">← Agent能力层</span>
-                    </div>
-                    <div class="tech-card">
-                        <div class="tech-header">
-                            <span class="tech-icon">📦</span>
-                            <span class="tech-title">OpenClaw Agent 处理</span>
-                            <span class="tech-subtitle">调用Skills · 代码生成 · 沙箱执行</span>
-                        </div>
-                        <div class="tech-body">
-                            <span><span class="tech-label">逻辑:</span> Agent + Skills调度</span>
-                            <span><span class="tech-label">物理:</span> K8S Pod | 4C8G</span>
-                        </div>
-                    </div>
-                    <div class="tech-card">
-                        <div class="tech-header">
-                            <span class="tech-icon">🏪</span>
-                            <span class="tech-title">Skills Hub 技能中心</span>
-                            <span class="tech-subtitle">Schema管理 · 版本控制 · 分发</span>
-                        </div>
-                        <div class="tech-body">
-                            <span><span class="tech-label">逻辑:</span> 注册+审核+版本</span>
-                            <span><span class="tech-label">物理:</span> S3 + CDN</span>
-                        </div>
-                    </div>
+                <div class="sync-arrow">⇄</div>
+                <div style="text-align: center;">
+                    <div class="sync-icon">🖥️</div>
+                    <div class="sync-label">本地Pod</div>
                 </div>
-
-                <!-- T2 网关层 -->
-                <div class="arch-row">
-                    <div class="arch-row-header">
-                        <span class="layer-tag tech">T2</span>
-                        🚪 网关层
-                        <span class="mapping">← 服务层</span>
-                    </div>
-                    <div class="tech-card">
-                        <div class="tech-header">
-                            <span class="tech-icon">🛡️</span>
-                            <span class="tech-title">Gateway 鉴权路由</span>
-                            <span class="tech-subtitle">Token验证 · 消息路由 · 协议桥接</span>
-                        </div>
-                        <div class="tech-body">
-                            <span><span class="tech-label">逻辑:</span> JWT鉴权 + 路由</span>
-                            <span><span class="tech-label">物理:</span> Node.js | 18789</span>
-                        </div>
-                    </div>
+            </div>
+        </div>
+        
+        <!-- 图例 -->
+        <div class="legend">
+            <div class="legend-title">📊 架构映射关系（连线说明）</div>
+            <div class="legend-items">
+                <div class="legend-item">
+                    <div class="legend-line" style="background: #667eea;"></div>
+                    <span>用户触点 → 接入层</span>
                 </div>
-
-                <!-- T4 推理层 -->
-                <div class="arch-row">
-                    <div class="arch-row-header">
-                        <span class="layer-tag tech">T4</span>
-                        🧠 推理层
-                        <span class="mapping">← AgentCore</span>
-                    </div>
-                    <div class="tech-card">
-                        <div class="tech-header">
-                            <span class="tech-icon">🎯</span>
-                            <span class="tech-title">智能模型路由 + 推理</span>
-                            <span class="tech-subtitle">简单→小杯 · 复杂→大杯</span>
-                        </div>
-                        <div class="tech-body">
-                            <span><span class="tech-label">逻辑:</span> 复杂度评估+路由</span>
-                            <span><span class="tech-label">物理:</span> 万擎+Claude | MAAS</span>
-                        </div>
-                    </div>
+                <div class="legend-item">
+                    <div class="legend-line" style="background: #f59e0b;"></div>
+                    <span>安全审计 → 网关层</span>
                 </div>
-
-                <!-- T5 存储层 -->
-                <div class="arch-row">
-                    <div class="arch-row-header">
-                        <span class="layer-tag tech">T5</span>
-                        💾 存储层
-                        <span class="mapping">← AgentCore</span>
-                    </div>
-                    <div class="tech-card">
-                        <div class="tech-header">
-                            <span class="tech-icon">🗄️</span>
-                            <span class="tech-title">KFS 存储 + 同步</span>
-                            <span class="tech-subtitle">持久化 · 记忆写入 · 云↔本地同步</span>
-                        </div>
-                        <div class="tech-body">
-                            <span><span class="tech-label">逻辑:</span> 流式返回+增量同步</span>
-                            <span><span class="tech-label">物理:</span> KFS卷 | /home/node/.openclaw</span>
-                        </div>
-                    </div>
-                    <div class="tech-card">
-                        <div class="tech-header">
-                            <span class="tech-icon">📊</span>
-                            <span class="tech-title">监控 + 日志</span>
-                            <span class="tech-subtitle">任务统计 · 成本追踪 · 异常告警</span>
-                        </div>
-                        <div class="tech-body">
-                            <span><span class="tech-label">逻辑:</span> 指标采集+告警规则</span>
-                            <span><span class="tech-label">物理:</span> Prometheus + Grafana</span>
-                        </div>
-                    </div>
+                <div class="legend-item">
+                    <div class="legend-line" style="background: #10b981;"></div>
+                    <span>核心能力 → 计算层</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-line" style="background: #8b5cf6;"></div>
+                    <span>智能路由 → 推理层</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-line" style="background: #ec4899;"></div>
+                    <span>记忆系统 → 存储层</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot" style="background: #dbeafe;"></div>
+                    <span>逻辑标签</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot" style="background: #fef3c7;"></div>
+                    <span>物理标签</span>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- 存储架构基础 -->
-    <div class="storage-base">
-        <h3><span>💾</span> 存储架构基础 — 支撑所有功能层</h3>
-        <div class="storage-features">
-            <div class="storage-feature">✓ <strong>独立KFS存储</strong> · 配置/会话/记忆中心化</div>
-            <div class="storage-feature">✓ <strong>云端↔本地同步</strong> · 实时增量，换设备无缝</div>
-            <div class="storage-feature">✓ <strong>秒级Failover</strong> · Pod故障数据自动迁移</div>
-        </div>
+    <!-- Footer -->
+    <div class="footer">
+        研发线 · 研发效能中心 · 2026 年 3 月
     </div>
-
-    <footer class="footer">
-        快手AI员工架构 · AI产品终极形态 · 研发线 · 研发效能中心 · 2026 年 3 月
-    </footer>
 </div>
+
+<!-- Tooltip Element -->
+<div class="tooltip" id="tooltip"></div>
+
+<script>
+    // 精准映射关系
+    const mappings = [
+        // 用户触点域
+        { from: 'p-kim', to: 't-access', color: '#667eea' },
+        { from: 'p-web', to: 't-access', color: '#667eea' },
+        { from: 'p-local', to: 't-access', color: '#667eea' },
+        { from: 'p-market', to: 't-skills-hub', color: '#667eea' },
+        // 网关鉴权域
+        { from: 'p-security', to: 't-gateway', color: '#f59e0b' },
+        // Agent处理域
+        { from: 'p-skills', to: 't-agent', color: '#10b981' },
+        { from: 'p-skills', to: 't-skills-hub', color: '#10b981' },
+        { from: 'p-agent', to: 't-agent', color: '#10b981' },
+        // 模型调用域
+        { from: 'p-routing', to: 't-model', color: '#8b5cf6' },
+        // 存储同步域
+        { from: 'p-memory', to: 't-storage', color: '#ec4899' }
+    ];
+    
+    function drawLines() {
+        const svg = document.getElementById('connSvg');
+        const box = document.getElementById('swimlanes');
+        const rect = box.getBoundingClientRect();
+        
+        svg.setAttribute('width', rect.width);
+        svg.setAttribute('height', rect.height);
+        svg.setAttribute('viewBox', `0 0 ${rect.width} ${rect.height}`);
+        svg.innerHTML = '';
+        
+        mappings.forEach(m => {
+            const a = document.querySelector(`[data-m="${m.from}"]`);
+            const b = document.querySelector(`[data-m="${m.to}"]`);
+            if (!a || !b) return;
+            
+            const ar = a.getBoundingClientRect();
+            const br = b.getBoundingClientRect();
+            
+            const x1 = ar.right - rect.left;
+            const y1 = ar.top + ar.height / 2 - rect.top;
+            const x2 = br.left - rect.left;
+            const y2 = br.top + br.height / 2 - rect.top;
+            
+            const mx = (x1 + x2) / 2;
+            
+            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            path.setAttribute('d', `M ${x1} ${y1} C ${mx} ${y1}, ${mx} ${y2}, ${x2} ${y2}`);
+            path.setAttribute('stroke', m.color);
+            path.setAttribute('stroke-width', '2.5');
+            path.setAttribute('fill', 'none');
+            path.setAttribute('opacity', '0.5');
+            path.setAttribute('stroke-dasharray', '6,3');
+            
+            // 箭头
+            const arrow = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            arrow.setAttribute('cx', x2);
+            arrow.setAttribute('cy', y2);
+            arrow.setAttribute('r', '4');
+            arrow.setAttribute('fill', m.color);
+            arrow.setAttribute('opacity', '0.7');
+            
+            svg.appendChild(path);
+            svg.appendChild(arrow);
+        });
+    }
+    
+    // Tooltip functionality
+    const tooltip = document.getElementById('tooltip');
+    
+    document.querySelectorAll('.mod[data-tooltip]').forEach(mod => {
+        mod.addEventListener('mouseenter', function(e) {
+            const data = this.getAttribute('data-tooltip').split('|');
+            const title = data[0] || '';
+            const lines = data.slice(1);
+            
+            let html = `<div class="tooltip-title">${title}</div>`;
+            if (lines.length > 0) {
+                html += '<div class="tooltip-content"><ul>';
+                lines.forEach(line => {
+                    if (line.trim()) {
+                        html += `<li>${line.trim()}</li>`;
+                    }
+                });
+                html += '</ul></div>';
+            }
+            
+            tooltip.innerHTML = html;
+            tooltip.classList.add('visible');
+        });
+        
+        mod.addEventListener('mousemove', function(e) {
+            const x = e.clientX + 15;
+            const y = e.clientY + 15;
+            
+            // Keep tooltip within viewport
+            const rect = tooltip.getBoundingClientRect();
+            const maxX = window.innerWidth - rect.width - 20;
+            const maxY = window.innerHeight - rect.height - 20;
+            
+            tooltip.style.left = Math.min(x, maxX) + 'px';
+            tooltip.style.top = Math.min(y, maxY) + 'px';
+        });
+        
+        mod.addEventListener('mouseleave', function() {
+            tooltip.classList.remove('visible');
+        });
+    });
+    
+    window.addEventListener('load', () => setTimeout(drawLines, 150));
+    window.addEventListener('resize', drawLines);
+</script>
 </body>
 </html>
