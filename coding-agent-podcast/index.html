@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>所有Agent本质上都是Coding Agent — 42章经 × 文锋 深度对话</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- 粒子背景 -->
+  <canvas id="particles"></canvas>
+
+  <!-- 英雄区 -->
+  <header class="hero" id="hero">
+    <div class="hero-badge">42章经 PODCAST × GENSPARK</div>
+    <h1 class="hero-title">
+      <span class="line1">所有 Agent</span>
+      <span class="line2">本质上都是</span>
+      <span class="line3 glow">Coding Agent</span>
+    </h1>
+    <p class="hero-sub">曲凯 × 文锋（Genspark 创始人）深度对话提炼</p>
+    <div class="hero-meta">
+      <span class="tag">播客精华</span>
+      <span class="tag">~18000字 → 8核心观点</span>
+      <span class="tag">2025</span>
+    </div>
+    <div class="scroll-hint">
+      <span>向下滚动探索</span>
+      <div class="scroll-arrow"></div>
+    </div>
+  </header>
+
+  <!-- 核心数据条 -->
+  <section class="stats-bar">
+    <div class="stat-item" data-count="1000" data-suffix="x">
+      <span class="stat-num">0</span>
+      <span class="stat-label">效率差距</span>
+    </div>
+    <div class="stat-item" data-count="7" data-suffix="人">
+      <span class="stat-num">0</span>
+      <span class="stat-label">= 50人产出</span>
+    </div>
+    <div class="stat-item" data-count="1600" data-suffix="">
+      <span class="stat-num">0</span>
+      <span class="stat-label">单日最高Commit</span>
+    </div>
+    <div class="stat-item" data-count="500" data-suffix="万">
+      <span class="stat-num">0</span>
+      <span class="stat-label">活跃Agent用户</span>
+    </div>
+  </section>
+
+  <!-- 观点卡片区 -->
+  <main class="insights">
+    <!-- 观点1 -->
+    <section class="insight-card" id="insight-1">
+      <div class="card-index">01</div>
+      <div class="card-body">
+        <h2>所有 Agent 本质都是 Coding Agent</h2>
+        <div class="card-quote">"Coding Agent + Skill 基本能覆盖大多数场景"</div>
+        <ul class="card-points">
+          <li>AI Coding 是大模型的"灵巧手"已被验证，今年再进一步</li>
+          <li>OpenClaw 本质是围绕 Coding Agent 套壳的最佳实践</li>
+          <li>核心机会：谁能把套壳做成普通人也能用的产品</li>
+        </ul>
+        <div class="card-visual">
+          <div class="flow-diagram">
+            <div class="flow-node active">Coding Agent</div>
+            <div class="flow-arrow">+</div>
+            <div class="flow-node">Skill</div>
+            <div class="flow-arrow">=</div>
+            <div class="flow-node result">覆盖一切场景</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 观点2 -->
+    <section class="insight-card" id="insight-2">
+      <div class="card-index">02</div>
+      <div class="card-body">
+        <h2>垂直 Agent 和 SaaS 正在被颠覆</h2>
+        <div class="card-quote">"垂直 Agent 这条路需要被高度怀疑"</div>
+        <ul class="card-points">
+          <li>SaaS 的软件价值被 AI Coding 替代</li>
+          <li>SaaS 的 know-how 价值被 Skill 替代</li>
+          <li>未来 ToB 可能出现"企业版抖音"——通用 Agent 平台</li>
+        </ul>
+        <div class="card-visual">
+          <div class="disruption-chart">
+            <div class="bar-group">
+              <div class="bar-label">软件价值</div>
+              <div class="bar-track"><div class="bar-fill" data-width="85">AI Coding 替代</div></div>
+            </div>
+            <div class="bar-group">
+              <div class="bar-label">Know-how</div>
+              <div class="bar-track"><div class="bar-fill" data-width="70">Skill 替代</div></div>
+            </div>
+            <div class="bar-group">
+              <div class="bar-label">定制能力</div>
+              <div class="bar-track"><div class="bar-fill" data-width="90">Agent 颠覆</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 观点3 -->
+    <section class="insight-card" id="insight-3">
+      <div class="card-index">03</div>
+      <div class="card-body">
+        <h2>长程任务能力已突破天花板</h2>
+        <div class="card-quote">"状态从内存落到文件系统，做错了能自我回溯修复"</div>
+        <ul class="card-points">
+          <li>关键变化：状态落到文件，不再是不可逆的状态机</li>
+          <li>Context 最佳实践：让 Agent 自己维护 context</li>
+          <li>"Less structure, more intelligence"</li>
+        </ul>
+        <div class="card-visual">
+          <div class="evolution-box">
+            <div class="evo-stage old">
+              <div class="evo-icon">&#9888;</div>
+              <div class="evo-text">旧模式<br><small>内存状态 · 不可逆 · 人控 Context</small></div>
+            </div>
+            <div class="evo-arrow">&#10132;</div>
+            <div class="evo-stage new">
+              <div class="evo-icon">&#10004;</div>
+              <div class="evo-text">新模式<br><small>文件状态 · 可回溯 · Agent 自管理</small></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 观点4 -->
+    <section class="insight-card" id="insight-4">
+      <div class="card-index">04</div>
+      <div class="card-body">
+        <h2>Proactive Agent = "管 AI 的 AI"</h2>
+        <div class="card-quote">"Manus 是人管 AI，OpenClaw 是 AI 管 AI"</div>
+        <ul class="card-points">
+          <li>第一层：可重复执行的定时任务（被动触发的主动）</li>
+          <li>第二层：基于历史交互主动发现问题（真正的 proactive）</li>
+          <li>终极形态：能自己提需求、搭 Agent、释放 Agent 的管理者</li>
+        </ul>
+        <div class="card-visual">
+          <div class="pyramid">
+            <div class="pyramid-level l3">AI 管 AI</div>
+            <div class="pyramid-level l2">主动发现问题</div>
+            <div class="pyramid-level l1">定时任务执行</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 观点5 -->
+    <section class="insight-card" id="insight-5">
+      <div class="card-index">05</div>
+      <div class="card-body">
+        <h2>Coding Agent 进入第三阶段</h2>
+        <div class="card-quote">"AI 指挥 AI 写代码"</div>
+        <ul class="card-points">
+          <li>第一阶段：Copilot（代码补全）</li>
+          <li>第二阶段：Claude Code 式 Coding Assistant</li>
+          <li>第三阶段：AI 自己发现需求、澄清需求、调度执行</li>
+        </ul>
+        <div class="card-visual">
+          <div class="timeline">
+            <div class="tl-item">
+              <div class="tl-dot"></div>
+              <div class="tl-content">
+                <div class="tl-title">Phase 1</div>
+                <div class="tl-desc">Copilot · 补全</div>
+              </div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-dot"></div>
+              <div class="tl-content">
+                <div class="tl-title">Phase 2</div>
+                <div class="tl-desc">Claude Code · 对话</div>
+              </div>
+            </div>
+            <div class="tl-item active">
+              <div class="tl-dot"></div>
+              <div class="tl-content">
+                <div class="tl-title">Phase 3</div>
+                <div class="tl-desc">AI 指挥 AI</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 观点6 -->
+    <section class="insight-card" id="insight-6">
+      <div class="card-index">06</div>
+      <div class="card-body">
+        <h2>创业方法论：预判为辅，跟随为主</h2>
+        <div class="card-quote">"不要去解决人们还没遇到瓶颈的问题"</div>
+        <ul class="card-points">
+          <li>预判有效期从半年缩短到一两个月</li>
+          <li>关键心态：放下 ego，不为差异化而过度坚持</li>
+          <li>7 人团队产出 ≈ 过去三五十人</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 观点7 -->
+    <section class="insight-card" id="insight-7">
+      <div class="card-index">07</div>
+      <div class="card-body">
+        <h2>Agent 时代的商业模式变化</h2>
+        <div class="card-quote">"按 Token 消耗分层，而非组织人数"</div>
+        <ul class="card-points">
+          <li>日消耗 1 亿 Token ≈ SaaS 时代的世界 500 强</li>
+          <li>一个人/小组织年贡献 10 万美金成为可能</li>
+          <li>生产能力越丰饶，有意思的 idea 反而越稀缺</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 观点8 -->
+    <section class="insight-card" id="insight-8">
+      <div class="card-index">08</div>
+      <div class="card-body">
+        <h2>新概念：Agent Harness</h2>
+        <div class="card-quote">"越好的马越狂野，越需要马鞍"</div>
+        <ul class="card-points">
+          <li>类比马鞍——约束和引导 Agent 的脚手架</li>
+          <li>直接面向终端用户，跳过传统分层</li>
+          <li>让用户根据自身业务定制 Agent 系统</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <!-- 总结区 -->
+  <section class="summary" id="summary">
+    <div class="summary-inner">
+      <h2 class="summary-title">一句话总结</h2>
+      <p class="summary-text">
+        Coding Agent 的能力已接近天花板，核心竞争从
+        <strong>"做更聪明的 Agent"</strong>转向
+        <strong>"让 AI 管理 AI"</strong>的产品化和平权化。<br>
+        创业者需要<em>放下 ego、跟随明确趋势、解决当下真实瓶颈</em>。
+      </p>
+    </div>
+  </section>
+
+  <!-- 底部 -->
+  <footer class="footer">
+    <div class="footer-source">
+      原文来源：<a href="https://mp.weixin.qq.com/s/SPyg43bpF8t4D3y26JJmqg" target="_blank">42章经 × 文锋 播客对话</a>
+    </div>
+    <div class="footer-note">核心观点提炼 · AI-Powered Research</div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
