@@ -6,10 +6,10 @@
     "duration_seconds": 1068.7723019123077
   },
   "summary": {
-    "pass_rate": 0.5,
-    "passed": 2,
+    "pass_rate": 0.75,
+    "passed": 3,
     "failed": 0,
-    "errors": 2,
+    "errors": 1,
     "by_priority": {
       "P1": {
         "passed": 2,
@@ -23,8 +23,8 @@
         "total": 1
       },
       "ks-design-infographic": {
-        "passed": 0,
-        "failed": 1,
+        "passed": 1,
+        "failed": 0,
         "total": 1
       },
       "ks-design-slide-deck": {
@@ -75,13 +75,39 @@
       "scenario_id": "ks-design-infographic-001",
       "skill_name": "ks-design-infographic",
       "description": "信息图生成基础功能测试：生成一张 AI 技术演进信息图",
-      "status": "timeout",
-      "duration_ms": 397451,
-      "assertions": [],
+      "status": "passed",
+      "duration_ms": 255600,
+      "assertions": [
+        {
+          "name": "包含图片URL或路径",
+          "passed": true,
+          "actual": "/infographic/ai-model-evolution-2025.jpg",
+          "expected": "正则: (https?://[^\\s]+\\.(jpg|png|webp|jpeg)|/[^\\s]+\\.(jpg|png|webp|jpeg))",
+          "evidence": "正则匹配结果: /infographic/ai-model-evolution-2"
+        },
+        {
+          "name": "提到布局或风格选择",
+          "passed": true,
+          "actual": "layout",
+          "expected": "正则: 布局|风格|时间线|timeline|layout",
+          "evidence": "正则匹配结果: layout"
+        },
+        {
+          "name": "任务完成标志",
+          "passed": true,
+          "actual": "完成",
+          "expected": "正则: 完成|生成|已生成|infographic",
+          "evidence": "正则匹配结果: 完成"
+        }
+      ],
       "artifacts": [],
-      "transcript": {},
+      "transcript": {
+        "session_id": "AA2ACA89-5E80-4C5F-814B-A16F43AEF849",
+        "messages_count": 15,
+        "transcript_path": "/Users/[USER]/.codeflicker/skills/link-skill-dojo/transcripts/ks-design-infographic-001.json"
+      },
       "key_outputs": [],
-      "error_message": "任务超时 (300s)"
+      "error_message": ""
     },
     {
       "scenario_id": "ks-design-slide-deck-001",
@@ -91,7 +117,11 @@
       "duration_ms": 300207,
       "assertions": [],
       "artifacts": [],
-      "transcript": {},
+      "transcript": {
+        "session_id": "6FFE6C36-B124-430D-8822-1557A57B5478",
+        "messages_count": 26,
+        "transcript_path": "/Users/[USER]/.codeflicker/skills/link-skill-dojo/transcripts/ks-design-slide-deck-001.json"
+      },
       "key_outputs": [],
       "error_message": "任务超时 (600s)"
     },

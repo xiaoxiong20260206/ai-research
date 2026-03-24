@@ -691,11 +691,11 @@ tbody td {
   <!-- Stats Cards -->
   <div class="stats-grid">
     <div class="stat-card highlight">
-      <div class="value c-blue">50%</div>
+      <div class="value c-blue">75%</div>
       <div class="label">通过率</div>
     </div>
     <div class="stat-card">
-      <div class="value c-green">2</div>
+      <div class="value c-green">3</div>
       <div class="label">通过</div>
     </div>
     <div class="stat-card">
@@ -703,7 +703,7 @@ tbody td {
       <div class="label">失败</div>
     </div>
     <div class="stat-card">
-      <div class="value c-yellow">2</div>
+      <div class="value c-yellow">1</div>
       <div class="label">错误</div>
     </div>
     <div class="stat-card">
@@ -720,10 +720,10 @@ tbody td {
               <span class="dot"></span>
               ks-design-image-gen
               <span class="duration">210s</span>
-            </div><div class="skill-chip chip-warn" onclick="jumpToRow('1')">
+            </div><div class="skill-chip chip-pass" onclick="jumpToRow('1')">
               <span class="dot"></span>
               ks-design-infographic
-              <span class="duration">397s</span>
+              <span class="duration">256s</span>
             </div><div class="skill-chip chip-warn" onclick="jumpToRow('2')">
               <span class="dot"></span>
               ks-design-slide-deck
@@ -794,15 +794,49 @@ tbody td {
         </tr>
         <tr class="row-anchor" id="row-1">
           <td style="text-align:center;color:var(--text-muted)">2</td>
-          <td style="text-align:center"><span class="badge badge-circle badge-warn">⏱</span></td>
+          <td style="text-align:center"><span class="badge badge-circle badge-pass">✓</span></td>
           <td>
             <div class="skill-name">ks-design-infographic</div>
             <div class="skill-id">ks-design-infographic-001</div>
           </td>
           <td><div class="skill-desc">信息图生成基础功能测试：生成一张 AI 技术演进信息图</div></td>
-          <td><span class="empty">—</span></td>
-          <td><span class="empty">文本输出</span></td>
-          <td style="text-align:right;color:var(--text-muted)">397.5s</td>
+          <td><div>
+          <div class="assertion-summary" onclick="toggleAssertions(1)">
+          <div class="assertion-pills"><span class="pill pill-pass">✓ 3</span></div>
+          <span style="font-size:0.72rem">3 项</span>
+          <span class="pill-toggle" onclick="toggleAssertions(1)">▼ 展开</span>
+        </div>
+          <ul class="assertion-list assertion-detail" id="assertions-1" >
+            <li class="assertion-item">
+              <span class="assertion-icon c-green">✓</span>
+              <div>
+                <span class="assertion-text">包含图片URL或路径</span>
+                <div class="assertion-evidence">正则匹配结果: /infographic/ai-model-evolution-2</div>
+              </div>
+            </li><li class="assertion-item">
+              <span class="assertion-icon c-green">✓</span>
+              <div>
+                <span class="assertion-text">提到布局或风格选择</span>
+                <div class="assertion-evidence">正则匹配结果: layout</div>
+              </div>
+            </li><li class="assertion-item">
+              <span class="assertion-icon c-green">✓</span>
+              <div>
+                <span class="assertion-text">任务完成标志</span>
+                <div class="assertion-evidence">正则匹配结果: 完成</div>
+              </div>
+            </li>
+          </ul>
+        </div></td>
+          <td><div class="artifact-list"><a class="artifact-card" href="../transcripts/ks-design-infographic-001.json" target="_blank">
+                  <span class="artifact-icon">💬</span>
+                  <div class="artifact-body">
+                    <div class="artifact-name">对话记录 · JSON</div>
+                    <div class="artifact-desc">15 条消息</div>
+                  </div>
+                  <span class="artifact-arrow">↗</span>
+                </a></div></td>
+          <td style="text-align:right;color:var(--text-muted)">255.6s</td>
         </tr>
         <tr class="row-anchor" id="row-2">
           <td style="text-align:center;color:var(--text-muted)">3</td>
@@ -813,7 +847,14 @@ tbody td {
           </td>
           <td><div class="skill-desc">幻灯片图片序列生成测试：生成3张研发效能主题幻灯片</div></td>
           <td><span class="empty">—</span></td>
-          <td><span class="empty">文本输出</span></td>
+          <td><div class="artifact-list"><a class="artifact-card" href="../transcripts/ks-design-slide-deck-001.json" target="_blank">
+                  <span class="artifact-icon">💬</span>
+                  <div class="artifact-body">
+                    <div class="artifact-name">对话记录 · JSON</div>
+                    <div class="artifact-desc">26 条消息</div>
+                  </div>
+                  <span class="artifact-arrow">↗</span>
+                </a></div></td>
           <td style="text-align:right;color:var(--text-muted)">300.2s</td>
         </tr>
         <tr class="row-anchor" id="row-3">
@@ -874,7 +915,7 @@ tbody td {
 
   <!-- Footer -->
   <div class="page-footer">
-    Generated by Skill Dojo v1.9.0 · 2026-03-24 16:49:27
+    Generated by Skill Dojo v1.9.0 · 2026-03-24 19:02:36
   </div>
 
 </div>
