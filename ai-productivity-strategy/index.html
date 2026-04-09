@@ -1,0 +1,1808 @@
+<html lang="zh-CN"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI 生产力中心 · 战略本质 v2</title>
+  <style>
+    /* ============ Reset & Base ============ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --c-bg:        #F7F6F3;
+      --c-surface:   #FFFFFF;
+      --c-border:    #E8E6E1;
+      --c-border-lt: #F0EEE9;
+      --c-text-1:    #1C1917;
+      --c-text-2:    #57534E;
+      --c-text-3:    #A8A29E;
+      --c-green:     #059669;
+      --c-green-lt:  #ECFDF5;
+      --c-blue:      #2563EB;
+      --c-blue-lt:   #EFF6FF;
+      --c-amber:     #D97706;
+      --c-amber-lt:  #FFFBEB;
+      --c-red:       #E11D48;
+      --c-red-lt:    #FFF0F3;
+      --c-purple:    #7C3AED;
+      --c-purple-lt: #F5F3FF;
+      --c-token:     #0D9488;   /* teal — Token 专属色 */
+      --c-token-lt:  #F0FDFA;
+      --r-card:      12px;
+      --r-tag:       6px;
+      --sp-xs:       6px;
+      --sp-sm:       12px;
+      --sp-md:       20px;
+      --sp-lg:       32px;
+      --sp-xl:       48px;
+      --shadow-sm:   0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+      --shadow-md:   0 4px 12px rgba(0,0,0,.07), 0 2px 4px rgba(0,0,0,.04);
+      --font:        -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Helvetica Neue', sans-serif;
+      --c-push:     #E11D48;
+      --c-push-lt:  #FFF0F3;
+      --c-auto:     #059669;
+      --c-auto-lt:  #ECFDF5;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font);
+      background: var(--c-bg);
+      color: var(--c-text-1);
+      line-height: 1.65;
+      font-size: 15px;
+    }
+
+    /* ============ Layout ============ */
+    .page-wrap { max-width: 960px; margin: 0 auto; padding: 0 var(--sp-md) var(--sp-xl); }
+
+    /* ============ Hero ============ */
+    .hero {
+      padding: var(--sp-xl) 0 var(--sp-lg);
+      text-align: center;
+    }
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--c-token-lt); border: 1px solid rgba(13,148,136,.25);
+      color: var(--c-token); font-size: 12px; font-weight: 600;
+      padding: 4px 12px; border-radius: 20px;
+      letter-spacing: .04em; text-transform: uppercase;
+      margin-bottom: var(--sp-md);
+    }
+    .hero-title {
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 800; letter-spacing: -.02em; line-height: 1.2;
+      background: linear-gradient(135deg, #0D9488 0%, #2563EB 50%, #7C3AED 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: var(--sp-sm);
+    }
+    .hero-sub {
+      font-size: 16px; color: var(--c-text-2); max-width: 640px; margin: 0 auto var(--sp-lg);
+      line-height: 1.7;
+    }
+
+    /* ============ First Principle Banner ============ */
+    .fp-banner {
+      background: linear-gradient(135deg, #0F2027, #203A43, #2C5364);
+      border-radius: var(--r-card);
+      padding: var(--sp-lg) var(--sp-xl);
+      color: #fff;
+      margin-bottom: var(--sp-xl);
+      position: relative;
+      overflow: hidden;
+    }
+    .fp-banner::before {
+      content: '';
+      position: absolute; top: -40px; right: -40px;
+      width: 200px; height: 200px;
+      background: radial-gradient(circle, rgba(13,148,136,.35) 0%, transparent 70%);
+    }
+    .fp-banner::after {
+      content: '';
+      position: absolute; bottom: -60px; left: -20px;
+      width: 160px; height: 160px;
+      background: radial-gradient(circle, rgba(37,99,235,.25) 0%, transparent 70%);
+    }
+    .fp-label {
+      font-size: 11px; font-weight: 700; letter-spacing: .12em;
+      text-transform: uppercase; color: #5EEAD4;
+      margin-bottom: var(--sp-sm);
+    }
+    .fp-title {
+      font-size: clamp(18px, 3vw, 26px); font-weight: 800;
+      line-height: 1.35; margin-bottom: var(--sp-sm);
+      color: #fff;
+    }
+    .fp-title em { color: #5EEAD4; font-style: normal; }
+    .fp-body {
+      font-size: 14px; color: rgba(255,255,255,.72); line-height: 1.75;
+      position: relative; z-index: 1;
+    }
+    .fp-body strong { color: rgba(255,255,255,.95); }
+    .fp-arrow-row {
+      display: flex; align-items: center; gap: var(--sp-sm);
+      margin-top: var(--sp-md); flex-wrap: wrap;
+      position: relative; z-index: 1;
+    }
+    .fp-pill {
+      padding: 6px 16px; border-radius: 20px; font-size: 13px; font-weight: 600;
+      border: 1px solid rgba(255,255,255,.15);
+    }
+    .fp-pill-old { background: rgba(225,29,72,.18); color: #FDA4AF; }
+    .fp-pill-new { background: rgba(13,148,136,.25); color: #5EEAD4; }
+    .fp-arrow { font-size: 20px; color: #D97706; }
+    .fp-why {
+      margin-top: var(--sp-sm);
+      font-size: 13px; color: rgba(255,255,255,.55);
+      position: relative; z-index: 1;
+    }
+
+    /* ============ Tab Nav ============ */
+    .tab-nav-wrap {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(247,246,243,.92);
+      backdrop-filter: blur(16px) saturate(1.6);
+      border-bottom: 1px solid var(--c-border);
+      margin-bottom: var(--sp-lg);
+    }
+    .tab-nav {
+      display: flex; gap: 2px; overflow-x: auto;
+      scrollbar-width: none; padding: 8px 0;
+    }
+    .tab-nav::-webkit-scrollbar { display: none; }
+    .tab-btn {
+      flex-shrink: 0; padding: 7px 18px;
+      font-size: 13px; font-weight: 600; color: var(--c-text-3);
+      background: transparent; border: none; border-radius: 20px;
+      cursor: pointer; transition: all .18s ease;
+      white-space: nowrap;
+    }
+    .tab-btn:hover { color: var(--c-text-2); background: var(--c-border-lt); }
+    .tab-btn.active {
+      background: var(--c-token-lt); color: var(--c-token);
+      border: 1px solid rgba(13,148,136,.3);
+    }
+
+    /* ============ Tab Panels ============ */
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ============ Card ============ */
+    .card {
+      background: var(--c-surface); border: 1px solid var(--c-border);
+      border-radius: var(--r-card); box-shadow: var(--shadow-sm);
+      padding: var(--sp-lg); margin-bottom: var(--sp-md);
+    }
+    .card-header {
+      display: flex; gap: var(--sp-md); align-items: flex-start;
+      margin-bottom: var(--sp-md);
+    }
+    .card-num {
+      flex-shrink: 0; width: 36px; height: 36px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px; font-weight: 800; color: #fff;
+      background: linear-gradient(135deg, var(--c-token), var(--c-blue));
+    }
+    .card-title { font-size: 17px; font-weight: 700; margin-bottom: 4px; }
+    .card-desc { font-size: 13px; color: var(--c-text-3); }
+
+    /* ============ Tags ============ */
+    .tag {
+      display: inline-block; padding: 2px 9px; border-radius: var(--r-tag);
+      font-size: 11px; font-weight: 700; letter-spacing: .02em;
+    }
+    .tag-token  { background: var(--c-token-lt);  color: var(--c-token); }
+    .tag-green  { background: var(--c-green-lt);  color: var(--c-green); }
+    .tag-blue   { background: var(--c-blue-lt);   color: var(--c-blue); }
+    .tag-amber  { background: var(--c-amber-lt);  color: var(--c-amber); }
+    .tag-red    { background: var(--c-red-lt);    color: var(--c-red); }
+    .tag-purple { background: var(--c-purple-lt); color: var(--c-purple); }
+
+    /* ============ Insight / Quote / Conclusion boxes ============ */
+    .insight {
+      background: var(--c-token-lt); border-left: 3px solid var(--c-token);
+      border-radius: 0 var(--r-tag) var(--r-tag) 0;
+      padding: var(--sp-sm) var(--sp-md); margin: var(--sp-md) 0;
+      font-size: 13.5px; color: var(--c-text-2);
+    }
+    .insight-title {
+      font-size: 11px; font-weight: 700; color: var(--c-token);
+      letter-spacing: .06em; text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .quote {
+      border-left: 3px solid var(--c-token);
+      padding: var(--sp-sm) var(--sp-md);
+      margin: var(--sp-md) 0;
+      font-size: 15px; color: var(--c-text-2);
+      font-style: italic; line-height: 1.7;
+    }
+    .callout {
+      background: linear-gradient(135deg, var(--c-token-lt), var(--c-blue-lt));
+      border: 1px solid rgba(13,148,136,.2);
+      border-radius: var(--r-card); padding: var(--sp-md) var(--sp-lg);
+      margin: var(--sp-md) 0;
+    }
+    .callout-label {
+      font-size: 11px; font-weight: 700; color: var(--c-token);
+      letter-spacing: .08em; text-transform: uppercase; margin-bottom: 6px;
+    }
+
+    /* ============ Two / Three column ============ */
+    .cols-2, .cols-3 { display: grid; gap: var(--sp-md); margin: var(--sp-md) 0; }
+    .cols-2 { grid-template-columns: repeat(2, 1fr); }
+    .cols-3 { grid-template-columns: repeat(3, 1fr); }
+    @media (max-width: 680px) {
+      .cols-2, .cols-3 { grid-template-columns: 1fr; }
+    }
+
+    /* ============ Info card (inner) ============ */
+    .icard {
+      background: var(--c-bg); border: 1px solid var(--c-border-lt);
+      border-radius: 10px; padding: var(--sp-md);
+    }
+    .icard-icon { font-size: 22px; margin-bottom: 8px; }
+    .icard-title { font-size: 13px; font-weight: 700; margin-bottom: 6px; }
+    .icard-body { font-size: 13px; color: var(--c-text-2); line-height: 1.65; }
+
+    /* ============ Compare cols ============ */
+    .cmp { border-radius: 10px; padding: var(--sp-md); }
+    .cmp-label {
+      font-size: 11px; font-weight: 700; letter-spacing: .05em;
+      text-transform: uppercase; margin-bottom: var(--sp-sm);
+    }
+    .cmp-before { background: var(--c-red-lt); border: 1px solid rgba(225,29,72,.15); }
+    .cmp-before .cmp-label { color: var(--c-red); }
+    .cmp-after  { background: var(--c-green-lt); border: 1px solid rgba(5,150,105,.2); }
+    .cmp-after .cmp-label { color: var(--c-green); }
+
+    /* ============ Table ============ */
+    .tbl-wrap { overflow-x: auto; margin: var(--sp-md) 0; }
+    table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+    th, td { padding: 10px 14px; border-bottom: 1px solid var(--c-border-lt); text-align: left; vertical-align: top; }
+    th { font-size: 11px; font-weight: 700; color: var(--c-text-3);
+         letter-spacing: .05em; text-transform: uppercase;
+         background: var(--c-bg); }
+    td.hl { color: var(--c-token); font-weight: 600; }
+    tr:last-child td { border-bottom: none; }
+
+    /* ============ Steps ============ */
+    .steps { list-style: none; }
+    .step { display: flex; gap: var(--sp-md); margin-bottom: var(--sp-md); }
+    .step:last-child { margin-bottom: 0; }
+    .step-num {
+      flex-shrink: 0; width: 30px; height: 30px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 800; color: #fff;
+    }
+    .step-title { font-size: 14px; font-weight: 700; margin-bottom: 3px; }
+    .step-desc  { font-size: 13px; color: var(--c-text-2); line-height: 1.6; }
+
+    /* ============ Progress ============ */
+    .prog-row { display: flex; align-items: center; gap: var(--sp-sm); margin-bottom: 10px; }
+    .prog-label { font-size: 13px; color: var(--c-text-2); min-width: 140px; }
+    .prog-bar { flex: 1; height: 7px; background: var(--c-border); border-radius: 99px; overflow: hidden; }
+    .prog-fill { height: 100%; border-radius: 99px; width: 0; transition: width 1.2s cubic-bezier(.4,0,.2,1) .3s; }
+    .prog-val { font-size: 13px; font-weight: 700; color: var(--c-token); min-width: 44px; }
+
+    /* ============ Sub-title ============ */
+    .sub { font-size: 13px; font-weight: 700; color: var(--c-text-3);
+           letter-spacing: .05em; text-transform: uppercase;
+           margin-bottom: var(--sp-sm); margin-top: var(--sp-md); }
+
+    /* ============ Footer ============ */
+    .footer {
+      text-align: center; padding: var(--sp-xl) var(--sp-md) var(--sp-lg);
+      border-top: 1px solid var(--c-border); color: var(--c-text-3);
+      font-size: 13px; margin-top: var(--sp-xl);
+    }
+    .footer strong { color: var(--c-text-2); display: block; margin-bottom: 6px; }
+
+    /* ============ Flywheel ============ */
+    .legend { display: inline-flex; gap: 20px; flex-wrap: wrap; justify-content: center; margin-bottom: 28px; }
+    .legend-item { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; }
+    .legend-dot { width: 12px; height: 12px; border-radius: 50%; }
+    .flywheel-wrap { background: var(--c-surface); border: 1px solid var(--c-border); border-radius: 16px; padding: 28px; box-shadow: var(--shadow-sm); margin-bottom: var(--sp-md); }
+    .flywheel-wrap svg { display: block; width: 100%; }
+    .nodes-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: var(--sp-md); }
+    @media (max-width: 680px) { .nodes-grid { grid-template-columns: 1fr; } }
+    .node-card { background: var(--c-surface); border-radius: 14px; border: 1px solid var(--c-border); overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,.05); transition: box-shadow .2s; }
+    .node-card:hover { box-shadow: 0 6px 20px rgba(0,0,0,.09); }
+    .node-card.wide { grid-column: 1 / -1; }
+    .node-head { display: flex; align-items: center; gap: 14px; padding: 16px 20px 14px; border-bottom: 1px solid var(--c-border); }
+    .node-num { flex-shrink: 0; width: 34px; height: 34px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 800; color: #fff; }
+    .node-title-wrap {}
+    .node-title { font-size: 15px; font-weight: 700; line-height: 1.3; }
+    .node-sub { font-size: 12px; color: var(--c-text-3); margin-top: 2px; }
+    .node-badge { margin-left: auto; flex-shrink: 0; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; letter-spacing: .03em; }
+    .badge-push   { background: var(--c-push-lt);  color: var(--c-push); }
+    .badge-auto   { background: var(--c-auto-lt);   color: var(--c-auto); }
+    .badge-hybrid { background: #FFF7ED; color: var(--c-amber); }
+    .node-body { padding: 16px 20px 20px; }
+    .node-desc { font-size: 13.5px; color: var(--c-text-2); line-height: 1.7; margin-bottom: 12px; }
+    .action-box { border-radius: 8px; padding: 10px 14px; font-size: 13px; line-height: 1.65; }
+    .action-push { background: var(--c-push-lt); border-left: 3px solid var(--c-push); }
+    .action-auto { background: var(--c-auto-lt);  border-left: 3px solid var(--c-auto); }
+    .action-title { font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; margin-bottom: 4px; }
+    .action-push .action-title { color: var(--c-push); }
+    .action-auto .action-title { color: var(--c-auto); }
+    .risk-box { background: #FFFBEB; border-left: 3px solid var(--c-amber); border-radius: 8px; padding: 8px 14px; margin-top: 10px; font-size: 12.5px; color: var(--c-text-2); }
+    .risk-title { font-size: 10px; font-weight: 700; color: var(--c-amber); letter-spacing: .05em; text-transform: uppercase; margin-bottom: 3px; }
+    .cold-start { background: linear-gradient(135deg, #0F2027, #203A43, #2C5364); border-radius: 16px; padding: 32px; color: #fff; margin-bottom: var(--sp-md); }
+    .cs-label { font-size: 11px; font-weight: 700; color: #5EEAD4; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 10px; }
+    .cs-title { font-size: clamp(17px, 2.5vw, 24px); font-weight: 800; line-height: 1.4; margin-bottom: 20px; color: #fff; }
+    .cs-steps { list-style: none; }
+    .cs-step { display: flex; gap: 16px; padding: 16px 0; border-bottom: 1px solid rgba(255,255,255,.1); }
+    .cs-step:last-child { border-bottom: none; }
+    .cs-step-num { flex-shrink: 0; width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; color: #fff; }
+    .cs-step-title { font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+    .cs-step-desc { font-size: 13px; color: rgba(255,255,255,.65); line-height: 1.65; }
+    .cs-step-tip { font-size: 12px; color: #5EEAD4; margin-top: 5px; }
+    .signals-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: var(--sp-md); }
+    @media (max-width: 600px) { .signals-grid { grid-template-columns: 1fr; } }
+    .signal-card { background: var(--c-surface); border: 1px solid var(--c-border); border-radius: 12px; padding: 18px; }
+    .signal-icon { font-size: 22px; margin-bottom: 8px; }
+    .signal-phase { font-size: 11px; font-weight: 700; color: var(--c-text-3); letter-spacing: .04em; text-transform: uppercase; margin-bottom: 5px; }
+    .signal-title { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+    .signal-body { font-size: 13px; color: var(--c-text-2); line-height: 1.6; }
+    .fw-conclusion { background: var(--c-token-lt); border: 1.5px solid rgba(13,148,136,.3); border-radius: 14px; padding: 28px 32px; text-align: center; }
+    .fw-conclusion-title { font-size: 18px; font-weight: 800; color: var(--c-token); margin-bottom: 10px; }
+    .fw-conclusion-body { font-size: 14px; color: var(--c-text-2); line-height: 1.75; }
+
+    /* ============ Animations ============ */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .tab-panel.active { animation: fadeUp .28s ease; }
+
+    /* ============ Responsive ============ */
+    @media (max-width: 600px) {
+      .fp-banner { padding: var(--sp-md); }
+      .card { padding: var(--sp-md); }
+      .hero { padding: var(--sp-lg) 0 var(--sp-md); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page-wrap">
+
+  <!-- ========== HERO ========== -->
+  <header class="hero">
+    <div class="hero-eyebrow">
+      <span>⚡</span> AI 生产力中心 · 战略本质 v2
+    </div>
+    <h1 class="hero-title">从卖工具到卖 Token<br>一次彻底的身份重塑</h1>
+    <p class="hero-sub">
+      所有问题——激励失效、公地悲剧、推广失败——都源于同一个根因。<br>
+      所有解法，也都从同一个 First Principle 推导而来。
+    </p>
+  </header>
+
+  <!-- ========== FIRST PRINCIPLE BANNER ========== -->
+  <div class="fp-banner">
+    <div class="fp-label">First Principle · 第一性原理</div>
+    <div class="fp-title">
+      <em>工具服务</em> → <em>AI 生产力商品化（Token）</em><br>
+      这不是产品升级，是身份转变
+    </div>
+    <p class="fp-body">
+      旧模式：AI 中心是<strong>工具供应商</strong>，业务线是<strong>被推广对象</strong>。
+      功劳算 AI 中心的，代价由业务线承担 → 利益天然错位 → 推广必然失败。<br><br>
+      新模式：AI 中心是<strong>算力基础设施提供方</strong>，业务线是<strong>Token 的买方和消费方</strong>。
+      Token 有价，产出可量化，谁消费谁受益 → 利益天然对齐 → 制度自洽。
+    </p>
+    <div class="fp-arrow-row">
+      <span class="fp-pill fp-pill-old">❌ 卖工具服务（覆盖率/使用率）</span>
+      <span class="fp-arrow">→</span>
+      <span class="fp-pill fp-pill-new">✅ 卖 AI 生产力（Token × 效率）</span>
+    </div>
+    <div class="fp-why">一旦确立这个转变，下面所有的障碍分析和解法设计，都是这个 First Principle 的自然推论。</div>
+  </div>
+
+  <!-- ========== TAB NAV ========== -->
+  <div class="tab-nav-wrap">
+    <nav class="tab-nav" role="tablist">
+      <button class="tab-btn active" onclick="switchTab('t1',this)" role="tab" aria-selected="true">① 第一性原理</button>
+      <button class="tab-btn" onclick="switchTab('t2',this)" role="tab" aria-selected="false">② 三层推论结构</button>
+      <button class="tab-btn" onclick="switchTab('t3',this)" role="tab" aria-selected="false">③ 转变：身份重塑</button>
+      <button class="tab-btn" onclick="switchTab('t4',this)" role="tab" aria-selected="false">④ 障碍：结构性失败</button>
+      <button class="tab-btn" onclick="switchTab('t5',this)" role="tab" aria-selected="false">⑤ 解法：五支柱</button>
+      <button class="tab-btn" onclick="switchTab('t6',this)" role="tab" aria-selected="false">⑥ 飞轮自洽证明</button>
+      <button class="tab-btn" onclick="switchTab('t7',this)" role="tab" aria-selected="false">⑦ 实施路径</button>
+      <button class="tab-btn" onclick="switchTab('t8',this)" role="tab" aria-selected="false">⑧ 飞轮实战拆解</button>
+    </nav>
+  </div>
+
+  <!-- ========== TAB CONTENT ========== -->
+  <main id="tab-content">
+
+    <!-- ① 第一性原理 -->
+    <div class="tab-panel active" id="t1" role="tabpanel">
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-num">FP</div>
+          <div>
+            <div class="card-title">什么是 First Principle 思维</div>
+            <div class="card-desc">找到不可再分的根本假设，所有问题和解法都从它推导</div>
+          </div>
+        </div>
+        <div class="quote">
+          "不要从别人的解法出发逆向工程，而是从第一性原理出发正向推导。"<br>
+          <small style="font-size:12px;font-style:normal;color:var(--c-text-3)">— Elon Musk，SpaceX 成本降至 1/10 背后的思维方式</small>
+        </div>
+        <div class="insight">
+          <div class="insight-title">用在这里</div>
+          AI 推广失败的「第一性原理诊断」：不问「怎么推」，先问「为什么推了没用」。
+          答案是：<strong>身份定位错了</strong>——不是执行问题，是底层逻辑问题。
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-num" style="background:linear-gradient(135deg,#E11D48,#D97706);">✗</div>
+          <div>
+            <div class="card-title">旧身份：工具服务供应商</div>
+            <div class="card-desc">这个身份内嵌了所有失败的种子</div>
+          </div>
+        </div>
+        <div class="cols-2">
+          <div class="icard" style="border-top:3px solid var(--c-red);">
+            <div class="icard-title">计量单位：覆盖率 / 使用率</div>
+            <div class="icard-body">
+              虚荣指标，跟业务结果不挂钩。<br>
+              「装了但不用」「用了但没效果」都能交差。<br>
+              <span class="tag tag-red" style="margin-top:6px;display:inline-block;">指标失真</span>
+            </div>
+          </div>
+          <div class="icard" style="border-top:3px solid var(--c-amber);">
+            <div class="icard-title">利益结构：功劳归 AI 中心</div>
+            <div class="icard-body">
+              AI 中心背 KPI，业务线配合执行。<br>
+              功劳是 AI 中心的，变革成本是业务线的。<br>
+              <span class="tag tag-amber" style="margin-top:6px;display:inline-block;">利益错位</span>
+            </div>
+          </div>
+          <div class="icard" style="border-top:3px solid var(--c-red);">
+            <div class="icard-title">关系模式：甲乙方</div>
+            <div class="icard-body">
+              AI 中心推 → 业务线用。<br>
+              对抗关系，不是合作关系。<br>
+              <span class="tag tag-red" style="margin-top:6px;display:inline-block;">推广依赖</span>
+            </div>
+          </div>
+          <div class="icard" style="border-top:3px solid var(--c-amber);">
+            <div class="icard-title">产品价值：模糊</div>
+            <div class="icard-body">
+              工具节省了多少时间？难以量化。<br>
+              「应该有用」≠「明确有多少用」。<br>
+              <span class="tag tag-amber" style="margin-top:6px;display:inline-block;">价值黑箱</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="border:1.5px solid var(--c-token);">
+        <div class="card-header">
+          <div class="card-num" style="background:linear-gradient(135deg,#0D9488,#2563EB);">✓</div>
+          <div>
+            <div class="card-title">新身份：AI 生产力基础设施提供方（Token 模式）</div>
+            <div class="card-desc">换一个身份，所有问题迎刃而解</div>
+          </div>
+        </div>
+        <div class="cols-2">
+          <div class="icard" style="border-top:3px solid var(--c-token);">
+            <div class="icard-title">计量单位：Token × 产出效率</div>
+            <div class="icard-body">
+              Token 消耗 = 算力投入，可精确计量。<br>
+              产出效率 = 每单位 Token 换来多少代码 / 需求。<br>
+              <span class="tag tag-token" style="margin-top:6px;display:inline-block;">真实指标</span>
+            </div>
+          </div>
+          <div class="icard" style="border-top:3px solid var(--c-green);">
+            <div class="icard-title">利益结构：业务线背效率 KPI</div>
+            <div class="icard-body">
+              业务线消费 Token，自己提效，自己受益。<br>
+              AI 中心做基础设施，功劳归业务线。<br>
+              <span class="tag tag-green" style="margin-top:6px;display:inline-block;">激励相容</span>
+            </div>
+          </div>
+          <div class="icard" style="border-top:3px solid var(--c-blue);">
+            <div class="icard-title">关系模式：市场关系</div>
+            <div class="icard-body">
+              业务线是 Token 买方，AI 中心是供给方。<br>
+              「用得越多越合算」→ 自发使用。<br>
+              <span class="tag tag-blue" style="margin-top:6px;display:inline-block;">自驱使用</span>
+            </div>
+          </div>
+          <div class="icard" style="border-top:3px solid var(--c-purple);">
+            <div class="icard-title">产品价值：清晰透明</div>
+            <div class="icard-body">
+              同行业公司同等规模，Token 效率排名可见。<br>
+              「我们团队 Token ROI 全公司前三」。<br>
+              <span class="tag tag-purple" style="margin-top:6px;display:inline-block;">可比较</span>
+            </div>
+          </div>
+        </div>
+        <div class="callout">
+          <div class="callout-label">核心洞察</div>
+          Token 不只是计量单位，它是<strong>重新定义价值的载体</strong>。
+          一旦用 Token 衡量，AI 生产力就变成了可交易的商品——
+          业务线「购买」算力产出，而不是「接受」工具推广。
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ② 三层推论结构 -->
+    <div class="tab-panel" id="t2" role="tabpanel">
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-num">∑</div>
+          <div>
+            <div class="card-title">从 First Principle 到完整战略的推导链</div>
+            <div class="card-desc">整份报告是一个严密的逻辑推论，而不是零散观点的堆砌</div>
+          </div>
+        </div>
+        <!-- 三层SVG -->
+        <div style="padding: var(--sp-sm) 0;">
+          <svg width="100%" viewBox="0 0 860 220" xmlns="http://www.w3.org/2000/svg" style="display:block;">
+            <defs>
+              <marker id="arr2" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                <polygon points="0 0,8 3,0 6" fill="#0D9488"></polygon>
+              </marker>
+            </defs>
+            <!-- FP -->
+            <rect x="300" y="10" width="260" height="50" rx="10" fill="#0D9488"></rect>
+            <text x="430" y="32" text-anchor="middle" font-size="12" font-weight="700" fill="white" font-family="-apple-system,sans-serif">First Principle</text>
+            <text x="430" y="50" text-anchor="middle" font-size="11" fill="rgba(255,255,255,.85)" font-family="-apple-system,sans-serif">工具服务 → AI生产力商品化（Token）</text>
+            <!-- 箭头 向下分叉 -->
+            <path d="M430 62 L430 84" stroke="#0D9488" stroke-width="2" marker-end="url(#arr2)"></path>
+            <!-- 层一 -->
+            <rect x="10" y="88" width="260" height="50" rx="10" fill="#FFF0F3" stroke="#E11D48" stroke-width="1.5"></rect>
+            <text x="140" y="109" text-anchor="middle" font-size="12" font-weight="700" fill="#E11D48" font-family="-apple-system,sans-serif">第一层：转变（Why）</text>
+            <text x="140" y="126" text-anchor="middle" font-size="10" fill="#57534E" font-family="-apple-system,sans-serif">身份重塑 → 利益结构重置</text>
+            <!-- 层二 -->
+            <rect x="300" y="88" width="260" height="50" rx="10" fill="#FFFBEB" stroke="#D97706" stroke-width="1.5"></rect>
+            <text x="430" y="109" text-anchor="middle" font-size="12" font-weight="700" fill="#D97706" font-family="-apple-system,sans-serif">第二层：障碍（Problem）</text>
+            <text x="430" y="126" text-anchor="middle" font-size="10" fill="#57534E" font-family="-apple-system,sans-serif">公地悲剧 + 利益错位（结构性）</text>
+            <!-- 层三 -->
+            <rect x="590" y="88" width="260" height="50" rx="10" fill="#F0FDFA" stroke="#0D9488" stroke-width="1.5"></rect>
+            <text x="720" y="109" text-anchor="middle" font-size="12" font-weight="700" fill="#0D9488" font-family="-apple-system,sans-serif">第三层：解法（How）</text>
+            <text x="720" y="126" text-anchor="middle" font-size="10" fill="#57534E" font-family="-apple-system,sans-serif">五支柱 = 激励相容制度设计</text>
+            <!-- 连线 FP -> 三层 -->
+            <path d="M360 62 L140 86" stroke="#E11D48" stroke-width="1.5" stroke-dasharray="4,3"></path>
+            <path d="M430 62 L430 86" stroke="#D97706" stroke-width="1.5" stroke-dasharray="4,3"></path>
+            <path d="M500 62 L720 86" stroke="#0D9488" stroke-width="1.5" stroke-dasharray="4,3"></path>
+            <!-- 下层：结果 -->
+            <path d="M140 140 L430 158" stroke="#E11D48" stroke-width="1.5" stroke-dasharray="3,3" opacity=".5"></path>
+            <path d="M430 140 L430 158" stroke="#D97706" stroke-width="1.5" stroke-dasharray="3,3" opacity=".5"></path>
+            <path d="M720 140 L430 158" stroke="#0D9488" stroke-width="1.5" stroke-dasharray="3,3" opacity=".5"></path>
+            <rect x="240" y="160" width="380" height="48" rx="10" fill="#0D9488"></rect>
+            <text x="430" y="181" text-anchor="middle" font-size="12" font-weight="700" fill="white" font-family="-apple-system,sans-serif">结果：飞轮自洽 · 业务线主动来找你</text>
+            <text x="430" y="198" text-anchor="middle" font-size="10" fill="rgba(255,255,255,.8)" font-family="-apple-system,sans-serif">AI 中心从「推广者」→「基础设施提供方」，无需外力</text>
+          </svg>
+        </div>
+      </div>
+
+      <div class="cols-3">
+        <div class="icard" style="border-top:3px solid var(--c-red);">
+          <div class="icard-icon">🔄</div>
+          <div class="icard-title">第一层：转变</div>
+          <div class="icard-body">
+            不是做得不够好，是<strong>身份错了</strong>。<br>
+            换身份 → 利益结构自动重置 → 所有参与者行为自发改变。<br><br>
+            <span class="tag tag-red">根因</span>
+          </div>
+        </div>
+        <div class="icard" style="border-top:3px solid var(--c-amber);">
+          <div class="icard-icon">🔍</div>
+          <div class="icard-title">第二层：障碍</div>
+          <div class="icard-body">
+            即使身份转变，转变过程中仍有<strong>结构性阻力</strong>需要拆解。<br>
+            公地悲剧 + 政治风险是两大核心障碍。<br><br>
+            <span class="tag tag-amber">阻力</span>
+          </div>
+        </div>
+        <div class="icard" style="border-top:3px solid var(--c-token);">
+          <div class="icard-icon">⚙️</div>
+          <div class="icard-title">第三层：解法</div>
+          <div class="icard-body">
+            五支柱不是五个独立措施，是<strong>一套机制</strong>——<br>
+            每个支柱解决一类阻力，五个合力构成激励相容。<br><br>
+            <span class="tag tag-token">制度设计</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout">
+        <div class="callout-label">为什么这个结构比「问题-对策」更有力</div>
+        「问题-对策」是平铺式，解法是经验堆砌，换个场景可能全部失效。<br>
+        三层推论是<strong>逻辑严密的因果链</strong>：First Principle → 转变定义 → 障碍识别 → 解法推导。
+        每一步都可以验证，每一步都是上一步的必然结果。
+      </div>
+
+    </div>
+
+    <!-- ③ 转变：身份重塑 -->
+    <div class="tab-panel" id="t3" role="tabpanel">
+
+      <!-- 概览对比SVG -->
+      <div class="card" style="padding: var(--sp-lg);">
+        <svg width="100%" viewBox="0 0 860 130" xmlns="http://www.w3.org/2000/svg" style="display:block;">
+          <rect width="860" height="130" rx="12" fill="#FAFAF9"></rect>
+          <text x="430" y="22" text-anchor="middle" font-size="13" font-weight="700" fill="#1C1917" font-family="-apple-system,sans-serif">同一套系统，两种身份，两种结果</text>
+          <!-- 旧 -->
+          <rect x="20" y="34" width="360" height="80" rx="10" fill="#FFF0F3" stroke="#E11D48" stroke-width="1.5"></rect>
+          <text x="200" y="58" text-anchor="middle" font-size="12" font-weight="700" fill="#E11D48" font-family="-apple-system,sans-serif">旧身份：工具服务供应商</text>
+          <text x="200" y="76" text-anchor="middle" font-size="10" fill="#57534E" font-family="-apple-system,sans-serif">产品=工具 · 计量=使用率 · 关系=甲乙方</text>
+          <text x="200" y="93" text-anchor="middle" font-size="10" fill="#E11D48" font-family="-apple-system,sans-serif">→ 功劳归 AI 中心，成本由业务线承担</text>
+          <text x="200" y="108" text-anchor="middle" font-size="9" fill="#78716C" font-family="-apple-system,sans-serif">结果：推广热情，使用冷漠，结构性失败</text>
+          <!-- 箭头 -->
+          <text x="430" y="78" text-anchor="middle" font-size="24" fill="#0D9488">→</text>
+          <!-- 新 -->
+          <rect x="480" y="34" width="360" height="80" rx="10" fill="#F0FDFA" stroke="#0D9488" stroke-width="2"></rect>
+          <text x="660" y="58" text-anchor="middle" font-size="12" font-weight="700" fill="#0D9488" font-family="-apple-system,sans-serif">新身份：AI 生产力基础设施</text>
+          <text x="660" y="76" text-anchor="middle" font-size="10" fill="#57534E" font-family="-apple-system,sans-serif">产品=Token · 计量=Token×效率 · 关系=市场</text>
+          <text x="660" y="93" text-anchor="middle" font-size="10" fill="#0D9488" font-family="-apple-system,sans-serif">→ 功劳归业务线，AI 中心做基础设施</text>
+          <text x="660" y="108" text-anchor="middle" font-size="9" fill="#78716C" font-family="-apple-system,sans-serif">结果：业务线主动来买，飞轮自转</text>
+        </svg>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-num" style="background:linear-gradient(135deg,#0D9488,#059669);">T</div>
+          <div>
+            <div class="card-title">Token 是什么？为什么是关键</div>
+            <div class="card-desc">Token 不只是技术计量单位，是重新定义「AI 价值」的货币</div>
+          </div>
+        </div>
+        <div class="cols-3">
+          <div class="icard" style="border-top:3px solid var(--c-token);">
+            <div class="icard-icon">📏</div>
+            <div class="icard-title">Token 是精确计量</div>
+            <div class="icard-body">
+              每次 LLM 调用消耗的 Token 数量精确可测。<br>
+              「用了多少算力」有了客观答案，不再是模糊感知。
+            </div>
+          </div>
+          <div class="icard" style="border-top:3px solid var(--c-blue);">
+            <div class="icard-icon">💰</div>
+            <div class="icard-title">Token 是价值锚点</div>
+            <div class="icard-body">
+              Token 有成本（算力），也有产出（代码/需求）。<br>
+              「每单位 Token 换来多少产出」= ROI，可横向比较。
+            </div>
+          </div>
+          <div class="icard" style="border-top:3px solid var(--c-purple);">
+            <div class="icard-icon">🏪</div>
+            <div class="icard-title">Token 是交易媒介</div>
+            <div class="icard-body">
+              积分锚定 Token 配额 → 积分有了真实价值。<br>
+              贡献 Skill = 换取 Token 优先权 = 市场化激励。
+            </div>
+          </div>
+        </div>
+        <div class="insight">
+          <div class="insight-title">历史类比</div>
+          就像「农村联产承包责任制」——土地产权归集体，但产出产权归个人。
+          制度一变，生产力在 5 年内爆发。
+          Token 做的是同样的事：明确谁消费、谁受益、谁负责。
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-num" style="background:linear-gradient(135deg,#D97706,#F59E0B);">≠</div>
+          <div>
+            <div class="card-title">转变的四个维度——逐一对比</div>
+            <div class="card-desc">每个维度的转变都是相互强化的，不能只改一个</div>
+          </div>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>维度</th><th>旧模式（工具服务）</th><th>新模式（Token 生产力）</th><th>转变原理</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>计量单位</strong></td>
+                <td><span class="tag tag-red">覆盖率 / 使用率</span><br><small style="color:var(--c-text-3)">虚荣指标，跟产出无关</small></td>
+                <td class="hl"><span class="tag tag-token">Token × 效率</span><br><small>算力投入 / 产出双端清晰</small></td>
+                <td>科斯定理：产权明晰才有效率</td>
+              </tr>
+              <tr>
+                <td><strong>KPI 归属</strong></td>
+                <td><span class="tag tag-red">AI 中心背推广 KPI</span><br><small style="color:var(--c-text-3)">功劳是我的，成本是你的</small></td>
+                <td class="hl"><span class="tag tag-token">业务线背效率 KPI</span><br><small>消费者自己评估 ROI</small></td>
+                <td>激励相容：谁受益谁负责</td>
+              </tr>
+              <tr>
+                <td><strong>关系模式</strong></td>
+                <td><span class="tag tag-amber">AI 中心推 → 业务线用</span><br><small style="color:var(--c-text-3)">单向推广，高摩擦</small></td>
+                <td class="hl"><span class="tag tag-token">业务线购买 → 消费 Token</span><br><small>市场双向，低摩擦</small></td>
+                <td>市场机制：需求拉动 &gt; 供给推动</td>
+              </tr>
+              <tr>
+                <td><strong>价值呈现</strong></td>
+                <td><span class="tag tag-amber">「应该有用」（主观）</span><br><small style="color:var(--c-text-3)">无法横向比较</small></td>
+                <td class="hl"><span class="tag tag-token">Token ROI 排名（客观）</span><br><small>「我们团队全公司前三」</small></td>
+                <td>信息公开：比较压力触发改变</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout">
+          <div class="callout-label">关键洞察</div>
+          这四个维度不是并列改进项，而是<strong>一个系统的四个面</strong>。
+          只改计量单位不改 KPI 归属，数字还是会注水。
+          只改关系模式不改价值呈现，动力还是不够。
+          必须四个同时转变，才能产生制度的自洽。
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-num" style="background:linear-gradient(135deg,#2563EB,#7C3AED);">↗</div>
+          <div>
+            <div class="card-title">转变带来的额外价值：可对外输出</div>
+            <div class="card-desc">Token 模式打开了旧模式根本无法开启的天花板</div>
+          </div>
+        </div>
+        <div class="cols-2">
+          <div class="icard" style="border-left:3px solid var(--c-purple);">
+            <div class="icard-title">外部变现可能性</div>
+            <div class="icard-body">
+              旧模式：工具是内部定制的，没有外部价值。<br>
+              新模式：<strong>Skill 市场 + Token 生产力体系</strong>是可对外输出的产品。<br>
+              外部公司可以购买「快手的 AI 研发生产力方法论」——这是降本增效时代的刚需。
+            </div>
+          </div>
+          <div class="icard" style="border-left:3px solid var(--c-blue);">
+            <div class="icard-title">组织知识资产化</div>
+            <div class="icard-body">
+              旧模式：知识沉在个人，人走知识散。<br>
+              新模式：每次 Token 消耗产生数据，数据积累成<strong>组织记忆</strong>。<br>
+              Skill 库是快手研发知识的结晶，越用越值钱，永不流失。
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ④ 障碍：结构性失败 -->
+    <div class="tab-panel" id="t4" role="tabpanel">
+
+      <!-- 概览SVG -->
+      <div class="card" style="padding: var(--sp-lg);">
+        <svg width="100%" viewBox="0 0 860 110" xmlns="http://www.w3.org/2000/svg" style="display:block;">
+          <rect width="860" height="110" rx="12" fill="#FAFAF9"></rect>
+          <text x="430" y="22" text-anchor="middle" font-size="13" font-weight="700" fill="#1C1917" font-family="-apple-system,sans-serif">转变过程中的两类结构性障碍</text>
+          <rect x="20" y="34" width="390" height="62" rx="10" fill="#FFF0F3" stroke="#E11D48" stroke-width="1.5"></rect>
+          <text x="215" y="57" text-anchor="middle" font-size="12" font-weight="700" fill="#E11D48" font-family="-apple-system,sans-serif">障碍 A：利益错位（四角色）</text>
+          <text x="215" y="74" text-anchor="middle" font-size="10" fill="#57534E" font-family="-apple-system,sans-serif">每个参与者理性选择 → 集体失败</text>
+          <text x="215" y="89" text-anchor="middle" font-size="9" fill="#E11D48" font-family="-apple-system,sans-serif">推广者热情，使用者冷漠 = 结构性失败</text>
+          <rect x="450" y="34" width="390" height="62" rx="10" fill="#FFFBEB" stroke="#D97706" stroke-width="1.5"></rect>
+          <text x="645" y="57" text-anchor="middle" font-size="12" font-weight="700" fill="#D97706" font-family="-apple-system,sans-serif">障碍 B：公地悲剧（三场景）</text>
+          <text x="645" y="74" text-anchor="middle" font-size="10" fill="#57534E" font-family="-apple-system,sans-serif">公共品无人建设 → 生态无法形成</text>
+          <text x="645" y="89" text-anchor="middle" font-size="9" fill="#D97706" font-family="-apple-system,sans-serif">搭便车是理性选择，不是道德问题</text>
+        </svg>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-num" style="background:linear-gradient(135deg,#E11D48,#F43F5E);">A</div>
+          <div>
+            <div class="card-title">障碍 A：四角色利益错位</div>
+            <div class="card-desc">这是结构性失败，靠培训和宣讲解决不了——必须重新设计利益结构</div>
+          </div>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>角色</th><th>当前 KPI</th><th>与 AI 化的利益关系</th><th>实际行为</th><th>Token 模式下</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>AI 中心</strong></td>
+                <td>覆盖率、使用率</td>
+                <td>功劳归自己，成本转移</td>
+                <td><span class="tag tag-red">拼命推工具</span></td>
+                <td class="hl">变为基础设施方，做平台不做推广</td>
+              </tr>
+              <tr>
+                <td><strong>效能 BP</strong></td>
+                <td>研发交付效率</td>
+                <td>AI 帮助不直接归自己</td>
+                <td><span class="tag tag-amber">冷漠、观望</span></td>
+                <td class="hl">共同背效率 KPI，天然对齐</td>
+              </tr>
+              <tr>
+                <td><strong>一线研发</strong></td>
+                <td>个人需求交付</td>
+                <td>短期学习成本高</td>
+                <td><span class="tag tag-amber">抵触、敷衍</span></td>
+                <td class="hl">Token 效率排名可见，自发提升</td>
+              </tr>
+              <tr>
+                <td><strong>业务线 Leader</strong></td>
+                <td>业务结果</td>
+                <td>AI 是成本还是收益？模糊</td>
+                <td><span class="tag tag-blue">等等再说</span></td>
+                <td class="hl">竞争对手已 L2，不进则退，被迫行动</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="insight">
+          <div class="insight-title">底层原理</div>
+          机制设计理论（赫维茨，2007 诺奖）：<strong>激励相容</strong>——让每个人做对自己最有利的事，恰好推动公共目标实现。
+          解法不是说服，是重新设计「对自己有利的事」的定义。
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-num" style="background:linear-gradient(135deg,#D97706,#F59E0B);">B</div>
+          <div>
+            <div class="card-title">障碍 B：三类公地悲剧</div>
+            <div class="card-desc">Garrett Hardin（1968）：公共资源无产权 → 过度使用或无人投入，理性人的集体失败</div>
+          </div>
+        </div>
+        <div class="cols-3">
+          <div class="icard" style="border-top:3px solid var(--c-red);">
+            <div class="icard-icon">🏗️</div>
+            <div class="icard-title">场景一：Skill 库无人建</div>
+            <div class="icard-body">
+              Skill 是公共品，所有人都能用，但建设需要成本。<br><br>
+              <strong>理性选择</strong>：等别人建，自己搭便车。<br>
+              <strong>集体结果</strong>：没有人建，库永远空的。<br><br>
+              <span class="tag tag-red">公共品困境</span>
+            </div>
+          </div>
+          <div class="icard" style="border-top:3px solid var(--c-amber);">
+            <div class="icard-icon">📦</div>
+            <div class="icard-title">场景二：最佳实践沉没</div>
+            <div class="icard-body">
+              团队的 AI 用法经验是公共知识，沉淀需要时间。<br><br>
+              <strong>理性选择</strong>：用自己的经验，没动力分享。<br>
+              <strong>集体结果</strong>：知识碎片化，每次都从零开始。<br><br>
+              <span class="tag tag-amber">知识公地悲剧</span>
+            </div>
+          </div>
+          <div class="icard" style="border-top:3px solid var(--c-purple);">
+            <div class="icard-icon">🏆</div>
+            <div class="icard-title">场景三：提效功劳模糊</div>
+            <div class="icard-body">
+              AI 提效是公共结果，归属模糊。<br><br>
+              <strong>成功时</strong>：AI 中心和业务线互争功劳。<br>
+              <strong>失败时</strong>：两方互推责任。<br><br>
+              <span class="tag tag-purple">产权不明晰</span>
+            </div>
+          </div>
+        </div>
+        <div class="insight">
+          <div class="insight-title">底层原理</div>
+          科斯定理（1991 诺奖）：<strong>产权明晰</strong>是解决外部性问题的前提。
+          Token 模式在「算力消耗」和「生产力产出」两端都定义了产权——谁消费、谁受益、谁贡献、谁分红，全部清晰。
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-num" style="background:linear-gradient(135deg,#7C3AED,#8B5CF6);">C</div>
+          <div>
+            <div class="card-title">障碍 C：中层管理者的政治风险</div>
+            <div class="card-desc">这是最容易被忽视，但最致命的隐性障碍</div>
+          </div>
+        </div>
+        <div class="cols-2">
+          <div class="cmp cmp-before">
+            <div class="cmp-label">❌ 中层的理性计算（旧模式）</div>
+            变革 = 不确定性 = 风险<br>
+            失败了我背锅，成功了 AI 中心拿功劳<br>
+            → <strong>最优策略：拖延、不配合、表面支持</strong>
+          </div>
+          <div class="cmp cmp-after">
+            <div class="cmp-label">✅ 中层的理性计算（新模式）</div>
+            沙盒特区：失败不计入绩效<br>
+            成功了团队等级提升，功劳归自己<br>
+            → <strong>最优策略：主动参与，因为赌注不对称</strong>
+          </div>
+        </div>
+        <div class="insight">
+          <div class="insight-title">关键设计</div>
+          沙盒特区的核心不是「给资源」，而是<strong>消除失败的代价</strong>。
+          当失败免责、成功有功劳时，参与特区对理性人来说优于等待被改造——这不依赖勇气，依赖理性。
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ⑤ 解法：五支柱 -->
+    <div class="tab-panel" id="t5" role="tabpanel">
+
+      <!-- 五支柱全景SVG -->
+      <div class="card" style="padding: var(--sp-lg);">
+        <svg width="100%" viewBox="0 0 860 150" xmlns="http://www.w3.org/2000/svg" style="display:block;">
+          <rect width="860" height="150" rx="12" fill="#FAFAF9"></rect>
+          <text x="430" y="22" text-anchor="middle" font-size="13" font-weight="700" fill="#1C1917" font-family="-apple-system,sans-serif">五支柱 = 一套激励相容的制度设计，每支柱解决一类障碍</text>
+          <!-- Token 核心 -->
+          <circle cx="430" cy="95" r="32" fill="#0D9488"></circle>
+          <text x="430" y="90" text-anchor="middle" font-size="11" font-weight="800" fill="white" font-family="-apple-system,sans-serif">Token</text>
+          <text x="430" y="106" text-anchor="middle" font-size="9" fill="rgba(255,255,255,.85)" font-family="-apple-system,sans-serif">First Principle</text>
+          <!-- 5支柱围绕 -->
+          <rect x="20" y="36" width="140" height="48" rx="8" fill="#EFF6FF" stroke="#2563EB" stroke-width="1.5"></rect>
+          <text x="90" y="57" text-anchor="middle" font-size="10" font-weight="700" fill="#2563EB" font-family="-apple-system,sans-serif">支柱一</text>
+          <text x="90" y="72" text-anchor="middle" font-size="9" fill="#57534E" font-family="-apple-system,sans-serif">等级制（产权）</text>
+          <rect x="180" y="36" width="140" height="48" rx="8" fill="#FFFBEB" stroke="#D97706" stroke-width="1.5"></rect>
+          <text x="250" y="57" text-anchor="middle" font-size="10" font-weight="700" fill="#D97706" font-family="-apple-system,sans-serif">支柱二</text>
+          <text x="250" y="72" text-anchor="middle" font-size="9" fill="#57534E" font-family="-apple-system,sans-serif">积分制（激励）</text>
+          <rect x="340" y="108" width="180" height="36" rx="8" fill="#ECFDF5" stroke="#059669" stroke-width="1.5"></rect>
+          <text x="430" y="124" text-anchor="middle" font-size="10" font-weight="700" fill="#059669" font-family="-apple-system,sans-serif">支柱三：使用即贡献</text>
+          <text x="430" y="138" text-anchor="middle" font-size="9" fill="#57534E" font-family="-apple-system,sans-serif">（公共品内化）</text>
+          <rect x="540" y="36" width="140" height="48" rx="8" fill="#FFF0F3" stroke="#E11D48" stroke-width="1.5"></rect>
+          <text x="610" y="57" text-anchor="middle" font-size="10" font-weight="700" fill="#E11D48" font-family="-apple-system,sans-serif">支柱四</text>
+          <text x="610" y="72" text-anchor="middle" font-size="9" fill="#57534E" font-family="-apple-system,sans-serif">沙盒特区（风险）</text>
+          <rect x="700" y="36" width="140" height="48" rx="8" fill="#F5F3FF" stroke="#7C3AED" stroke-width="1.5"></rect>
+          <text x="770" y="57" text-anchor="middle" font-size="10" font-weight="700" fill="#7C3AED" font-family="-apple-system,sans-serif">支柱五</text>
+          <text x="770" y="72" text-anchor="middle" font-size="9" fill="#57534E" font-family="-apple-system,sans-serif">排行榜（比较）</text>
+          <!-- 连线到中心 -->
+          <line x1="163" y1="60" x2="398" y2="88" stroke="#2563EB" stroke-width="1" stroke-dasharray="4,3" opacity=".5"></line>
+          <line x1="320" y1="60" x2="405" y2="80" stroke="#D97706" stroke-width="1" stroke-dasharray="4,3" opacity=".5"></line>
+          <line x1="430" y1="108" x2="430" y2="127" stroke="#059669" stroke-width="1" stroke-dasharray="4,3" opacity=".5"></line>
+          <line x1="538" y1="60" x2="462" y2="88" stroke="#E11D48" stroke-width="1" stroke-dasharray="4,3" opacity=".5"></line>
+          <line x1="700" y1="60" x2="462" y2="88" stroke="#7C3AED" stroke-width="1" stroke-dasharray="4,3" opacity=".5"></line>
+        </svg>
+      </div>
+
+      <!-- 五支柱 Token 视角一览表 -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-num">≡</div>
+          <div>
+            <div class="card-title">五支柱：Token 视角完整解读</div>
+            <div class="card-desc">每个支柱都是从 Token First Principle 推导出来的制度设计</div>
+          </div>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>支柱</th><th>解决的障碍</th><th>Token 视角的本质</th><th>没有它会怎样</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><span class="tag tag-blue">支柱一 · 等级制</span></td>
+                <td>产权不明晰</td>
+                <td class="hl">Token 效率等级 = 团队的「信用评级」<br><small>L1/L2/L3 代表 Token ROI 能力段位</small></td>
+                <td>谁高效谁低效无法区分，奖励无法精准投放</td>
+              </tr>
+              <tr>
+                <td><span class="tag tag-amber">支柱二 · 积分制</span></td>
+                <td>激励不相容</td>
+                <td class="hl">积分锚定 Token 配额 = 内部货币<br><small>贡献生态 → 获得更多算力 → 自我强化</small></td>
+                <td>贡献 Skill 没有私人收益，公共品无人建设</td>
+              </tr>
+              <tr>
+                <td><span class="tag tag-green">支柱三 · 使用即贡献</span></td>
+                <td>搭便车问题</td>
+                <td class="hl">Token 消耗产生使用数据 = 自动贡献<br><small>用一次 = 给 Skill 打了一次质量评分</small></td>
+                <td>只有主动贡献者参与，被动用户永远搭便车</td>
+              </tr>
+              <tr>
+                <td><span class="tag tag-red">支柱四 · 沙盒特区</span></td>
+                <td>政治风险</td>
+                <td class="hl">给 Token 额度去试验 = 用算力换数据<br><small>失败免责 = 降低试验的政治成本</small></td>
+                <td>中层管理者理性选择不参与，转变无法启动</td>
+              </tr>
+              <tr>
+                <td><span class="tag tag-purple">支柱五 · 排行榜</span></td>
+                <td>行动惰性</td>
+                <td class="hl">公开 Token 效率排名 = 制造比较压力<br><small>「隔壁团队 L2，我们还是 L1」= 最强激励</small></td>
+                <td>没有外部参照系，危机感无法被激活</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 支柱一详解 -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-num" style="background:linear-gradient(135deg,#2563EB,#3B82F6);">1</div>
+          <div>
+            <div class="card-title">支柱一：AI 成熟度等级制 — Token 效率的「信用评级」</div>
+            <div class="card-desc">解决产权问题：等级 = 团队 Token 能力资产，第三方认证，不可注水</div>
+          </div>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>等级</th><th>Token 视角定义</th><th>认证指标（示例）</th><th>等级赋予的权利</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><span class="tag tag-amber">L1 工具使用</span></td>
+                <td>团队日常工作中 AI 参与频次达标<br><small style="color:var(--c-text-3)">研发：AI 代码占比≥30%；其他岗位：AI 工具 DAU/人≥60%</small></td>
+                <td>全岗位 AI 工具 DAU/人≥60%；研发侧 AI 代码参与率≥30%</td>
+                <td>基础 Token 配额；公共 Skill 库访问</td>
+              </tr>
+              <tr>
+                <td><span class="tag tag-blue">L2 流程重构</span></td>
+                <td>AI 先动，Token 产出效率提升≥50%</td>
+                <td>AI 参与全链路≥50%；人均交付提升≥20%</td>
+                <td class="hl">积分×2倍系数；驻场支持；Skill 优先权</td>
+              </tr>
+              <tr>
+                <td><span class="tag tag-green">L3 自主交付</span></td>
+                <td>AI 独立消耗 Token 完成需求≥30%</td>
+                <td>AI 独立交付≥30%；人工 review≤20%</td>
+                <td class="hl">战略级算力配额；对外输出资格；官方背书</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="insight">
+          <div class="insight-title">关键设计原则</div>
+          等级数据来自第三方系统自动采集（不能自报）+ 评审委员会交叉验证。
+          等级是客观事实，不是荣誉，是<strong>可以用来兑换真实资源的生产力凭证</strong>。
+        </div>
+      </div>
+
+      <!-- 支柱二详解 -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-num" style="background:linear-gradient(135deg,#D97706,#F59E0B);">2</div>
+          <div>
+            <div class="card-title">支柱二：AI 积分经济体 — 以 Token 配额为锚的内部货币</div>
+            <div class="card-desc">解决激励问题：积分不是虚荣勋章，是兑换稀缺算力的真实货币</div>
+          </div>
+        </div>
+        <div class="cols-2">
+          <div>
+            <div class="sub">积分获取（贡献侧）</div>
+            <div class="tbl-wrap">
+              <table>
+                <thead><tr><th>行为</th><th>积分</th></tr></thead>
+                <tbody>
+                  <tr><td>团队获得 L2 认证</td><td class="hl"><strong>100 分</strong>/季</td></tr>
+                  <tr><td>团队获得 L3 认证</td><td class="hl"><strong>300 分</strong>/季</td></tr>
+                  <tr><td>贡献 1 个认证 Skill</td><td class="hl"><strong>20 分</strong> + 引用分红</td></tr>
+                  <tr><td>Skill 每被引用 100 次</td><td class="hl"><strong>5 分</strong>分红</td></tr>
+                  <tr><td>最佳实践全公司输出</td><td class="hl"><strong>30 分</strong></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div>
+            <div class="sub">积分消费（Token 侧）</div>
+            <div class="tbl-wrap">
+              <table>
+                <thead><tr><th>兑换内容</th><th>积分</th></tr></thead>
+                <tbody>
+                  <tr><td>Token 优先配额（季度）</td><td class="hl"><strong>50 分</strong></td></tr>
+                  <tr><td>AI 中心驻场 2 周</td><td class="hl"><strong>100 分</strong></td></tr>
+                  <tr><td>专属模型微调机会</td><td class="hl"><strong>200 分</strong></td></tr>
+                  <tr><td>Skill 需求进官方队列</td><td class="hl"><strong>150 分</strong></td></tr>
+                  <tr><td>跨部门专家借调 1 月</td><td class="hl"><strong>300 分</strong></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="callout">
+          <div class="callout-label">OKR 互锁 — 最关键的一步</div>
+          每季初，AI 中心与业务线效能 BP <strong>共同写 OKR，形成互锁</strong>。
+          把「甲乙方」变成「共同创业者」——这是从推广关系到共创关系的本质转变。
+        </div>
+      </div>
+
+      <!-- 支柱三四五简洁版 -->
+      <div class="cols-3">
+        <div class="card" style="margin-bottom:0;">
+          <div class="card-header">
+            <div class="card-num" style="background:linear-gradient(135deg,#059669,#10B981); font-size:13px;">3</div>
+            <div>
+              <div class="card-title" style="font-size:15px;">支柱三：使用即贡献</div>
+              <div class="card-desc">消解公共品困境</div>
+            </div>
+          </div>
+          <ul class="steps">
+            <li class="step">
+              <div class="step-num" style="background:#059669; width:24px; height:24px; font-size:11px;">→</div>
+              <div class="step-content">
+                <div class="step-title" style="font-size:13px;">使用数据自动反馈</div>
+                <div class="step-desc" style="font-size:12px;">每次 Token 调用 = 给 Skill 打分，贡献者自动收到优化建议</div>
+              </div>
+            </li>
+            <li class="step">
+              <div class="step-num" style="background:#059669; width:24px; height:24px; font-size:11px;">→</div>
+              <div class="step-content">
+                <div class="step-title" style="font-size:13px;">需求缺口自动沉淀</div>
+                <div class="step-desc" style="font-size:12px;">搜不到 Skill → 记录关键词 → 悬赏建设 → 「找不到」变「指引」</div>
+              </div>
+            </li>
+            <li class="step">
+              <div class="step-num" style="background:#059669; width:24px; height:24px; font-size:11px;">→</div>
+              <div class="step-content">
+                <div class="step-title" style="font-size:13px;">三档贡献门槛</div>
+                <div class="step-desc" style="font-size:12px;">5分钟写用法 / 30分钟翻文档 / 1天建新Skill，人人可参与</div>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="card" style="margin-bottom:0;">
+          <div class="card-header">
+            <div class="card-num" style="background:linear-gradient(135deg,#E11D48,#F43F5E); font-size:13px;">4</div>
+            <div>
+              <div class="card-title" style="font-size:15px;">支柱四：沙盒特区</div>
+              <div class="card-desc">消除政治风险</div>
+            </div>
+          </div>
+          <div class="insight" style="margin:0 0 var(--sp-sm);">
+            <div class="insight-title">核心设计</div>
+            失败不计入绩效 + Token 专属额度 + 成功功劳归团队
+          </div>
+          <ul class="steps">
+            <li class="step">
+              <div class="step-num" style="background:#E11D48; width:24px; height:24px; font-size:11px;">✓</div>
+              <div class="step-content">
+                <div class="step-desc" style="font-size:12px;">独立 Token 配额，不跟大盘竞争</div>
+              </div>
+            </li>
+            <li class="step">
+              <div class="step-num" style="background:#E11D48; width:24px; height:24px; font-size:11px;">✓</div>
+              <div class="step-content">
+                <div class="step-desc" style="font-size:12px;">流程豁免权，试验期跳过部分审批</div>
+              </div>
+            </li>
+            <li class="step">
+              <div class="step-num" style="background:#E11D48; width:24px; height:24px; font-size:11px;">✓</div>
+              <div class="step-content">
+                <div class="step-desc" style="font-size:12px;">AI 中心全力驻场，专人解决技术问题</div>
+              </div>
+            </li>
+            <li class="step">
+              <div class="step-num" style="background:#D97706; width:24px; height:24px; font-size:11px;">→</div>
+              <div class="step-content">
+                <div class="step-desc" style="font-size:12px;">义务：月度真实数据报告（不能美化）</div>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="card" style="margin-bottom:0;">
+          <div class="card-header">
+            <div class="card-num" style="background:linear-gradient(135deg,#7C3AED,#8B5CF6); font-size:13px;">5</div>
+            <div>
+              <div class="card-title" style="font-size:15px;">支柱五：公开排行榜</div>
+              <div class="card-desc">激活社会比较机制</div>
+            </div>
+          </div>
+          <div class="insight" style="margin:0 0 var(--sp-sm);">
+            <div class="insight-title">核心设计</div>
+            季度「快手 AI 研发成熟度全景报告」
+          </div>
+          <ul class="steps">
+            <li class="step">
+              <div class="step-num" style="background:#7C3AED; width:24px; height:24px; font-size:11px;">📊</div>
+              <div class="step-content">
+                <div class="step-desc" style="font-size:12px;">各业务线 Token 效率 + 等级排名，一眼可见位置</div>
+              </div>
+            </li>
+            <li class="step">
+              <div class="step-num" style="background:#7C3AED; width:24px; height:24px; font-size:11px;">🏆</div>
+              <div class="step-content">
+                <div class="step-desc" style="font-size:12px;">Skill 贡献 Top10，荣誉公开，品牌曝光</div>
+              </div>
+            </li>
+            <li class="step">
+              <div class="step-num" style="background:#7C3AED; width:24px; height:24px; font-size:11px;">📖</div>
+              <div class="step-content">
+                <div class="step-desc" style="font-size:12px;">2–3 个标杆案例，打破「AI 不适合我们」的借口</div>
+              </div>
+            </li>
+            <li class="step">
+              <div class="step-num" style="background:#7C3AED; width:24px; height:24px; font-size:11px;">⬆️</div>
+              <div class="step-content">
+                <div class="step-desc" style="font-size:12px;">「本季增长最快」榜单，L1 团队也能有希望</div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ⑥ 飞轮自洽证明 -->
+    <div class="tab-panel" id="t6" role="tabpanel">
+
+      <div class="card" style="padding: var(--sp-lg);">
+        <svg width="100%" viewBox="0 0 860 170" xmlns="http://www.w3.org/2000/svg" style="display:block;">
+          <defs>
+            <marker id="fa3" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+              <polygon points="0 0,8 3,0 6" fill="#0D9488"></polygon>
+            </marker>
+          </defs>
+          <rect width="860" height="170" rx="12" fill="#FAFAF9"></rect>
+          <text x="430" y="20" text-anchor="middle" font-size="13" font-weight="700" fill="#1C1917" font-family="-apple-system,sans-serif">Token 生态飞轮 — 一旦启动，自我强化</text>
+          <!-- 6节点环形 -->
+          <ellipse cx="430" cy="95" rx="280" ry="65" fill="none" stroke="#E8E6E1" stroke-width="1.5" stroke-dasharray="6,4"></ellipse>
+          <!-- 节点 -->
+          <rect x="320" y="30" width="220" height="36" rx="8" fill="#0D9488"></rect>
+          <text x="430" y="53" text-anchor="middle" font-size="11" font-weight="700" fill="white" font-family="-apple-system,sans-serif">Token 效率可量化 → 排行榜公开</text>
+
+          <rect x="590" y="55" width="200" height="36" rx="8" fill="#2563EB"></rect>
+          <text x="690" y="78" text-anchor="middle" font-size="11" font-weight="700" fill="white" font-family="-apple-system,sans-serif">业务线主动寻求合作</text>
+
+          <rect x="600" y="120" width="220" height="36" rx="8" fill="#D97706"></rect>
+          <text x="710" y="143" text-anchor="middle" font-size="11" font-weight="700" fill="white" font-family="-apple-system,sans-serif">L2 团队增加 → 更多 Skill</text>
+
+          <rect x="320" y="124" width="220" height="36" rx="8" fill="#059669"></rect>
+          <text x="430" y="147" text-anchor="middle" font-size="11" font-weight="700" fill="white" font-family="-apple-system,sans-serif">Skill 库丰富 → ROI 提升</text>
+
+          <rect x="40" y="120" width="220" height="36" rx="8" fill="#7C3AED"></rect>
+          <text x="150" y="143" text-anchor="middle" font-size="11" font-weight="700" fill="white" font-family="-apple-system,sans-serif">数据沉淀 → 模型更强</text>
+
+          <rect x="30" y="55" width="230" height="36" rx="8" fill="#E11D48"></rect>
+          <text x="145" y="78" text-anchor="middle" font-size="11" font-weight="700" fill="white" font-family="-apple-system,sans-serif">算力 ROI 提升 → 更多 Token</text>
+
+          <!-- 环形箭头 -->
+          <path d="M540 48 L595 60" stroke="#0D9488" stroke-width="2" marker-end="url(#fa3)"></path>
+          <path d="M790 91 L816 125" stroke="#2563EB" stroke-width="2" marker-end="url(#fa3)"></path>
+          <path d="M710 156 L540 156" stroke="#D97706" stroke-width="2" marker-end="url(#fa3)"></path>
+          <path d="M320 142 L258 142" stroke="#059669" stroke-width="2" marker-end="url(#fa3)"></path>
+          <path d="M40 118 L30 91" stroke="#7C3AED" stroke-width="2" marker-end="url(#fa3)"></path>
+          <path d="M145 91 L320 48" stroke="#E11D48" stroke-width="2" marker-end="url(#fa3)"></path>
+        </svg>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-num">⚙</div>
+          <div>
+            <div class="card-title">飞轮成立的逻辑证明</div>
+            <div class="card-desc">用 Token First Principle 验证：五支柱是否真正激励相容</div>
+          </div>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>角色</th><th>在旧模式的选择</th><th>在 Token 模式的选择</th><th>改变的根本原因</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>一线研发</strong></td>
+                <td>抵触 AI，维护现有习惯</td>
+                <td class="hl">主动学 AI，因为 Token 效率影响个人排名</td>
+                <td>个人收益与 Token 效率直接挂钩</td>
+              </tr>
+              <tr>
+                <td><strong>Skill 建设者</strong></td>
+                <td>等别人建，搭便车</td>
+                <td class="hl">主动建 Skill，因为引用分红 = 持续被动收入</td>
+                <td>产权明晰，贡献有私人回报</td>
+              </tr>
+              <tr>
+                <td><strong>效能 BP</strong></td>
+                <td>冷漠观望，KPI 不挂钩</td>
+                <td class="hl">主动推进，因为 OKR 互锁，共享提效 KPI</td>
+                <td>利益对齐，从旁观者变共同创业者</td>
+              </tr>
+              <tr>
+                <td><strong>业务线 Leader</strong></td>
+                <td>等等再说，风险太高</td>
+                <td class="hl">主动申请特区，因为失败免责+成功有功劳</td>
+                <td>沙盒改变了风险/收益的不对称结构</td>
+              </tr>
+              <tr>
+                <td><strong>AI 中心</strong></td>
+                <td>拼命推广，争功劳</td>
+                <td class="hl">做好基础设施，退到幕后当裁判</td>
+                <td>身份转变，不再需要推广，服务质量即竞争力</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout">
+          <div class="callout-label">飞轮成立的判断标准</div>
+          当你看到<strong>业务线主动来找你合作</strong>（而不是被要求），飞轮就已经启动了。
+          这不是靠教育改变了人，而是制度设计改变了「对自己最有利的事」的定义。
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-num" style="background:linear-gradient(135deg,#0D9488,#059669);">∞</div>
+          <div>
+            <div class="card-title">飞轮三阶段演化</div>
+            <div class="card-desc">从需要外力推动 → 内力自转 → 生态自扩张</div>
+          </div>
+        </div>
+        <ul class="steps">
+          <li class="step">
+            <div class="step-num" style="background:linear-gradient(135deg,#E11D48,#F43F5E);">🔴</div>
+            <div class="step-content">
+              <div class="step-title">冷启动期 — 需要外力（Q2–Q3 2026）</div>
+              <div class="step-desc">
+                找 2–3 个有意愿的特区团队跑通完整闭环。<br>
+                选标准：Leader 主动报名 + 团队 10–30 人 + 业务相对独立。<br>
+                核心任务：完成第一批 L2 认证，发布第一份公开排行榜。
+              </div>
+            </div>
+          </li>
+          <li class="step">
+            <div class="step-num" style="background:linear-gradient(135deg,#D97706,#F59E0B);">🟡</div>
+            <div class="step-content">
+              <div class="step-title">飞轮启动 — 出现主动贡献者（Q4 2026）</div>
+              <div class="step-desc">
+                排行榜发布后，落后团队开始感到比较压力。<br>
+                出现第一批<strong>不是因为被要求、而是主动寻求合作</strong>的团队。<br>
+                积分制 + 等级制正式上线，Skill 市场突破 50+ 个。
+              </div>
+            </div>
+          </li>
+          <li class="step">
+            <div class="step-num" style="background:linear-gradient(135deg,#059669,#10B981);">🟢</div>
+            <div class="step-content">
+              <div class="step-title">自我加速 — 不参与的成本变高（Q1–Q2 2027）</div>
+              <div class="step-desc">
+                业务线主动找你要合作，Skill 市场出现外部询价。<br>
+                AI 中心退到后台做裁判员，不再需要主动推广。<br>
+                <strong>这才是成功的标志：不是推广者 KPI 好看，是业务线离不开。</strong>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+    </div>
+
+    <!-- ⑦ 实施路径 -->
+    <div class="tab-panel" id="t7" role="tabpanel">
+
+      <div class="card" style="padding: var(--sp-lg);">
+        <svg width="100%" viewBox="0 0 860 120" xmlns="http://www.w3.org/2000/svg" style="display:block;">
+          <rect width="860" height="120" rx="12" fill="#FAFAF9"></rect>
+          <text x="430" y="22" text-anchor="middle" font-size="13" font-weight="700" fill="#1C1917" font-family="-apple-system,sans-serif">三阶段实施路径 — 以 Token 效率为核心量化目标</text>
+          <line x1="60" y1="65" x2="800" y2="65" stroke="#E8E6E1" stroke-width="2"></line>
+          <circle cx="180" cy="65" r="16" fill="#E11D48"></circle>
+          <text x="180" y="70" text-anchor="middle" font-size="11" font-weight="700" fill="white" font-family="-apple-system,sans-serif">1</text>
+          <text x="180" y="46" text-anchor="middle" font-size="10" font-weight="700" fill="#E11D48" font-family="-apple-system,sans-serif">点火</text>
+          <text x="180" y="90" text-anchor="middle" font-size="10" fill="#57534E" font-family="-apple-system,sans-serif">Q2–Q3 2026</text>
+          <text x="180" y="106" text-anchor="middle" font-size="9" fill="#78716C" font-family="-apple-system,sans-serif">特区 2–3 个 · L2 认证</text>
+          <circle cx="430" cy="65" r="16" fill="#D97706"></circle>
+          <text x="430" y="70" text-anchor="middle" font-size="11" font-weight="700" fill="white" font-family="-apple-system,sans-serif">2</text>
+          <text x="430" y="46" text-anchor="middle" font-size="10" font-weight="700" fill="#D97706" font-family="-apple-system,sans-serif">扩散</text>
+          <text x="430" y="90" text-anchor="middle" font-size="10" fill="#57534E" font-family="-apple-system,sans-serif">Q4 2026</text>
+          <text x="430" y="106" text-anchor="middle" font-size="9" fill="#78716C" font-family="-apple-system,sans-serif">等级制 + 积分制 + 排行榜</text>
+          <circle cx="680" cy="65" r="16" fill="#0D9488"></circle>
+          <text x="680" y="70" text-anchor="middle" font-size="11" font-weight="700" fill="white" font-family="-apple-system,sans-serif">3</text>
+          <text x="680" y="46" text-anchor="middle" font-size="10" font-weight="700" fill="#0D9488" font-family="-apple-system,sans-serif">生态</text>
+          <text x="680" y="90" text-anchor="middle" font-size="10" fill="#57534E" font-family="-apple-system,sans-serif">Q1–Q2 2027</text>
+          <text x="680" y="106" text-anchor="middle" font-size="9" fill="#78716C" font-family="-apple-system,sans-serif">飞轮自转 · 业务线主动来</text>
+          <line x1="196" y1="65" x2="414" y2="65" stroke="#D97706" stroke-width="2" stroke-dasharray="6,3"></line>
+          <line x1="446" y1="65" x2="664" y2="65" stroke="#0D9488" stroke-width="2" stroke-dasharray="6,3"></line>
+        </svg>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-num" style="background:linear-gradient(135deg,#0D9488,#2563EB);">⭐</div>
+          <div>
+            <div class="card-title">量化目标（2027 Q2）— Token 视角</div>
+            <div class="card-desc">用真实的 Token 效率数据，覆盖全公司所有岗位，而不只是研发</div>
+          </div>
+        </div>
+        <div class="prog-row">
+          <div class="prog-label">团队 L2+ 覆盖率</div>
+          <div class="prog-bar"><div class="prog-fill" data-w="60%" style="width:0;background:linear-gradient(90deg,#0D9488,#059669)"></div></div>
+          <div class="prog-val">≥60%</div>
+        </div>
+        <div class="prog-row">
+          <div class="prog-label">全公司 AI 工作渗透率</div>
+          <div class="prog-bar"><div class="prog-fill" data-w="55%" style="width:0;background:linear-gradient(90deg,#2563EB,#3B82F6)"></div></div>
+          <div class="prog-val">≥50%</div>
+        </div>
+        <div class="prog-row">
+          <div class="prog-label">Skill 市场规模</div>
+          <div class="prog-bar"><div class="prog-fill" data-w="80%" style="width:0;background:linear-gradient(90deg,#D97706,#F59E0B)"></div></div>
+          <div class="prog-val">200+</div>
+        </div>
+        <div class="prog-row">
+          <div class="prog-label">自发 Skill 贡献占比</div>
+          <div class="prog-bar"><div class="prog-fill" data-w="70%" style="width:0;background:linear-gradient(90deg,#7C3AED,#8B5CF6)"></div></div>
+          <div class="prog-val">≥70%</div>
+        </div>
+        <div class="insight" style="margin-top:var(--sp-md);">
+          <div class="insight-title">关于「AI 工作渗透率」的说明</div>
+          <strong>不只是研发</strong>——这是全公司所有岗位的综合指标：研发看 AI 代码参与率，产品看文档/PRD AI 辅助率，运营看内容创作频次，数据看 SQL/报告 AI 使用率，设计看 AI 生成素材占比。每个岗位有自己的子指标，汇总为统一的「AI 工作渗透率」。
+        </div>
+        <div class="callout" style="margin-top:var(--sp-md);">
+          <div class="callout-label">为什么这个指标替换「AI 代码贡献率」</div>
+          「AI 代码贡献率」天然只覆盖研发岗，占公司总人数约 30%。<strong>剩下 70% 的产品、运营、设计、市场、数据岗位被完全排除在外</strong>——这不是 AI 提效，这是研发提效。真正的「AI 生产力」是全员命题：每个人都是 Token 的消费者，每个岗位都有 Token ROI。
+        </div>
+      </div>
+
+      <!-- 全岗位 Token 衡量矩阵 -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-num" style="background:linear-gradient(135deg,#0D9488,#7C3AED);">⊞</div>
+          <div>
+            <div class="card-title">全岗位 Token 衡量矩阵</div>
+            <div class="card-desc">AI 生产力不是研发专利——每个岗位都有自己的 Token ROI 衡量维度</div>
+          </div>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>岗位</th><th>核心工作产出</th><th>AI 工作渗透率子指标</th><th>L2 门槛示例</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>研发工程师</strong><br><small style="color:var(--c-text-3)">~30% 人力</small></td>
+                <td>代码、技术方案</td>
+                <td class="hl">AI 代码参与率<br><small>AI 辅助生成的代码占 commit 总量</small></td>
+                <td>AI 代码参与率 ≥ 50%；AI 参与需求全链路 ≥ 50%</td>
+              </tr>
+              <tr>
+                <td><strong>产品经理</strong><br><small style="color:var(--c-text-3)">~15% 人力</small></td>
+                <td>PRD、需求文档、竞品分析</td>
+                <td class="hl">文档 AI 辅助渗透率<br><small>AI 参与起草/评审的文档占比</small></td>
+                <td>AI 辅助文档占比 ≥ 60%；需求响应周期缩短 ≥ 30%</td>
+              </tr>
+              <tr>
+                <td><strong>运营</strong><br><small style="color:var(--c-text-3)">~20% 人力</small></td>
+                <td>方案、文案、活动策划</td>
+                <td class="hl">内容创作 AI 使用频次<br><small>AI 辅助生成的内容占输出总量</small></td>
+                <td>AI 内容参与率 ≥ 50%；人均内容产出提升 ≥ 40%</td>
+              </tr>
+              <tr>
+                <td><strong>数据分析</strong><br><small style="color:var(--c-text-3)">~10% 人力</small></td>
+                <td>SQL、分析报告、看板</td>
+                <td class="hl">SQL/报告 AI 辅助率<br><small>AI 参与的取数与分析任务占比</small></td>
+                <td>AI 辅助取数占比 ≥ 60%；报告产出周期缩短 ≥ 40%</td>
+              </tr>
+              <tr>
+                <td><strong>设计师</strong><br><small style="color:var(--c-text-3)">~10% 人力</small></td>
+                <td>UI 设计、图片、视觉物料</td>
+                <td class="hl">AI 生成素材参与率<br><small>AI 辅助生成或迭代的素材占比</small></td>
+                <td>AI 素材参与率 ≥ 40%；设计周期缩短 ≥ 30%</td>
+              </tr>
+              <tr>
+                <td><strong>市场 / HR / 其他</strong><br><small style="color:var(--c-text-3)">~15% 人力</small></td>
+                <td>文档、沟通、分析、招聘</td>
+                <td class="hl">AI 工具 DAU / 人均<br><small>日均 AI 工具调用次数</small></td>
+                <td>AI 工具 DAU/人 ≥ 3 次；人均 Token 消耗达标线</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="insight">
+          <div class="insight-title">汇总公式</div>
+          <strong>全公司 AI 工作渗透率</strong> = Σ（各岗位子指标得分 × 岗位人力占比）<br>
+          各岗位子指标归一化为 0–100 分，加权平均即为公司整体得分。每季度公开排行榜展示各团队、各岗位的分项得分和综合得分。
+        </div>
+      </div>
+
+      <!-- 核心结论卡 -->
+      <div class="card" style="background:linear-gradient(135deg,#0F2027,#203A43,#2C5364);color:#fff;border:none;">
+        <div class="fp-label" style="margin-bottom:var(--sp-sm);">核心结论 · 一句话</div>
+        <div style="font-size:clamp(16px,2.5vw,22px);font-weight:800;line-height:1.5;margin-bottom:var(--sp-md);">
+          推工具失败，是因为你在做「改变别人」的事。<br>
+          <span style="color:#5EEAD4;">每个理性人只做「对自己有利」的事。</span><br>
+          你真正要做的，是重新定义「对自己有利」的含义——<br>
+          <span style="color:#5EEAD4;">把 Token 生产力变成可量化的商品，让消费者自己来买。</span>
+        </div>
+        <div class="cols-3" style="margin-top:0;">
+          <div style="text-align:center;padding:var(--sp-md);background:rgba(255,255,255,.07);border-radius:10px;">
+            <div style="font-size:26px;font-weight:800;color:#5EEAD4;margin-bottom:4px;">Token</div>
+            <div style="font-size:12px;color:rgba(255,255,255,.6);">First Principle<br>所有推论的起点</div>
+          </div>
+          <div style="text-align:center;padding:var(--sp-md);background:rgba(255,255,255,.07);border-radius:10px;">
+            <div style="font-size:26px;font-weight:800;color:#93C5FD;margin-bottom:4px;">5</div>
+            <div style="font-size:12px;color:rgba(255,255,255,.6);">激励相容支柱<br>一套自洽制度设计</div>
+          </div>
+          <div style="text-align:center;padding:var(--sp-md);background:rgba(255,255,255,.07);border-radius:10px;">
+            <div style="font-size:26px;font-weight:800;color:#86EFAC;margin-bottom:4px;">∞</div>
+            <div style="font-size:12px;color:rgba(255,255,255,.6);">飞轮自转终态<br>业务线主动来找你</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ⑧ 飞轮实战拆解 -->
+    <div class="tab-panel" id="t8" role="tabpanel">
+
+      <!-- 飞轮图例 -->
+      <div class="card" style="text-align:center; padding: var(--sp-lg);">
+        <div class="card-title" style="margin-bottom:12px;">飞轮不会自己启动 — 你只需要在 3 个节点主动做功，剩下的自驱</div>
+        <div class="legend">
+          <div class="legend-item"><div class="legend-dot" style="background:var(--c-push)"></div>需要你主动做功（外力）</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--c-auto)"></div>飞轮自驱（内力）</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--c-amber)"></div>混合型（需撬动一次）</div>
+        </div>
+      </div>
+
+      <!-- 飞轮 SVG 全景图 -->
+      <div class="flywheel-wrap">
+        <svg viewBox="0 0 900 520" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="t8arw" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0,9 3.5,0 7" fill="#94A3B8"></polygon></marker>
+            <marker id="t8arw-push" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0,9 3.5,0 7" fill="#E11D48"></polygon></marker>
+            <marker id="t8arw-auto" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0,9 3.5,0 7" fill="#059669"></polygon></marker>
+            <filter id="t8glow"><feGaussianBlur stdDeviation="3" result="blur"></feGaussianBlur><feMerge><feMergeNode in="blur"></feMergeNode><feMergeNode in="SourceGraphic"></feMergeNode></feMerge></filter>
+          </defs>
+          <ellipse cx="450" cy="260" rx="310" ry="195" fill="none" stroke="#E8E6E1" stroke-width="2" stroke-dasharray="8,5"></ellipse>
+          <rect x="290" y="22" width="320" height="58" rx="12" fill="#FFF0F3" stroke="#E11D48" stroke-width="2"></rect>
+          <circle cx="310" cy="51" r="12" fill="#E11D48"></circle>
+          <text x="310" y="55" text-anchor="middle" font-size="11" font-weight="800" fill="white" font-family="-apple-system,sans-serif">①</text>
+          <text x="440" y="45" text-anchor="middle" font-size="12" font-weight="700" fill="#E11D48" font-family="-apple-system,sans-serif">Token 数据基础设施</text>
+          <text x="440" y="63" text-anchor="middle" font-size="10" fill="#57534E" font-family="-apple-system,sans-serif">每岗位 AI 工作渗透率 · 可量化 · 可对比</text>
+          <text x="775" y="51" text-anchor="middle" font-size="10" font-weight="700" fill="#E11D48" font-family="-apple-system,sans-serif">🔴 你做功</text>
+          <rect x="660" y="120" width="210" height="58" rx="12" fill="#FFF0F3" stroke="#E11D48" stroke-width="2"></rect>
+          <circle cx="680" cy="149" r="12" fill="#E11D48"></circle>
+          <text x="680" y="153" text-anchor="middle" font-size="11" font-weight="800" fill="white" font-family="-apple-system,sans-serif">②</text>
+          <text x="766" y="143" text-anchor="middle" font-size="12" font-weight="700" fill="#E11D48" font-family="-apple-system,sans-serif">公开排行榜</text>
+          <text x="766" y="161" text-anchor="middle" font-size="10" fill="#57534E" font-family="-apple-system,sans-serif">季度发布 · 区分度高</text>
+          <rect x="690" y="225" width="185" height="58" rx="12" fill="#ECFDF5" stroke="#059669" stroke-width="2"></rect>
+          <circle cx="710" cy="254" r="12" fill="#059669"></circle>
+          <text x="710" y="258" text-anchor="middle" font-size="11" font-weight="800" fill="white" font-family="-apple-system,sans-serif">③</text>
+          <text x="784" y="248" text-anchor="middle" font-size="12" font-weight="700" fill="#059669" font-family="-apple-system,sans-serif">比较压力激活</text>
+          <text x="784" y="266" text-anchor="middle" font-size="10" fill="#57534E" font-family="-apple-system,sans-serif">Leader 主动寻求合作</text>
+          <rect x="650" y="340" width="220" height="58" rx="12" fill="#FFFBEB" stroke="#D97706" stroke-width="2"></rect>
+          <circle cx="670" cy="369" r="12" fill="#D97706"></circle>
+          <text x="670" y="373" text-anchor="middle" font-size="11" font-weight="800" fill="white" font-family="-apple-system,sans-serif">④</text>
+          <text x="762" y="363" text-anchor="middle" font-size="12" font-weight="700" fill="#D97706" font-family="-apple-system,sans-serif">沙盒特区试验</text>
+          <text x="762" y="381" text-anchor="middle" font-size="10" fill="#57534E" font-family="-apple-system,sans-serif">失败免责 · 专项资源</text>
+          <text x="762" y="394" text-anchor="middle" font-size="9" fill="#D97706" font-family="-apple-system,sans-serif">🟡 撬动一次</text>
+          <rect x="310" y="432" width="280" height="58" rx="12" fill="#ECFDF5" stroke="#059669" stroke-width="2"></rect>
+          <circle cx="330" cy="461" r="12" fill="#059669"></circle>
+          <text x="330" y="465" text-anchor="middle" font-size="11" font-weight="800" fill="white" font-family="-apple-system,sans-serif">⑤</text>
+          <text x="452" y="455" text-anchor="middle" font-size="12" font-weight="700" fill="#059669" font-family="-apple-system,sans-serif">L2/L3 等级认证</text>
+          <text x="452" y="473" text-anchor="middle" font-size="10" fill="#57534E" font-family="-apple-system,sans-serif">团队 Token ROI 段位确立</text>
+          <rect x="30" y="340" width="220" height="58" rx="12" fill="#ECFDF5" stroke="#059669" stroke-width="2"></rect>
+          <circle cx="50" cy="369" r="12" fill="#059669"></circle>
+          <text x="50" y="373" text-anchor="middle" font-size="11" font-weight="800" fill="white" font-family="-apple-system,sans-serif">⑥</text>
+          <text x="142" y="363" text-anchor="middle" font-size="12" font-weight="700" fill="#059669" font-family="-apple-system,sans-serif">积分 / 算力优势</text>
+          <text x="142" y="381" text-anchor="middle" font-size="10" fill="#57534E" font-family="-apple-system,sans-serif">资源向高 ROI 团队集中</text>
+          <rect x="20" y="225" width="220" height="58" rx="12" fill="#FFF7ED" stroke="#D97706" stroke-width="2"></rect>
+          <circle cx="40" cy="254" r="12" fill="#D97706"></circle>
+          <text x="40" y="258" text-anchor="middle" font-size="11" font-weight="800" fill="white" font-family="-apple-system,sans-serif">⑦</text>
+          <text x="132" y="248" text-anchor="middle" font-size="12" font-weight="700" fill="#D97706" font-family="-apple-system,sans-serif">Skill 库沉淀</text>
+          <text x="132" y="266" text-anchor="middle" font-size="10" fill="#57534E" font-family="-apple-system,sans-serif">贡献有分红 · 越用越丰富</text>
+          <rect x="30" y="120" width="210" height="58" rx="12" fill="#ECFDF5" stroke="#059669" stroke-width="2"></rect>
+          <circle cx="50" cy="149" r="12" fill="#059669"></circle>
+          <text x="50" y="153" text-anchor="middle" font-size="11" font-weight="800" fill="white" font-family="-apple-system,sans-serif">⑧</text>
+          <text x="137" y="143" text-anchor="middle" font-size="12" font-weight="700" fill="#059669" font-family="-apple-system,sans-serif">Token ROI 全面提升</text>
+          <text x="137" y="161" text-anchor="middle" font-size="10" fill="#57534E" font-family="-apple-system,sans-serif">数据更好看 · 排行更有说服力</text>
+          <path d="M610 51 Q700 51 660 130" stroke="#E11D48" stroke-width="2.5" fill="none" marker-end="url(#t8arw-push)"></path>
+          <path d="M766 178 L766 222" stroke="#059669" stroke-width="2" fill="none" marker-end="url(#t8arw-auto)" stroke-dasharray="5,3"></path>
+          <path d="M784 283 L784 337" stroke="#059669" stroke-width="2" fill="none" marker-end="url(#t8arw-auto)" stroke-dasharray="5,3"></path>
+          <path d="M660 395 Q560 430 590 435" stroke="#D97706" stroke-width="2" fill="none" marker-end="url(#t8arw)"></path>
+          <path d="M310 461 Q200 461 248 373" stroke="#059669" stroke-width="2" fill="none" marker-end="url(#t8arw-auto)" stroke-dasharray="5,3"></path>
+          <path d="M142 340 L132 283" stroke="#059669" stroke-width="2" fill="none" marker-end="url(#t8arw-auto)" stroke-dasharray="5,3"></path>
+          <path d="M132 225 L132 178" stroke="#059669" stroke-width="2" fill="none" marker-end="url(#t8arw-auto)" stroke-dasharray="5,3"></path>
+          <path d="M240 149 Q290 80 290 51" stroke="#059669" stroke-width="2.5" fill="none" marker-end="url(#t8arw-auto)" stroke-dasharray="5,3"></path>
+          <circle cx="450" cy="260" r="60" fill="#0D9488" filter="url(#t8glow)" opacity=".12"></circle>
+          <circle cx="450" cy="260" r="50" fill="#0D9488"></circle>
+          <text x="450" y="252" text-anchor="middle" font-size="13" font-weight="800" fill="white" font-family="-apple-system,sans-serif">Token</text>
+          <text x="450" y="270" text-anchor="middle" font-size="10" fill="rgba(255,255,255,.8)" font-family="-apple-system,sans-serif">First</text>
+          <text x="450" y="284" text-anchor="middle" font-size="10" fill="rgba(255,255,255,.8)" font-family="-apple-system,sans-serif">Principle</text>
+          <line x1="450" y1="210" x2="450" y2="82" stroke="#0D9488" stroke-width="1" stroke-dasharray="3,4" opacity=".35"></line>
+          <line x1="495" y1="220" x2="670" y2="165" stroke="#0D9488" stroke-width="1" stroke-dasharray="3,4" opacity=".25"></line>
+          <line x1="405" y1="220" x2="230" y2="165" stroke="#0D9488" stroke-width="1" stroke-dasharray="3,4" opacity=".25"></line>
+          <line x1="450" y1="310" x2="450" y2="432" stroke="#0D9488" stroke-width="1" stroke-dasharray="3,4" opacity=".35"></line>
+        </svg>
+      </div>
+
+      <!-- 节点详解 -->
+      <div class="nodes-grid">
+        <div class="node-card wide">
+          <div class="node-head">
+            <div class="node-num" style="background:#E11D48;">①</div>
+            <div class="node-title-wrap">
+              <div class="node-title">Token 数据基础设施 — 让「AI 工作渗透率」可量化</div>
+              <div class="node-sub">这是整个飞轮的发动机。没有这一步，后面所有节点都无法运转</div>
+            </div>
+            <span class="node-badge badge-push">🔴 关键做功点</span>
+          </div>
+          <div class="node-body">
+            <p class="node-desc">飞轮第一步不是「推广 AI」，而是<strong>把 AI 工作量变成可测量的数字</strong>。当前大多数公司 AI 使用是「黑箱」——没人知道谁用了多少、效果怎样。你需要建一套轻量的数据采集层，覆盖研发（代码参与率）+ 非研发（AI 工具 DAU）两端，让每季度的排行榜数据是客观的、可信的、不能注水的。</p>
+            <div class="action-box action-push">
+              <div class="action-title">🔴 你需要主动做的事</div>
+              <strong>技术侧：</strong>接入 IDE/AI 工具 API，自动采集 Token 消耗 + 代码参与率 + 文档 AI 使用频次（3–6 周工程量）<br>
+              <strong>规则侧：</strong>定义各岗位子指标，制定季度汇总公式<br>
+              <strong>治理侧：</strong>成立数据评审委员会（AI 中心 + 效能 BP + 业务线代表），确保数据公信力
+            </div>
+            <div class="risk-box"><div class="risk-title">⚠️ 最容易卡死飞轮的风险</div>数据依赖手工填报 → 数据失真 → 排行榜没有公信力 → 整个飞轮失效。必须<strong>技术手段保证数据来自系统</strong>。</div>
+          </div>
+        </div>
+        <div class="node-card">
+          <div class="node-head">
+            <div class="node-num" style="background:#E11D48;">②</div>
+            <div class="node-title-wrap"><div class="node-title">公开排行榜 — 让比较可见</div><div class="node-sub">排行榜是「社会压力」的物理载体</div></div>
+            <span class="node-badge badge-push">🔴 做功点</span>
+          </div>
+          <div class="node-body">
+            <p class="node-desc">数据有了还不够，必须让它<strong>公开可见、有区分度</strong>。排行榜的目标不是「给优秀者颁奖」，而是让落后者看到自己的位置——「隔壁团队 L2，我们还是 L1」这句话能触发的行动，比 100 次培训更有效。</p>
+            <div class="action-box action-push"><div class="action-title">🔴 你需要主动做的事</div>每季度产出「快手 AI 工作渗透率全景报告」，展示：各团队综合得分 + 各岗位子指标 + 等级分布 + 本季增长最快团队。拉 CTO/VPE 一起签发，<strong>高层背书让排行榜有杀伤力</strong>。</div>
+            <div class="risk-box"><div class="risk-title">⚠️ 风险</div>区分度不够 → 比较压力为零。初期要<strong>刻意拉大差距的可见性</strong>，标注「L2 已获额外 2x 积分」。</div>
+          </div>
+        </div>
+        <div class="node-card">
+          <div class="node-head">
+            <div class="node-num" style="background:#059669;">③</div>
+            <div class="node-title-wrap"><div class="node-title">比较压力激活 — Leader 主动来找你</div><div class="node-sub">飞轮从「被推」到「主动拉」的转折点</div></div>
+            <span class="node-badge badge-auto">🟢 自驱</span>
+          </div>
+          <div class="node-body">
+            <p class="node-desc">排行榜发布后，落后团队的 Leader 会感到压力——不是 AI 中心给的，是<strong>竞争对手和老板的视线给的</strong>。这时他们会主动来找你合作，这是飞轮转起来的信号。</p>
+            <div class="action-box action-auto"><div class="action-title">🟢 这时你只需要</div>准备好「接球」的标准流程：主动来找你的团队进入「沙盒申请」通道，2 周内给出评估、分配资源、正式启动。<strong>不要让主动来的人等超过 2 周。</strong></div>
+          </div>
+        </div>
+        <div class="node-card">
+          <div class="node-head">
+            <div class="node-num" style="background:#D97706;">④</div>
+            <div class="node-title-wrap"><div class="node-title">沙盒特区 — 消除第一次失败的代价</div><div class="node-sub">关键做功点：让第一批试验者不怕失败</div></div>
+            <span class="node-badge badge-hybrid">🟡 撬动一次</span>
+          </div>
+          <div class="node-body">
+            <p class="node-desc">即使 Leader 有意愿，他还面临理性计算：「万一失败了，我需要背锅」。沙盒的作用是<strong>打破这个对称性</strong>：失败 = 免责 + 学到了什么；成功 = 功劳归团队。参与特区就变成了「对自己有利」的事。</p>
+            <div class="action-box action-push"><div class="action-title">🔴 你需要主动做的事（只需做一次）</div>向管理层申请：特区期间（1 季度）团队绩效豁免 AI 转型相关失败。<strong>一次性拿到高层授权</strong>——这是最难但最关键的政治动作。</div>
+            <div class="risk-box"><div class="risk-title">⚠️ 风险</div>特区团队是被分配的，不是自愿的 → 走形式，数据注水。<strong>必须坚持「自愿申请制」</strong>。</div>
+          </div>
+        </div>
+        <div class="node-card">
+          <div class="node-head">
+            <div class="node-num" style="background:#059669;">⑤</div>
+            <div class="node-title-wrap"><div class="node-title">L2/L3 等级认证 — 资产化 Token 能力</div><div class="node-sub">等级 = 团队信用凭证，用来兑换资源</div></div>
+            <span class="node-badge badge-auto">🟢 自驱</span>
+          </div>
+          <div class="node-body">
+            <p class="node-desc">沙盒试验完成后，数据达标的团队进入等级认证。等级不是荣誉牌，是<strong>可以兑换真实资源的生产力凭证</strong>：L2 获 2x 积分系数，L3 获战略级算力配额和对外输出资格。</p>
+            <div class="action-box action-auto"><div class="action-title">🟢 这时你只需要</div>建立标准评审流程（数据自动采集 + 季度评审委员会交叉验证），保持标准的客观性。<strong>标准松了，等级失去价值；标准严了，大家会努力达到。</strong></div>
+          </div>
+        </div>
+        <div class="node-card">
+          <div class="node-head">
+            <div class="node-num" style="background:#059669;">⑥</div>
+            <div class="node-title-wrap"><div class="node-title">积分 / 算力优势 — 资源正向循环</div><div class="node-sub">高 ROI 团队获得更多算力，算力带来更高 ROI</div></div>
+            <span class="node-badge badge-auto">🟢 自驱</span>
+          </div>
+          <div class="node-body">
+            <p class="node-desc">积分制把「贡献→资源」的正反馈回路制度化：贡献 Skill → 积分 → 更多 Token 配额 → 更高 ROI → 更高等级 → 更多积分。这是飞轮的内燃机，一旦启动不需要外力持续加油。</p>
+            <div class="action-box action-auto"><div class="action-title">🟢 你只需要定期做</div>每季度更新积分兑换目录，确保可兑换的东西持续有吸引力。当积分能换到「专属模型微调机会」或「跨部门专家借调」，贡献动力最强。</div>
+          </div>
+        </div>
+        <div class="node-card">
+          <div class="node-head">
+            <div class="node-num" style="background:#D97706;">⑦</div>
+            <div class="node-title-wrap"><div class="node-title">Skill 库沉淀 — 知识产权化</div><div class="node-sub">公共品困境 → 积分分红打破搭便车</div></div>
+            <span class="node-badge badge-hybrid">🟡 初期撬动</span>
+          </div>
+          <div class="node-body">
+            <p class="node-desc">Skill 库是飞轮的「知识积累」节点：每次有人贡献 Skill，所有人的 Token ROI 都会提升。但公共品困境决定了初期需要<strong>积分分红机制</strong>才能让人主动贡献。</p>
+            <div class="action-box action-push"><div class="action-title">🟡 你初期需要撬动一次</div>自己（或 AI 中心团队）<strong>亲手建前 30 个高质量 Skill</strong>，覆盖最常见场景。当库里有 50+ 个 Skill 后，社区贡献开始自驱。</div>
+            <div class="risk-box"><div class="risk-title">⚠️ 风险</div>Skill 质量太低 → 用了没效果 → 失去信任。<strong>前 50 个 Skill 必须经过 AI 中心评审，宁可慢，不能滥</strong>。</div>
+          </div>
+        </div>
+        <div class="node-card">
+          <div class="node-head">
+            <div class="node-num" style="background:#059669;">⑧</div>
+            <div class="node-title-wrap"><div class="node-title">Token ROI 全面提升 — 增强排行榜说服力</div><div class="node-sub">飞轮转速提升的核心证明</div></div>
+            <span class="node-badge badge-auto">🟢 自驱</span>
+          </div>
+          <div class="node-body">
+            <p class="node-desc">Skill 库越丰富，所有团队的 Token ROI 就越高。ROI 数据越好，排行榜的绝对分值上升，但<strong>相对差距依然存在</strong>——全面提升只会让竞争烈度上升，飞轮转速加快。</p>
+            <div class="action-box action-auto"><div class="action-title">🟢 这时你只需要</div>定期更新排行榜基准线（全公司中位数每季度设为新的 L1 门槛），让「站在原地等于退步」的感觉持续存在。</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 冷启动协议 -->
+      <div class="cold-start">
+        <div class="cs-label">冷启动协议 · Cold Start Protocol</div>
+        <div class="cs-title">飞轮不会自动启动<br>你需要按顺序完成这 4 步</div>
+        <ul class="cs-steps">
+          <li class="cs-step">
+            <div class="cs-step-num" style="background:#E11D48;">S1</div>
+            <div>
+              <div class="cs-step-title">建数据管道（节点①，优先级 P0）</div>
+              <div class="cs-step-desc">接入 AI 工具 API，搭建 Token 消耗 + AI 工作渗透率的自动采集体系。数据不准，后面全是废功。</div>
+              <div class="cs-step-tip">时间估算：3–6 周 · 验收标准：数据自动采集，不依赖手工填报</div>
+            </div>
+          </li>
+          <li class="cs-step">
+            <div class="cs-step-num" style="background:#D97706;">S2</div>
+            <div>
+              <div class="cs-step-title">找 2–3 个自愿特区团队（节点④，P0）</div>
+              <div class="cs-step-desc">必须是 Leader 自愿，不能是被分配。同时向高层申请「特区期失败免责」授权。提前亲手建好前 30 个 Skill。</div>
+              <div class="cs-step-tip">验收标准：Leader 签了特区协议，AI 中心种子 Skill 30+</div>
+            </div>
+          </li>
+          <li class="cs-step">
+            <div class="cs-step-num" style="background:#7C3AED;">S3</div>
+            <div>
+              <div class="cs-step-title">发布第一份排行榜（节点②，P1）</div>
+              <div class="cs-step-desc">特区跑了 6–8 周后，有了数据差距，发布第一份全公司 AI 工作渗透率报告。5–10 个团队的数据就够产生区分度。</div>
+              <div class="cs-step-tip">核心动作：拉 CTO/VPE 一起签发，增加排行榜权威性</div>
+            </div>
+          </li>
+          <li class="cs-step">
+            <div class="cs-step-num" style="background:#059669;">S4</div>
+            <div>
+              <div class="cs-step-title">等待「第一个主动来找你的团队」（转折点）</div>
+              <div class="cs-step-desc">这是飞轮启动的信号。不是你去找的，是对方主动来要合作的。比较压力已经在发挥作用——飞轮已经在转了。</div>
+              <div class="cs-step-tip">🎯 里程碑：出现第一个「非特区、主动来找你」的团队 = 飞轮启动</div>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- 飞轮成功信号 -->
+      <div class="signals-grid">
+        <div class="signal-card" style="border-top:3px solid #E11D48;">
+          <div class="signal-icon">🌱</div>
+          <div class="signal-phase">冷启动期 · Q2–Q3 2026</div>
+          <div class="signal-title">成功信号</div>
+          <div class="signal-body">特区团队完成第一次 L2 认证<br>排行榜发布，高层转发<br>数据系统稳定，无需手工填报</div>
+        </div>
+        <div class="signal-card" style="border-top:3px solid #D97706;">
+          <div class="signal-icon">⚡</div>
+          <div class="signal-phase">飞轮启动期 · Q4 2026</div>
+          <div class="signal-title">成功信号</div>
+          <div class="signal-body">出现<strong>第一个主动来找你</strong>的团队<br>Skill 市场有人主动贡献（非 AI 中心）<br>有团队开始互相「打听」对方怎么做的</div>
+        </div>
+        <div class="signal-card" style="border-top:3px solid #059669;">
+          <div class="signal-icon">🚀</div>
+          <div class="signal-phase">自我加速期 · Q1–Q2 2027</div>
+          <div class="signal-title">成功信号</div>
+          <div class="signal-body"><strong>你不推广，对方还来找</strong><br>Skill 市场自发贡献 &gt; 70%<br>有团队询问「能否对外卖这套方法论」</div>
+        </div>
+      </div>
+
+      <!-- 飞轮结论 -->
+      <div class="fw-conclusion">
+        <div class="fw-conclusion-title">飞轮的核心逻辑只有一句话</div>
+        <div class="fw-conclusion-body">
+          你只需要在 <strong style="color:var(--c-push);">①数据可量化</strong>、<strong style="color:var(--c-push);">②排行榜有公信力</strong>、<strong style="color:var(--c-amber);">④沙盒有授权</strong> 三个节点主动做功。<br>
+          剩下的节点会通过<strong>理性人追逐自身利益</strong>自动转动。<br>
+          当你开始「接球」而不是「推球」，飞轮就成功了。
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <strong>快手 AI 生产力中心 · 战略本质分析 v2.1</strong>
+    从第一性原理出发：工具服务 → AI 生产力商品化（Token）<br>
+    含：飞轮实战拆解 · 8 节点 · 冷启动协议 · 全岗位 Token 衡量矩阵
+  </footer>
+
+</div><!-- /page-wrap -->
+
+<script>
+  /* Tab switching */
+  function switchTab(id, btn) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => {
+      b.classList.remove('active');
+      b.setAttribute('aria-selected', 'false');
+    });
+    const panel = document.getElementById(id);
+    if (panel) { panel.classList.add('active'); }
+    btn.classList.add('active');
+    btn.setAttribute('aria-selected', 'true');
+    // Animate progress bars in new panel
+    panel && panel.querySelectorAll('.prog-fill[data-w]').forEach(el => {
+      el.style.width = '0';
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => { el.style.width = el.dataset.w; });
+      });
+    });
+  }
+
+  /* Init progress bars in active panel */
+  document.querySelectorAll('.tab-panel.active .prog-fill[data-w]').forEach(el => {
+    setTimeout(() => { el.style.width = el.dataset.w; }, 400);
+  });
+</script>
+
+
+
+</body></html>
